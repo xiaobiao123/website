@@ -1,0 +1,275 @@
+#Html("begin")
+#Head("begin")
+#Title("系统管理-话题管理")
+#LoadBootstrap("default")
+#LoadSUI("default")
+#LoadSUI("upload")
+#Head("end")
+<script type="text/javascript" src="$!request.contextPath/assets/js/labelPanel.js">
+</script>
+<body style="width:100%">
+    #parse("header.vm")
+    <div id="user-profile-1" class="user-profile row">
+        <form id="J_Form" name="J_Form" class="form-horizontal" role="form" method="post" >
+    <!--nav-table start-->
+    <ul class="nav nav-tabs" id="">
+          <li class="active">
+            <a  href="$request.contextPath/topic/detail.htm?id=$!topicId">基本信息</a>
+          </li>
+          <li >
+           <a href="$!request.contextPath/topic/relationedArticle.htm?id=$!topicId"> 管理相关文章
+        </a>
+          </li>
+   </ul>
+    <!--nav-table end-->
+            <p>&nbsp;</p>
+            #Hidden("id", "$!topicId")
+            <div class="col-xs-12 col-sm-3 center">
+                <div id="profile-picture">
+                    <span class="profile-picture">
+                        <img src="#if($!topic.imagePath) $!reviewImagePath/$!topic.imagePath #else $!request.contextPath/assets/images/no_img.jpg #end" alt="Avatar" class="editable img-responsive editable-click editable-empty" id="infoImage_preview" style="width:334px; height:288px"/>
+                        #Uploader_pic({
+                            "width":334,
+                            "height":288,
+                            "rates":"m,s",
+                            "maxSize":40000000,
+                            "fieldName": "infoImage", 
+                            "fileFieldName": "infoImageFile", 
+                            "src": "$!topic.imagePath",
+                            "required":"false"
+                        })
+                    </span>
+                    <div class="space-4"></div>
+                </div>
+            </div>
+        
+            <!-- PAGE CONTENT BEGINS -->
+            <div class="col-xs-12 col-sm-9">
+                <div class="form-group">
+                    
+                    <label class="control-label col-xs-12 col-sm-2 no-padding-right" for="title"><span class="red">*</span>话题名称：</label>
+                        <div class="clearfix">
+                            <div class="col-xs-12 col-sm-9">
+                                <div class="clearfix">
+                                    <input type="text" name="name" id="name" class="col-xs-12 col-sm-6" value="$!topic.name">
+                                </div>
+                            </div>
+                        </div>
+                </div>
+                <div class="space-2"></div>
+                <div class="form-group">
+                    
+                    <label class="control-label col-xs-12 col-sm-2 no-padding-right" for="title">分类标签：</label>
+                    <div class="col-xs-12 col-sm-9 " id="">
+                        <div class="clearfix">
+                            <div class="col-xs-12 col-sm-9">
+                                <div class="clearfix">
+                                    <input type="hidden" id="labelIds" name="labelIds" value="$!topic.labelIds"/>
+                                    <input  type="text" name="categoryNames" id="categoryNames" class="col-xs-12 col-sm-6" value="$!topic.categoryNames" >&nbsp;&nbsp;
+                                        <button type="button" id="categoryButton" class=" btn-info " onclick="this.isclick=1" >
+                                                <i bigger-110"></i>
+                                                                                                                    选择标签
+                                        </button>
+                                </div>
+                            </div>
+                            
+                        </div> 
+                    </div>
+                </div>
+                <div class="space-2"></div>
+                <div class="form-group">
+                    <label class="control-label col-xs-12 col-sm-2 no-padding-right" for="title">装修百科：</label>
+                    <div class="col-xs-12 col-sm-9 " id="">
+                        <div class="clearfix">
+                            <div class="col-xs-12 col-sm-9">
+                                <div class="clearfix">
+                                    <input type="hidden" id="craftLabels" name="craftLabels" value="$!topic.craftLabels"/>
+                                    <input type="text" name="craftNames" id="craftNames" class="col-xs-12 col-sm-6" value="$!topic.craftNames">&nbsp;&nbsp;
+                                        <button type="button" id="craftButton" class=" btn-info "  onclick="this.isclick=1">
+                                             <i class="bigger-110"></i>
+                                                                                           选择标签
+                                        </button>
+                                </div>
+                            </div>
+                            
+                        
+                            
+                        </div>
+                    </div>
+                </div>
+                <div class="space-2"></div>
+                <div class="form-group">
+                    <label class="control-label col-xs-12 col-sm-2 no-padding-right" for="title">建材百科：</label>
+                    <div class="col-xs-12 col-sm-9 " id="">
+                        <div class="clearfix">
+                            <div class="col-xs-12 col-sm-9">
+                                <div class="clearfix">
+                                    <input type="hidden" id="materialLabels" name="materialLabels" value="$!topic.materialLabels"/>
+                                    <input type="text" name="materialNames" id="materialNames" class="col-xs-12 col-sm-6" value="$!topic.materialNames">&nbsp;&nbsp;
+                                        <button type="button" id="materialButton" class=" btn-info " onclick="this.isclick=1" >
+                                           
+                                                                                  选择标签
+                                        </button>
+                                </div>
+                            </div>  
+                        </div>
+                    </div>
+                </div>
+                <div class="space-2"></div>
+                <div class="form-group">
+                    <label class="control-label col-xs-12 col-sm-2 no-padding-right" for="title">设计百科：</label>
+                    <div class="col-xs-12 col-sm-9 " id="">
+                        <div class="clearfix">
+                            <div class="col-xs-12 col-sm-9">
+                                <div class="clearfix">
+                                    <input type="hidden" id="styleLabels" name="styleLabels" value="$!topic.styleLabels"/>
+                                    <input type="text" name="styleNames" id="styleNames" class="col-xs-12 col-sm-6" value="$!topic.styleNames">&nbsp;&nbsp;
+                                        <button type="button" id="styleButton" class=" btn-info " onclick="this.isclick=1" >
+                                             
+                                                                                                 选择标签
+                                        </button>
+                                </div>
+                            </div>          
+                        </div>
+                    </div>
+                </div>
+        
+                <div class="space-2"></div>
+                <label class="control-label col-xs-12 col-sm-2 no-padding-right" for="title"><span class="red">*</span>话题简介：&nbsp;&nbsp;</label>
+                <textarea style="width:50%;align-left:100px;" rows="3" id="introduction" name="introduction">$!topic.introduction
+                 </textarea>
+                <div class="space-2"></div>
+                <div style="position: absolute;">
+                    <div class="col-md-offset-3 col-md-7">
+                        <button type="button" id="J_SAVE" class="btn btn-info J_LoadingBtn" data-loading-text="保存中...">
+                            <i class="icon-ok bigger-110"></i>
+                            保存
+                        </button>
+                    </div>
+                </div>
+                <div class="space-2"></div>
+                <div style="position: relative;align-left:70px">
+                    <div class="col-md-offset-3 col-md-7" >
+                        <button type="button" id="saveToNext" class="btn btn-info J_LoadingBtn" data-loading-text="保存中...">
+                            <i class="icon-ok bigger-110"></i>保存至下一步</button>
+                    </div>
+                   
+                </div>
+            </div>
+        </form>
+        #LabelPanel( "categoryButton" "categoryNames" "category_dialog" "100101")
+        #LabelPanel( "craftButton" "craftNames" "craft_dialog" "100102")
+        #LabelPanel( "materialButton" "materialNames" "material_dialog" "100103")
+        #LabelPanel( "styleButton" "styleNames" "style_dialog" "100104")
+    </div>
+	<script>
+    //去空
+    function trim(str){       
+        return str.replace(/^(\s|\u00A0)+/,'').replace(/(\s|\u00A0)+$/,'');       
+    } 
+     
+     //获得标签值
+     function labels(){
+         /*分类标签*/
+         if (document.getElementById("categoryButton").isclick == 1 ){
+             var labelIds = "";
+             for(var i=0;i<dialog_map['category_dialog'].length;i++){
+                labelIds += dialog_map['category_dialog'][i].id+",";     
+             }
+            labelIds = labelIds.substring(0,labelIds.length-1);
+            $("#labelIds").val(labelIds);
+         }
+        /*装修百科*/
+        if (document.getElementById("craftButton").isclick == 1 ){
+            var craftLabels = "";
+            for(var i=0;i<dialog_map['craft_dialog'].length;i++){
+                craftLabels += dialog_map['craft_dialog'][i].id+",";     
+            }
+            craftLabels = craftLabels.substring(0,craftLabels.length-1);
+            $("#craftLabels").val(craftLabels);
+        }
+        /*建材百科*/
+        if (document.getElementById("materialButton").isclick == 1 ){
+            var materialLabels = "";
+            for(var i=0;i<dialog_map['material_dialog'].length;i++){
+                materialLabels += dialog_map['material_dialog'][i].id+",";     
+            }
+            materialLabels = materialLabels.substring(0,materialLabels.length-1);
+            $("#materialLabels").val(materialLabels);
+            }
+        /*设计百科*/
+        if (document.getElementById("styleButton").isclick == 1 ){
+            var styleLabels = "";
+            for(var i=0;i<dialog_map['style_dialog'].length;i++){
+                styleLabels += dialog_map['style_dialog'][i].id+",";     
+            }
+            styleLabels = styleLabels.substring(0,styleLabels.length-1);
+            $("#styleLabels").val(styleLabels);
+        }
+     }
+	$("#J_SAVE").click(function(){
+        var name =  $('#name').val();
+        var introduction =  $('#introduction').val();
+        if("" == name){
+            alert("话题名称不能为空");
+            return ;
+        }
+        if("" == trim(introduction)){
+            alert("话题简介不能为空");
+            return ;
+        }
+        labels();
+        if($('#J_Form').valid()){
+            $.ajax({
+                dataType: "json",
+                type: "POST",
+                url: '$!request.contextPath/topic/saveAndQuit.htm',
+                data: $("#J_Form").serialize(),
+                success: function(res){
+                var obj = eval(res);
+                    if(obj[0]){
+                        alert(obj[1]);
+                        window.location.href="$!request.contextPath/topic/index.htm";
+                    } else {
+                         jAlert(obj[1]);
+                     }
+                 }
+            });
+        }
+        });
+        
+        $("#saveToNext").click(function(){
+        var name =  $('#name').val();
+        var introduction =  $('#introduction').val();
+        if("" == name){
+            alert("话题名称不能为空");
+            return ;
+        }
+        if("" == trim(introduction)){
+            alert("话题简介不能为空");
+            return ;
+        }
+        labels();
+        if($('#J_Form').valid()){
+            $.ajax({
+                dataType: "json",
+                type: "POST",
+                url: '$!request.contextPath/topic/saveAndQuit.htm',
+                data: $("#J_Form").serialize(),
+                success: function(res){
+                var obj = eval(res);
+                    if(obj[0]){
+                        alert(obj[1]);
+                        window.location.href="$!request.contextPath/topic/relationedArticle.htm?id="+obj[2];
+                    } else {
+                         jAlert(obj[1]);
+                     }
+                 }
+            });
+        }
+        });
+    </script>
+	<!-- PAGE CONTENT ENDS -->
+	#parse("footer.vm")
+</body>
+#Html("end")

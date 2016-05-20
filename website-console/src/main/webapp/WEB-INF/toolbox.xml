@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<toolbox>
+	<xhtml>true</xhtml>
+	
+<!--      <tool> -->
+<!-- 		<key>constants</key> -->
+<!-- 		<scope>application</scope> -->
+<!-- 		<class>com.goujia.website.base.constants.base.SysConstants</class> -->
+<!-- 	</tool> -->
+	<tool>
+		<key>date</key>
+		<scope>application</scope>
+		<class>com.goujia.website.base.utils.DateUtil</class>
+	</tool>
+</toolbox>

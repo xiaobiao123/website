@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.goujia.website.base.dao.article.ArticleReviewMapper">
+	<resultMap id="RM_ArticleReview"
+		type="com.goujia.website.base.entity.article.ArticleReview">
+		<id column="ID" property="id" jdbcType="INTEGER" />
+		<result column="CONTENT" property="content" jdbcType="VARCHAR" />
+		<result column="GMT_CREATE" property="gmtCreate" jdbcType="TIMESTAMP" />
+		<result column="IS_DELETED" property="isDeleted" jdbcType="VARCHAR" />
+		<result column="GMT_MODIFY" property="gmtModify" jdbcType="TIMESTAMP" />
+		<association property="article" javaType="com.goujia.website.base.entity.article.Article">
+			<result column="ARTICLE" property="id"/>
+			<result column="article_name" property="articleName"/>
+			<result column="article_content" property="content"/>
+			<result column="article_introduction" property="introduction"/>
+		</association>
+		<association property="user" javaType="com.goujia.website.base.entity.system.User">
+			<result column="USER" property="id"/>
+			<result column="user_name" property="userName"/>
+			<result column="user_headPortrait" property="headPortrait"/>
+		</association>
+	</resultMap>
+
+	<resultMap id="RM_ArticleReviewVO"
+		type="com.goujia.website.base.vo.article.ArticleReviewVO" extends="RM_ArticleReview">
+	</resultMap>
+	<sql id="Base_Column_List">
+		ID, ARTICLE, CONTENT, USER,
+		GMT_CREATE, IS_DELETED,
+		GMT_MODIFY
+	</sql>
+	<sql id="Base_Query_Condition">
+		<where>
+			<if test="article!=null and article.id!=null and article.id!=''">
+				ARTICLE = #{article.id,jdbcType=INTEGER}
+			</if>
+			<if test="content!=null and content!=''">
+				and CONTENT = #{content,jdbcType=VARCHAR}
+			</if>
+			<if test="user!=null and user.id!=null and user.id!=''">
+				and USER = #{user.id,jdbcType=INTEGER}
+			</if>
+			<if test="isDeleted != null">
+				and IS_DELETED = #{isDeleted,jdbcType=VARCHAR}
+			</if>
+		</where>
+	</sql>
+
+	<select id="list" parameterType="map" resultMap="RM_ArticleReviewVO">
+		select
+			review.*,
+			user.USER_NAME as user_name,
+			user.HEAD_PORTRAIT user_headPortrait
+		from G_BBS_ARTICLE_REVIEW review
+		left join G_USER user on review.USER=user.ID
+		where review.ARTICLE = #{article} and review.IS_DELETED='n'
+	</select>
+
+	<select id="count" resultType="int" parameterType="map">
+		select count(*) from G_BBS_ARTICLE_REVIEW
+		where ARTICLE = #{article} and IS_DELETED='n'
+	</select>
+
+	<select id="get" resultMap="RM_ArticleReview" parameterType="java.lang.Integer">
+		select
+		<include refid="Base_Column_List" />
+		from G_BBS_ARTICLE_REVIEW
+		where ID = #{id,jdbcType=INTEGER}
+	</select>
+	<delete id="delete" parameterType="java.lang.Integer">
+		delete from
+		G_BBS_ARTICLE_REVIEW
+		where ID = #{id,jdbcType=INTEGER}
+	</delete>
+	<insert id="insert"
+		parameterType="com.goujia.website.base.entity.article.ArticleReview">
+		insert into G_BBS_ARTICLE_REVIEW (ARTICLE,
+		CONTENT, USER, 
+		GMT_CREATE, IS_DELETED,
+		GMT_MODIFY
+		)
+		values (
+		#{article.id,jdbcType=INTEGER},
+		#{content,jdbcType=VARCHAR},
+		#{user.id,jdbcType=INTEGER},
+		now(),
+		'n',
+		now()
+		)
+	</insert>
+
+	<update id="update"
+		parameterType="com.goujia.website.base.entity.article.ArticleReview">
+		update G_BBS_ARTICLE_REVIEW
+		<set>
+			<if test="article!=null and article.id!=null and article.id!=''">
+				ARTICLE = #{article.id,jdbcType=INTEGER}
+			</if>
+			<if test="content!=null and content!=''">
+				CONTENT = #{content,jdbcType=VARCHAR}
+			</if>
+			<if test="user!=null and user.id!=null and user.id!=''">
+				USER = #{user.id,jdbcType=INTEGER}
+			</if>
+			<if test="isDeleted != null">
+			 	IS_DELETED = #{isDeleted,jdbcType=VARCHAR}
+			</if>
+		</set>
+		where ID = #{id,jdbcType=INTEGER}
+	</update>
+	
+	<select id="reviewManager"
+        parameterType="com.goujia.website.base.vo.article.ArticleReviewSearchParam"
+        resultType="com.goujia.website.base.vo.article.ArticleReviewVO">
+        select
+        G_BBS_ARTICLE_REVIEW.ID as id,
+        G_BBS_ARTICLE.ARTICLE_NAME as isDeleted,
+        G_BBS_ARTICLE_REVIEW.CONTENT as content,
+        G_BBS_ARTICLE_REVIEW.GMT_CREATE as gmtCreate
+        from
+        G_BBS_ARTICLE_REVIEW,G_BBS_ARTICLE,G_USER
+        where
+        G_BBS_ARTICLE_REVIEW.ARTICLE=G_BBS_ARTICLE.ID
+        AND
+        G_BBS_ARTICLE_REVIEW.USER=G_USER.ID
+        AND
+        G_BBS_ARTICLE_REVIEW.IS_DELETED=#{isDeleted,jdbcType=VARCHAR}
+        <if test="null!=searchText and searchIf==1">
+            AND
+            G_BBS_ARTICLE_REVIEW.CONTENT like CONCAT('%', #{searchText,jdbcType=VARCHAR},'%')
+        </if>
+        <if test="null!=searchText and searchIf==2">
+            AND
+            G_USER.USER_NAME like CONCAT('%', #{searchText,jdbcType=VARCHAR},'%')
+        </if>
+    </select>
+
+    <select id="reviewManagerCount"
+        parameterType="com.goujia.website.base.vo.article.ArticleReviewSearchParam"
+        resultType="int">
+        select
+        count(G_BBS_ARTICLE_REVIEW.ID) as id
+        from G_BBS_ARTICLE_REVIEW,G_BBS_ARTICLE,G_USER
+        where
+        G_BBS_ARTICLE_REVIEW.ARTICLE=G_BBS_ARTICLE.ID
+        AND
+        G_BBS_ARTICLE_REVIEW.USER=G_USER.ID
+        AND
+        G_BBS_ARTICLE_REVIEW.IS_DELETED=#{isDeleted,jdbcType=VARCHAR}
+        <if test="null!=searchText and searchIf==1">
+            AND
+            G_BBS_ARTICLE_REVIEW.CONTENT like CONCAT('%', #{searchText,jdbcType=VARCHAR},'%')
+        </if>
+        <if test="null!=searchText and searchIf==2">
+            AND
+            G_USER.USER_NAME like CONCAT('%', #{searchText,jdbcType=VARCHAR},'%')
+        </if>
+    </select>
+
+    <update id="disable" parameterType="int">
+        update G_BBS_ARTICLE_REVIEW
+        set
+        IS_DELETED = 'y'
+        where ID = #{id,jdbcType=INTEGER}
+    </update>
+    <select id="countReviewForUserArticle" parameterType="map" resultType="long">
+    	select 
+			count(1)
+		from (select * from g_bbs_article where IS_DELETED='n' and USER_ID=#{user}) article 
+		inner join (select * from g_bbs_article_review where IS_DELETED='n') review on review.ARTICLE=article.ID
+    </select>
+    <select id="findReviewForUserArticle" parameterType="map" resultMap="RM_ArticleReviewVO">
+    	select 
+			review.*, 
+			article.ARTICLE_NAME article_name,
+			user.USER_NAME user_name,
+			user.HEAD_PORTRAIT user_headPortrait
+		from (select * from g_bbs_article where IS_DELETED='n' and USER_ID=#{user}) article 
+		inner join (select * from g_bbs_article_review where IS_DELETED='n') review on review.ARTICLE=article.ID
+		join g_user user on user.ID=review.USER
+    </select>
+    <select id="countUserReviewForArticle" parameterType="map" resultType="long">
+    	select 
+			count(1)
+		from (select id,ARTICLE from g_bbs_article_review where IS_DELETED='n' and USER=#{user}) review
+		join (select id from g_bbs_article where IS_DELETED='n') article on review.ARTICLE=article.ID
+    </select>
+    <select id="findUserReviewForArticle" parameterType="map" resultMap="RM_ArticleReviewVO">
+    	select 
+			review.*, 
+			article.ARTICLE_NAME article_name,
+			article.CONTENT article_content,
+			article.INTRODUCTION article_introduction,
+			user.USER_NAME user_name,
+			user.HEAD_PORTRAIT user_headPortrait
+		from (select * from g_bbs_article_review where IS_DELETED='n' and USER=#{user}) review
+		join (select * from g_bbs_article where IS_DELETED='n') article on review.ARTICLE=article.ID
+		join g_user user on user.ID=review.USER
+    </select>
+    <select id="findArticleByUser" parameterType="map" resultType="int">
+    	select 
+			distinct(review.article)
+		from (select id,ARTICLE from g_bbs_article_review where IS_DELETED='n' and USER=#{user}) review
+		join (select id from g_bbs_article where IS_DELETED='n') article on review.ARTICLE=article.ID
+    </select>
+    <select id="countArticleByUser" parameterType="map" resultType="long">
+    	select 
+			count(distinct(review.article))
+		from (select id,ARTICLE from g_bbs_article_review where IS_DELETED='n' and USER=#{user}) review
+		join (select id from g_bbs_article where IS_DELETED='n') article on review.ARTICLE=article.ID
+    </select>
+     
+</mapper>

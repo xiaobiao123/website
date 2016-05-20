@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+    
+<mapper namespace="com.goujia.website.base.ges.dao.UserGesMapper">
+
+	<resultMap id="baseMap" type="com.goujia.website.base.entity.system.User">
+		<id column="ID" property="id"/>
+		<result column="USER_NAME" property="userName"/>
+		<result column="EMAIL" property="email"/>
+		<result column="PASSWORD_KEY" property="passwordKey"/>
+		<result column="REAL_NAME" property="realName"/>
+		<result column="PHONE" property="phone"/>
+		<result column="HEAD_PORTRAIT" property="headPortrait" jdbcType="VARCHAR" />
+		<result column="QQ" property="qq" jdbcType="VARCHAR" />
+		<result column="ORG_TYPE" property="orgType" jdbcType="VARCHAR" />
+	</resultMap>
+	<select id="findAll" resultMap="baseMap">
+		select 
+			*
+		from g_user where IS_DELETED='n'
+	</select>
+</mapper>

@@ -1,0 +1,377 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+    
+<mapper namespace="com.goujia.website.base.ges.dao.GoodsRoomMapper">
+
+    <!--
+      - ===============================================
+      - 返回GoodsRoom POJO
+      - @author jipengfei
+      - @date 2014-06-20
+      - ===============================================
+    -->
+    <resultMap  type="com.goujia.website.base.ges.entity.GoodsRoom"  id="RM_Goods_Room">
+        <id     property="id"          column="ID"            jdbcType="INTEGER"   javaType="java.lang.Integer" />
+        <result property="goodsId"     column="GOODS_ID"      jdbcType="INTEGER"   javaType="java.lang.Integer" />
+        <result property="name"        column="NAME"          jdbcType="VARCHAR"   javaType="java.lang.String"  />
+        <result property="photo2DPath" column="PHOTO_2D_PATH" jdbcType="VARCHAR"   javaType="java.lang.String"  />
+        <result property="photo3DPath" column="PHOTO_3D_PATH" jdbcType="VARCHAR"   javaType="java.lang.String"  />
+        <result property="summary"     column="SUMMARY"       jdbcType="VARCHAR"   javaType="java.lang.String"  />
+        <result property="orderIndex"  column="ORDER_INDEX"   jdbcType="INTEGER"   javaType="java.lang.Integer" />
+        <result property="isDeleted"   column="IS_DELETED"    jdbcType="VARCHAR"   javaType="java.lang.String"  />
+        <result property="gmtCreate"   column="GMT_CREATE"    jdbcType="TIMESTAMP" javaType="java.util.Date"    />
+        <result property="gmtModified" column="GMT_MODIFIED"  jdbcType="TIMESTAMP" javaType="java.util.Date"    />
+        <result property="ownerId"     column="OWNER_ID"      jdbcType="INTEGER"   javaType="java.lang.Integer" />
+        <result property="effectPath"  column="EFFECT_PATH"   jdbcType="VARCHAR"   javaType="java.lang.String"  />
+        <result property="effectWidth"     column="EFFECT_WIDTH"      jdbcType="INTEGER"   javaType="java.lang.Integer" />
+        <result property="effectHeight"     column="EFFECT_HEIGHT"      jdbcType="INTEGER"   javaType="java.lang.Integer" />
+        <result property="roomAttribute"     column="ROOM_ATTRIBUTE"      jdbcType="INTEGER"   javaType="java.lang.Integer" />
+        <result property="rootRoomId"     column="ROOT_ROOM_ID"      jdbcType="INTEGER"   javaType="java.lang.Integer" />
+        <result property="canDiy"         column="CAN_DIY"           jdbcType="VARCHAR"   javaType="java.lang.String"  />
+    </resultMap>
+    
+    <!--
+      - ===============================================
+      - 返回GoodsRoom VO
+      - @author Caoqi
+      - @date 2014-06-16
+      - ===============================================
+    -->
+    <resultMap  type="com.goujia.website.base.ges.vo.GoodsRoomVO"        id="RM_Goods_Room_Mark" extends="RM_Goods_Room">
+        <result property="roomAttributeName" column="ROOM_ATTRIBUTE_NAME" jdbcType="VARCHAR"   javaType="java.lang.String"  />
+        <collection property="markList"    column="ID"            javaType="ArrayList" select="selectMark" ofType="com.goujia.api.model.vo.GoodsMarkVO">
+            <id     property="id"          column="MARK_ID"       jdbcType="INTEGER"   javaType="java.lang.Integer" />
+            <result property="goodsRoomId" column="GOODS_ROOM_ID" jdbcType="INTEGER"   javaType="java.lang.Integer" />
+            <result property="relativeX"   column="RELATIVE_X"    jdbcType="DOUBLE"    javaType="java.lang.Double"  />
+            <result property="relativeY"   column="RELATIVE_Y"    jdbcType="DOUBLE"    javaType="java.lang.Double"  />
+            <result property="type"        column="TYPE"          jdbcType="VARCHAR"   javaType="java.lang.String"  />
+            <result property="isDeleted"   column="IS_DELETED"    jdbcType="VARCHAR"   javaType="java.lang.String"  />
+            <result property="gmtCreate"   column="GMT_CREATE"    jdbcType="TIMESTAMP" javaType="java.util.Date"    />
+            <result property="gmtModified" column="GMT_MODIFIED"  jdbcType="TIMESTAMP" javaType="java.util.Date"    />
+            <result property="ownerId"     column="OWNER_ID"      jdbcType="INTEGER"   javaType="java.lang.Integer" />
+            <result property="isCut"       column="IS_CUT"         jdbcType="VARCHAR"   javaType="java.lang.String" />
+        </collection>
+    </resultMap>
+    
+    <!--
+      - ===============================================
+      - 返回GoodsMark VO
+      - @author jipengfei
+      - @date 2014-06-16
+      - ===============================================
+    -->
+    <resultMap  type="com.goujia.website.base.ges.vo.GoodsMarkVO"    id="RM_Goods_Mark">
+        <id     property="id"          column="ID"            jdbcType="INTEGER"   javaType="java.lang.Integer" />
+        <result property="goodsRoomId" column="GOODS_ROOM_ID" jdbcType="INTEGER"   javaType="java.lang.Integer" />
+        <result property="relativeX"   column="RELATIVE_X"    jdbcType="DOUBLE"    javaType="java.lang.Double"  />
+        <result property="relativeY"   column="RELATIVE_Y"    jdbcType="DOUBLE"    javaType="java.lang.Double"  />
+        <result property="type"        column="TYPE"          jdbcType="VARCHAR"   javaType="java.lang.String"  />
+        <result property="isDeleted"   column="IS_DELETED"    jdbcType="VARCHAR"   javaType="java.lang.String"  />
+        <result property="gmtCreate"   column="GMT_CREATE"    jdbcType="TIMESTAMP" javaType="java.util.Date"    />
+        <result property="gmtModified" column="GMT_MODIFIED"  jdbcType="TIMESTAMP" javaType="java.util.Date"    />
+        <result property="ownerId"     column="OWNER_ID"      jdbcType="INTEGER"   javaType="java.lang.Integer" />
+        <result property="effectX"   column="EFFECT_X"        jdbcType="DOUBLE"    javaType="java.lang.Double"  />
+        <result property="effectY"   column="EFFECT_Y"        jdbcType="DOUBLE"    javaType="java.lang.Double"  />
+        <result property="effectPath"  column="EFFECT_PATH"   jdbcType="VARCHAR"   javaType="java.lang.String"  />
+        <result property="effectStyle"  column="EFFECT_STYLE" jdbcType="VARCHAR"   javaType="java.lang.String"  />
+        <result property="matterId"     column="MATTER_ID"    jdbcType="INTEGER"   javaType="java.lang.Integer" />
+    </resultMap>
+    
+    <!--
+      - ===============================================
+      - 新增ShopGoods
+      - @author jipengfei
+      - @date 2014-06-13
+      - ===============================================
+    -->
+    <insert id="create" parameterType="com.goujia.website.base.ges.entity.GoodsRoom" useGeneratedKeys="true" keyProperty="id">
+        insert into G_GOODS_ROOM (
+            ID, 
+            GOODS_ID,
+            NAME, 
+            PHOTO_2D_PATH,
+            PHOTO_3D_PATH,
+            SUMMARY,
+            ORDER_INDEX,
+            IS_DELETED,
+            GMT_CREATE,
+            GMT_MODIFIED,
+            OWNER_ID,
+            DIY_EFFECT_PATH,
+            ROOM_ATTRIBUTE
+        ) values (
+            #{id}, 
+            #{goodsId}, 
+            #{name}, 
+            #{photo2DPath},
+            #{photo3DPath},
+            #{summary},
+            #{orderIndex},
+            'n',
+            now(),
+            now(),
+            #{ownerId},
+            #{diyEffectPath},
+            #{roomAttribute}
+        )
+    </insert>
+    
+    <!--
+      - ===============================================
+      - 修改ShopGoods
+      - @author jipengfei
+      - @date 2014-06-13
+      - ===============================================
+    -->
+    <update id="update" parameterType="com.goujia.website.base.ges.vo.GoodsRoomVO">
+        update G_GOODS_ROOM set GMT_MODIFIED = now()
+        <if test="goodsId !=null and goodsId >0">,GOODS_ID = #{goodsId}</if>
+        <if test="name !=null and name !=''">,NAME = #{name}</if>
+        <if test="summary !=null and summary !=''">,SUMMARY = #{summary}</if>
+        <if test="photo2DPath !=null and photo2DPath !=''">,PHOTO_2D_PATH = #{photo2DPath}</if>
+        <if test="photo3DPath !=null and photo3DPath !=''">,PHOTO_3D_PATH = #{photo3DPath}</if>
+        <if test="orderIndex !=null and orderIndex >0">,ORDER_INDEX = #{orderIndex}</if>
+        <if test="isDeleted !=null and isDeleted !=''">,IS_DELETED = #{isDeleted}</if>
+        where ID = #{id}
+    </update>
+    
+    <!--
+      - ===============================================
+      - 查询Matter带有锚点信息
+      - @author jipengfei
+      - @date 2014-06-13
+      - ===============================================
+    -->
+    <select id="query" resultMap="RM_Goods_Room_Mark" parameterType="com.goujia.website.base.ges.vo.GoodsRoomVO">
+        select
+            ID, 
+            GOODS_ID,
+            NAME, 
+            PHOTO_2D_PATH,
+            PHOTO_3D_PATH,
+            SUMMARY,
+            ORDER_INDEX,
+            IS_DELETED,
+            GMT_CREATE,
+            GMT_MODIFIED,
+            OWNER_ID,
+            DIY_EFFECT_PATH,
+            ROOM_ATTRIBUTE
+        from G_GOODS_ROOM where ID = #{id} and IS_DELETED = 'n'
+        order by ORDER_INDEX asc
+    </select>
+    <select id="queryById" resultMap="RM_Goods_Room" parameterType="map">
+        select
+            *
+        from G_GOODS_ROOM where ID = #{id} and IS_DELETED = 'n'
+    </select>
+    
+    <!--
+      - ===============================================
+      - 查询带有锚点信息的GoodsRoom列表
+      - @author jipengfei
+      - @date 2014-06-13
+      - ===============================================
+    -->
+    <select id="list" resultMap="RM_Goods_Room_Mark" parameterType="com.goujia.website.base.ges.vo.GoodsRoomVO">
+        select
+            ID, 
+            GOODS_ID,
+            NAME, 
+            PHOTO_2D_PATH,
+            PHOTO_3D_PATH,
+            SUMMARY,
+            ORDER_INDEX,
+            IS_DELETED,
+            GMT_CREATE,
+            GMT_MODIFIED,
+            EFFECT_PATH,
+            EFFECT_WIDTH,
+            EFFECT_HEIGHT,
+            OWNER_ID,
+            CAN_DIY
+        from G_GOODS_ROOM where GOODS_ID = #{goodsId} and IS_DELETED = 'n'
+        <if test="name !=null and name !=''"> and NAME = #{name}</if>
+        order by ORDER_INDEX asc
+    </select>
+    
+    <!--
+      - ===============================================
+      - 查单条房间信息
+      - @author jipengfei
+      - @date 2014-09-05
+      - ===============================================
+    -->
+    <select id="queryRoom" resultMap="RM_Goods_Room" parameterType="com.goujia.website.base.ges.vo.GoodsRoomVO">
+        select
+            ID, 
+            GOODS_ID,
+            NAME, 
+            PHOTO_2D_PATH,
+            PHOTO_3D_PATH,
+            SUMMARY,
+            ORDER_INDEX,
+            IS_DELETED,
+            GMT_CREATE,
+            GMT_MODIFIED,
+            OWNER_ID
+        from G_GOODS_ROOM where ID = #{id} and IS_DELETED = 'n'
+    </select>
+    
+    <!--
+      - ===============================================
+      - 查询GoodsRoom列表
+      - @author jipengfei
+      - @date 2014-09-09
+      - ===============================================
+    -->
+    <select id="listGoodsRoom" resultMap="RM_Goods_Room" parameterType="com.goujia.website.base.ges.vo.GoodsRoomVO">
+        select
+            rm.ID, 
+            rm.GOODS_ID,
+            rm.NAME, 
+            rm.PHOTO_2D_PATH,
+            rm.PHOTO_3D_PATH,
+            rm.SUMMARY,
+            rm.ORDER_INDEX,
+            rm.IS_DELETED,
+            rm.GMT_CREATE,
+            rm.GMT_MODIFIED,
+            rm.OWNER_ID,
+            rm.DIY_EFFECT_PATH,
+            rm.ROOM_ATTRIBUTE,
+            rs.NAME ROOM_ATTRIBUTE_NAME
+        from G_GOODS_ROOM rm 
+            left join g_resource rs on rm.ROOM_ATTRIBUTE = rs.ID 
+        where rm.GOODS_ID = #{goodsId} and rm.IS_DELETED = 'n'
+        order by rm.ORDER_INDEX asc
+    </select>
+    
+    <!--
+      - ===============================================
+      - 删除GoodsRoom
+      - @author jipengfei
+      - @date 2014-09-11
+      - ===============================================
+    -->
+    <delete id="delete">
+        delete from G_GOODS_ROOM where id = #{id}
+    </delete>
+    
+    <!--
+      - ===============================================
+      - 查询物料锚点
+      - @author jipengfei
+      - @date 2014-06-13
+      - ===============================================
+    -->
+    <select id="selectMark" resultMap="RM_Goods_Mark" parameterType="com.goujia.website.base.ges.vo.GoodsRoomVO">
+        select
+            ID, 
+            GOODS_ROOM_ID,
+            RELATIVE_X,
+            RELATIVE_Y, 
+            TYPE,
+            IS_DELETED,
+            GMT_CREATE,
+            GMT_MODIFIED,
+            EFFECT_X,
+            EFFECT_Y,
+            EFFECT_PATH,
+            EFFECT_STYLE,
+            MATTER_ID,
+            OWNER_ID
+        from G_GOODS_MARK where GOODS_ROOM_ID = #{id} and IS_DELETED = 'n'
+    </select>
+    
+    <select id="getRoomPic" resultMap="RM_Goods_Room_Mark" parameterType="com.goujia.website.base.ges.vo.GoodsVO">
+    SELECT 
+       DISTINCT room.ID,room.* 
+    from  
+    (SELECT ID,GOODS_ID FROM g_shop_goods  WHERE STATUS = 'enable') as sg
+     JOIN  g_goods g on sg.GOODS_ID = g.ID and STATUS ='published'
+      join (SELECT * FROM g_goods_room WHERE IS_DELETED='n' and length(PHOTO_2D_PATH)>15) AS room on g.ID = room.GOODS_ID
+        left join G_HOUSE h on g.HOUSE_ID = h.ID
+        where  room.ID!=0
+        <if test="goodsVO.styleId != null and goodsVO.styleId >0"> and g.STYLE_ID = #{goodsVO.styleId}</if>
+        <if test="goodsVO.houseTypeId != null and goodsVO.houseTypeId >0"> and g.HOUSE_TYPE_ID = #{goodsVO.houseTypeId}</if>
+        <if test="goodsVO.minArea !=null and goodsVO.minArea >0"><![CDATA[ and h.FLOOR_AREA >= #{goodsVO.minArea}]]></if>
+        <if test="goodsVO.maxArea !=null and goodsVO.maxArea >0"><![CDATA[ and h.FLOOR_AREA <= #{goodsVO.maxArea}]]></if>
+        <if test="goodsVO.roomId != null and goodsVO.roomId != ''">and room.ROOM_ATTRIBUTE = #{goodsVO.roomId}</if>
+        <if test="goodsVO.q !=null and goodsVO.q !=''">
+            <![CDATA[ and (g.NAME like CONCAT('%','${goodsVO.q}','%' ) or g.HOUSE_TYPE_NAME like CONCAT('%','${goodsVO.q}','%' ) 
+                    or g.STYLE_NAME like CONCAT('%','${goodsVO.q}','%' ) 
+                    or room.name like CONCAT('%','${goodsVO.q}','%' ) or room.summary like CONCAT('%','${goodsVO.q}','%' )
+                    )]]>
+        </if>
+        order by g.IS_PROMOTION desc ,g.GMT_CREATE desc
+    </select>
+    
+    <select id="getRoomPicCount" resultType="java.lang.Integer" parameterType="com.goujia.website.base.ges.vo.GoodsVO">
+    SELECT COUNT(DISTINCT room.ID)
+    from 
+    (SELECT ID,GOODS_ID FROM g_shop_goods  WHERE STATUS = 'enable') as sg
+     JOIN g_goods g on sg.GOODS_ID = g.ID and STATUS ='published' 
+      join (SELECT ID,GOODS_ID,NAME,SUMMARY,ROOM_ATTRIBUTE FROM g_goods_room WHERE IS_DELETED='n' and length(PHOTO_2D_PATH)>15)AS room on g.ID = room.GOODS_ID
+         join G_HOUSE h on g.HOUSE_ID = h.ID
+        where  room.ID!=0
+        <if test="goodsVO.styleId != null and goodsVO.styleId >0"> and g.STYLE_ID = #{goodsVO.styleId}</if>
+        <if test="goodsVO.houseTypeId != null and goodsVO.houseTypeId >0"> and g.HOUSE_TYPE_ID = #{goodsVO.houseTypeId}</if>
+        <if test="goodsVO.minArea !=null and goodsVO.minArea >0"><![CDATA[ and h.FLOOR_AREA >= #{goodsVO.minArea}]]></if>
+        <if test="goodsVO.maxArea !=null and goodsVO.maxArea >0"><![CDATA[ and h.FLOOR_AREA <= #{goodsVO.maxArea}]]></if>
+        <if test="goodsVO.roomId != null and goodsVO.roomId != ''">and room.ROOM_ATTRIBUTE=#{goodsVO.roomId}</if>
+        <if test="goodsVO.q !=null and goodsVO.q !=''">
+            <![CDATA[ and (g.NAME like CONCAT('%','${goodsVO.q}','%' ) or g.HOUSE_TYPE_NAME like CONCAT('%','${goodsVO.q}','%' ) 
+                    or g.STYLE_NAME like CONCAT('%','${goodsVO.q}','%' ) 
+                    or room.name like CONCAT('%','${goodsVO.q}','%' ) or room.summary like CONCAT('%','${goodsVO.q}','%' )
+                    )]]>
+        </if>
+    </select>
+    
+    <select id="getById" parameterType="map" resultMap="RM_Goods_Room">
+        select room.* 
+        from (select * from g_goods_room where ID=#{id} and IS_DELETED='n') room
+        inner join (select * from g_goods where STATUS = 'published') goods on room.GOODS_ID=goods.ID
+        where (select count(1) from g_shop_goods where STATUS='enable' and GOODS_ID=room.GOODS_ID) > 0
+    </select>
+    <select id="getNextById" parameterType="map" resultMap="RM_Goods_Room">
+        select room.* 
+        from (select * from g_goods_room where ID &gt;#{id} and IS_DELETED='n') room
+        join (select ID from g_goods where STATUS = 'published') goods on room.GOODS_ID=goods.ID
+        join (select GOODS_ID from g_shop_goods where STATUS='enable') shop_goods on room.GOODS_ID=shop_goods.GOODS_ID 
+        order by room.ID asc limit 1
+    </select>
+    <select id="getPreById" parameterType="map" resultMap="RM_Goods_Room">
+        select room.* 
+        from (select * from g_goods_room where ID &lt;#{id} and IS_DELETED='n') room
+        join (select ID from g_goods where STATUS = 'published') goods on room.GOODS_ID=goods.ID
+        join (select GOODS_ID from g_shop_goods where STATUS='enable') shop_goods on room.GOODS_ID=shop_goods.GOODS_ID 
+        order by room.ID desc limit 1
+    </select>
+    <select id="getFirst"  resultMap="RM_Goods_Room">
+        select room.* 
+        from (select * from g_goods_room where  IS_DELETED='n') room
+        join (select * from g_goods where STATUS = 'published') goods on room.GOODS_ID=goods.ID
+        join (select * from g_shop_goods where STATUS='enable') shop_goods on room.GOODS_ID=shop_goods.GOODS_ID
+        order by ID asc limit 1
+    </select>
+    <select id="getEnd"  resultMap="RM_Goods_Room">
+        select room.* 
+        from (select * from g_goods_room where  IS_DELETED='n') room
+        join (select * from g_goods where STATUS = 'published') goods on room.GOODS_ID=goods.ID
+        join (select * from g_shop_goods where STATUS='enable') shop_goods on room.GOODS_ID=shop_goods.GOODS_ID 
+        order by ID desc limit 1
+    </select>
+    <select id="getByGoodsId" resultMap="RM_Goods_Room" parameterType="map">
+       select * from g_goods_room where IS_DELETED='n' and GOODS_ID=#{goods}
+    </select>
+    <select id="getAllId" resultType="int">
+        select  distinct room.ID 
+        from (select ID,GOODS_ID from g_goods_room where IS_DELETED='n') room
+        join (select ID from g_goods where STATUS = 'published') goods on room.GOODS_ID=goods.ID
+        join (select GOODS_ID from g_shop_goods where STATUS='enable') shop_goods on room.GOODS_ID=shop_goods.GOODS_ID 
+        order by room.ID asc
+    </select>
+</mapper>

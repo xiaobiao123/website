@@ -1,0 +1,13 @@
+#Html("begin")
+#Head("begin")
+#Title("构家网")
+#LoadBootstrap("default")
+#LoadSUI("default")
+#LoadSUI("editor")
+#Head("end")
+<body>
+	#parse("header.vm")
+	系统首页
+	#parse("footer.vm")
+</body>
+#Html("end")

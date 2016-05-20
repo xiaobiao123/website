@@ -1,0 +1,629 @@
+#** ------------------------------- 
+* Function: <Html></Html>。
+* 
+* @author FlounyCaesar
+* @date   2014-11-26
+*  
+* @param  (String) path  文件全路径
+* ------------------------------- **#
+#macro(Html $flag)
+	#if("$!{flag}" == "begin")
+		<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+		<html xmlns="http://www.w3.org/1999/xhtml">
+	#elseif("$!{flag}" == "end")
+		</html>
+	#end
+#end
+
+#** ------------------------------- 
+* Function: <Head></Head>。
+* 
+* @author FlounyCaesar
+* @date   2014-11-26
+*  
+* @param  (String) path  文件全路径
+* ------------------------------- **#
+#macro(Head $flag)
+	#if("$!{flag}" == "begin")
+		<head>
+            <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"></meta>
+            <meta http-equiv="X-UA-Compatible" content="IE=8.0000"></meta>
+            <meta http-equiv="Pragma" content="no-cache"></meta>
+            <meta http-equiv="Cache-Control" content="no-cache"></meta>
+            <meta http-equiv="Expires" content="0"></meta>
+	#elseif("$!{flag}" == "end")
+        </head>
+	#end
+#end
+
+#** ------------------------------- 
+* Function: <title></title>。
+* 
+* @author FlounyCaesar
+* @date   2014-11-26
+*  
+* @param  (String) path  文件全路径
+* ------------------------------- **#
+#macro(Title $title)
+	<title>构家网-$!{title}</title>
+#end
+
+#** -------------------------------
+ * Function: 头像
+ *
+ * @author zhangjl
+ * @date   2015-1-4
+ *
+ * @param  (String) name  组件名
+ * ------------------------------- **#
+#macro(HeadPath $attrs)
+	<img #if(""=="$!attrs.get('headpath')" || "$!attrs.get('headpath')"=="null") src='$!env.getStaticURL("images/default/head_path.png")' #else src='$!env.get("images")/$!attrs.get("headpath")' #end style='width:$!attrs.get("width")px; height:$!attrs.get("height")px;' alt='头像'/>
+#end
+
+#** ------------------------------- 
+* Function: 载入Bootstrap组件。
+* 
+* @author FlounyCaesar
+* @date   2015-06-01
+*  
+* @param  (String) name  组件名
+* ------------------------------- **#
+#macro(LoadBootstrap $name)
+	#if("$!{name}" == "default")
+		<link href="$!request.contextPath/assets/css/bootstrap.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="$!request.contextPath/assets/css/font-awesome.min.css" />
+
+		<!--[if IE 7]>
+		  <link rel="stylesheet" href="$!request.contextPath/assets/css/font-awesome-ie7.min.css" />
+		<![endif]-->
+
+		<!-- page specific plugin styles -->
+
+		<!-- ace styles -->
+		<link rel="stylesheet" href="$!request.contextPath/assets/css/jquery-ui-1.10.3.full.min.css">
+		<link href="$!request.contextPath/assets/js/alerts/jquery.alerts.css" rel="stylesheet" type="text/css">
+		<link href="$!request.contextPath/assets/css/jquery.gritter.css" rel="stylesheet" type="text/css">
+		<link rel="stylesheet" href="$!request.contextPath/assets/css/ace.min.css" />
+
+		<!--[if lte IE 8]>
+		  <link rel="stylesheet" href="$!request.contextPath/assets/css/ace-ie.min.css" />
+		<![endif]-->
+
+		<!-- inline styles related to this page -->
+		<link rel="stylesheet" href="$!request.contextPath/assets/css/tt-min.css" />
+		<!--[if IE 7]>
+		  <link rel="stylesheet" href="$!request.contextPath/assets/css/tt.ie7-min.css" />
+		<![endif]-->
+
+		<!-- ace settings handler -->
+
+		<script src="$!request.contextPath/assets/js/ace-extra.min.js"></script>
+
+		<!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+
+		<!--[if lt IE 9]>
+		<script src="$!request.contextPath/assets/js/html5shiv.js"></script>
+		<script src="$!request.contextPath/assets/js/respond.min.js"></script>
+		<![endif]-->
+		
+		<script type="text/javascript" charset="utf-8">
+			var DS = DS || {};
+			DS.config = {path:{rootPath:""}}
+		</script>
+		
+		<!-- basic scripts -->
+		<!--[if !IE]> -->
+		<script type="text/javascript">
+			window.jQuery || document.write("<script src='$!request.contextPath/assets/js/jquery-2.0.3.min.js'>"+"<"+"/script>");
+		</script>
+		<!-- <![endif]-->
+
+		<!--[if IE]>
+		<script type="text/javascript">
+		 window.jQuery || document.write("<script src='$!request.contextPath/assets/js/jquery-1.10.2.min.js'>"+"<"+"/script>");
+		</script>
+		<![endif]-->
+
+		<script type="text/javascript">
+			if("ontouchend" in document) document.write("<script src='$!request.contextPath/assets/js/jquery.mobile.custom.min.js'>"+"<"+"/script>");
+		</script>
+	#end
+#end
+#** ------------------------------- 
+* Function: 载入GUI组件。
+* 
+* @author FlounyCaesar
+* @date   2014-11-26
+*  
+* @param  (String) name  组件名
+* ------------------------------- **#
+#macro(LoadSUI $name)
+	#if("$!{name}" == "default")
+		<script type="text/javascript" src="$!request.contextPath/source/sui/library/jquery/jquery-1.9.1.js" charset="UTF-8"></script>
+    	<script type="text/javascript" src="$!request.contextPath/source/sui/core/sui-core.js" charset="UTF-8"></script>
+		<script type="text/javascript" src="$!request.contextPath/source/sui/util/sui-ajax.js" charset="UTF-8"></script>
+		<script type="text/javascript" src="$!request.contextPath/source/sui/util/sui-string.js" charset="UTF-8"></script>
+	#elseif("$!{name}" == "formValidator")
+		<link rel="stylesheet" type="text/css" href="$!request.contextPath/source/sui/library/formValidator/style/validator.css" charset="UTF-8"></link>
+		<script type="text/javascript" src="$!request.contextPath/source/sui/library/formValidator/jquery-1.2.js" charset="UTF-8"></script>
+		<script type="text/javascript" src="$!request.contextPath/source/sui/library/formValidator/formValidator.js" charset="UTF-8"></script>
+		<script type="text/javascript" src="$!request.contextPath/source/sui/library/formValidator/formValidatorRegex.js" charset="UTF-8"></script>
+	#elseif("$!{name}" == "string")
+		<script type="text/javascript" src="$!request.contextPath/source/sui/util/sui-string.js" charset="UTF-8"></script>
+	#elseif("$!{name}" == "post")
+    	<script type="text/javascript" src="$!request.contextPath/source/sui/util/sui-post.js" charset="UTF-8"></script>
+	#elseif("$!{name}" == "fancybox")
+		<link rel="stylesheet" type="text/css" href="$!request.contextPath/source/sui/library/fancybox/jquery.fancybox-1.3.4.css" media="screen" />
+		<script type="text/javascript" src="$!request.contextPath/source/sui/library/fancybox/jquery-1.4.3.min.js" charset="UTF-8"></script>
+		<script type="text/javascript" src="$!request.contextPath/source/sui/library/fancybox/jquery.fancybox-1.3.4.pack.js" charset="UTF-8"></script>
+    	<script type="text/javascript" src="$!request.contextPath/source/sui/library/fancybox/jquery.mousewheel-3.0.4.pack.js" charset="UTF-8"></script>
+		<script type="text/javascript" src="$!request.contextPath/source/sui/widgets/sui-widgets-box.js" charset="UTF-8"></script>
+	#elseif("$!{name}" == "asyncbox")
+		<link rel="stylesheet" type="text/css" href="$!request.contextPath/source/sui/library/asyncbox/skins/ZCMS/asyncbox.css" media="screen" />
+    	<script type="text/javascript" src="$!request.contextPath/source/sui/library/asyncbox/AsyncBox.v1.4.5.js" charset="UTF-8"></script>
+	#elseif("$!{name}" == "auth_login")
+        <script type="text/javascript" src="http://qzonestyle.gtimg.cn/qzone/openapi/qc_loader.js" data-appid="101171896" data-redirecturi="$!env.get('server.mall')" charset="utf-8"></script>
+		<script src="http://tjs.sjs.sinajs.cn/open/api/js/wb.js?appkey=93524070" type="text/javascript" charset="utf-8"></script>
+	#elseif("$!{name}" == "imgareaselect")
+		<link rel="stylesheet" type="text/css" href="$!request.contextPath/source/sui/library/imgareaselect/imgareaselect-default.css" />
+        <script type="text/javascript" src="$!request.contextPath/source/sui/library/imgareaselect/jquery.imgareaselect.pack.js')"></script>
+        <script type="text/javascript" src="$!request.contextPath/source/sui/library/imgareaselect/jQueryRotate.js')"></script>
+	#elseif("$!{name}" == "upload")
+		<link rel="stylesheet" type="text/css" href="$!request.contextPath/source/sui/external/upload/ajaxfileupload.css" charset="UTF-8" #if("$!media" != "") media=$!media #end></link>
+		<script type="text/javascript" src="$!request.contextPath/source/sui/external/upload/ajaxfileupload.js" charset="UTF-8"></script>
+		<script type="text/javascript" src="$!request.contextPath/source/sui/external/upload/uploadApp.js" charset="UTF-8"></script>
+	#elseif("$!{name}" == "editor")
+		<link rel="stylesheet" type="text/css" href="$!request.contextPath/source/sui/library/kindeditor/themes/default/default.css" charset="UTF-8" #if("$!media" != "") media=$!media #end></link>
+		<script type="text/javascript" src="$!request.contextPath/source/sui/library/kindeditor/kindeditor-all.js" charset="UTF-8"></script>
+		<script type="text/javascript" src="$!request.contextPath/source/sui/library/kindeditor/lang/zh_CN.js" charset="UTF-8"></script>
+		<script type="text/javascript" src="$!request.contextPath/source/sui/widgets/sui-widgets-edit.js" charset="UTF-8"></script>
+		<script type="text/javascript" src="$!request.contextPath/source/sui/util/sui-emoticons.js" charset="UTF-8"></script>
+    #elseif("$!{name}" == "webuploader")
+        <!--引入CSS-->
+        <link rel="stylesheet" type="text/css" href="$!request.contextPath/source/sui/library/webuploader.css" />
+        <!--引入JS-->
+        <script type="text/javascript" src="$!request.contextPath/source/sui/library/webuploader.js"></script>
+    #elseif("$!{name}" == "fullpage")
+		<link rel="stylesheet" type="text/css" href="$!request.contextPath/source/sui/library/fullpage/jquery.fullPage.css" charset="UTF-8" #if("$!media" != "") media=$!media #end></link>
+		<script type="text/javascript" src="http://cdn.staticfile.org/jqueryui/1.10.3/jquery-ui.min.js" charset="UTF-8"></script>
+		<script type="text/javascript" src="$!request.contextPath/source/sui/library/fullpage/jquery.fullPage.min.js" charset="UTF-8"></script>
+	#elseif("$!{name}" == "alert")
+		<link rel="stylesheet" type="text/css" href="$!request.contextPath/source/sui/library/alert/css/msgbox.css" charset="UTF-8" #if("$!media" != "") media=$!media #end></link>
+		<script type="text/javascript" src="$!request.contextPath/source/sui/library/alert/msgbox.js" charset="UTF-8"></script>
+		<script>
+			function clickhide() {
+                ZENG.msgbox._hide();
+            }
+            function alertAutoHide(i, tip) {
+            
+                //    1 = "失败！";
+                //    4 = "成功！";
+                //    5 = "请求失败";
+                //    6 = "正在加载中，请稍后";
+            
+                ZENG.msgbox.show(tip, i, 3000);
+            }
+            function alertAutoHideLong(i,tip)
+            {
+             ZENG.msgbox.show(tip, i, 6000);
+            }
+		</script>
+	#elseif("$!{name}" == "pager")
+		<link href="$!request.contextPath/source/sui/external/pager/pager.css" rel="stylesheet" type="text/css"></link>
+		<script type="text/javascript" src="$!request.contextPath/source/sui/external/pager/pager.js" charset="utf-8"></script>
+	#elseif("$!{name}" == "sms")
+		<script type="text/javascript" src="$!request.contextPath/source/sui/util/sui-sms.js" charset="UTF-8"></script>
+	#end
+#end
+
+#** ------------------------------- 
+* Function: Hidden
+* 
+* @author FlounyCaesar
+* @date   2014-11-26
+*  
+* @param  (String) name  组件名
+* ------------------------------- **#
+#macro(Hidden $name $value)
+    <input id="$!{name}" type="hidden" name="$!{name}" value="$!{value}"/>
+#end
+
+#** ------------------------------- 
+* Function: pager
+* 
+* @author FlounyCaesar
+* @date   2014-11-26
+*  
+* @param  (String) name  组件名
+* ------------------------------- **#
+#macro(PAGING_PANEL $pageInfo $formName)
+	<div style="clear:both;"></div>
+	<div id="pagebox">
+	<div id="pager"></div>
+	
+	<input type="hidden" id="totalRows" value="$!pageInfo.totalRows"></input>
+	<input type="hidden" id="curPage" name="curPage" value="$!pageInfo.curPage"></input>
+	<input type="hidden" id="totalPages" value="$!pageInfo.totalPages"></input>
+	<input type="hidden" id="pagerFormName" value="$!formName"></input>
+	</div>
+    <script language="javascript">
+    	$(document).ready(function() {
+			var totalRows = $('#totalRows').val()== '' ? 0 : $('#totalRows').val();
+    		var curPage = $('#curPage').val() == '' ? 0 : $('#curPage').val();
+    		var totalPages = $('#totalPages').val() == '' ? 0 : $('#totalPages').val();
+    		var pagerFormName = $('#pagerFormName').val();
+    		pageClick = function(pageclickednumber) {
+    			pageclickednumber=(pageclickednumber==undefined)?curPage:pageclickednumber;
+    			$('#curPage').val(pageclickednumber);
+    			var form = document.getElementById(pagerFormName);
+    			form.method='GET';
+    			form.submit();
+    		}
+		
+			$("#pager").pager({ pagenumber: curPage, pagecount:totalPages, totalcount:totalRows, buttonClickCallback: pageClick});
+    	})
+	</script>
+#end
+
+
+#** -------------------------------
+ * Function: Uploader_pic
+ *
+ * @author Archer
+ * @date   2014-10-22
+ *
+ * @param  (String) name  组件名
+ *
+ * ------------------------------- **#
+#macro(Uploader_pic $attrs)
+	<script>
+		function $!attrs.get("fieldName")_upload(){
+			var ns = "$!attrs.get("fieldName")";
+			var path = $("#" + ns + "_preview").attr('src');
+			$("#" + ns + "_preview").attr('src', "$!request.contextPath/assets/images/loading.gif");
+			
+			var success = function(data){
+			
+				if(data != ""){
+					data = eval('(' + data + ')');
+    				if(data.errCode){
+						$("#" + ns + "_preview").attr('src', path);
+    					EU.showTopTip("error",data.errMsg);
+    				}else{
+						$("#" + ns).val('/'+data.path);
+    					$("." + ns + "_path").val(data.path);
+    					var abs_path = '$!reviewImagePath' + '/' + data.path;
+    					$("#" + ns + "_preview").attr('src', abs_path);
+					}
+				}else{
+					$("#" + ns + "_preview").attr('src', path);
+					EU.showTopTip("error",data);
+				}
+			};
+			upload_pic('$!attrs.get("fileFieldName")' ,success);
+		}
+	</script>
+	
+	<input id='$!attrs.get("fieldName")' name="$!attrs.get("fieldName")" type="hidden" value="$!attrs.get("src")"/>
+	<input class="ajaxfileupload_weburl" type="hidden" value="$!request.contextPath"/>
+	<span name="form" action="$!request.contextPath/store/upload_pic.htm" method="POST" enctype="multipart/form-data">
+        <input id="$!attrs.get("fileFieldName")_width" class="ajaxfileupload_width" type="text" name="width" value='$!attrs.get("width")' data-options="required:true" style="display: none"/>
+        <input id="$!attrs.get("fileFieldName")_height" class="ajaxfileupload_height" type="text" name="height" value='$!attrs.get("height")' data-options="required:true" style="display: none"/>
+        <input id="$!attrs.get("fileFieldName")_rates" class="ajaxfileupload_rates" type="text" name="rates" value='$!attrs.get("rates")' data-options="required:true" style="display: none"/>
+        <input id="$!attrs.get("fileFieldName")_maxSize" class="ajaxfileupload_maxSize" type="text" name="maxSize" value='$!attrs.get("maxSize")' data-options="required:true" style="display: none"/>
+	</span>
+	<SCRIPT>
+		jQuery(function($) {
+			
+    		//editables on first profile page
+    		$.fn.editable.defaults.mode = 'inline';
+    		$.fn.editableform.loading = "<div class='editableform-loading'><i class='light-blue icon-2x icon-spinner icon-spin'></i></div>";
+    	    $.fn.editableform.buttons = '<button type="submit" class="btn btn-info editable-submit"><i class="icon-ok icon-white"></i></button>'+
+    	                                '<button type="button" class="btn editable-cancel"><i class="icon-remove"></i></button>';    
+    									
+    		// *** editable recImage *** //
+    		try {//ie8 throws some harmless exception, so let's catch it
+    	
+    			//it seems that editable plugin calls appendChild, and as Image doesn't have it, it causes errors on IE at unpredicted points
+    			//so let's have a fake appendChild for it!
+    			if( /msie\s*(8|7|6)/.test(navigator.userAgent.toLowerCase()) ) Image.prototype.appendChild = function(el){}
+    	
+    			var last_gritter
+    			$('#$!attrs.get("fieldName")_preview').editable({
+    				type: 'image',
+    				name: '$!attrs.get("fileFieldName")',
+    				value: null,
+    				image: {
+    					//specify ace file input plugin's options here
+    					btn_choose: 'Change Image',
+    					droppable: true,
+    					/**
+    					//this will override the default before_change that only accepts image files
+    					before_change: function(files, dropped) {
+    						return true;
+    					},
+    					*/
+    	
+    					//and a few extra ones here
+    					name: '$!attrs.get("fileFieldName")',//put the field name here as well, will be used inside the custom plugin
+    					max_size: 40000000,//~40M
+    					on_error : function(code) {//on_error function will be called when the selected file has a problem
+    						if(last_gritter) $.gritter.remove(last_gritter);
+    						if(code == 1) {//file format error
+    							last_gritter = $.gritter.add({
+    								title: 'File is not an image!',
+    								text: 'Please choose a jpg|gif|png image!',
+    								class_name: 'gritter-error gritter-center'
+    							});
+    						} else if(code == 2) {//file size rror
+    							last_gritter = $.gritter.add({
+    								title: 'File too big!',
+    								text: 'Image size should not exceed 100Kb!',
+    								class_name: 'gritter-error gritter-center'
+    							});
+    						}
+    						else {//other error
+    						}
+    					},
+    					on_success : function() {
+    						$.gritter.removeAll();
+    					}
+    				},
+    			    url: function(params) {
+    					$("input[name='$!attrs.get("fileFieldName")']").attr('id', '$!attrs.get("fileFieldName")');
+    					$!attrs.get("fieldName")_upload();
+    				},
+    				
+    				success: function(response, newValue) {
+    				}
+    			})
+    		}catch(e) {}
+    	});
+    		
+    </SCRIPT>
+
+#end
+
+
+#macro(Uploader_pic_simple $attrs)
+	<script>
+		function $!attrs.get("fieldName")_upload(){		
+			var ns = "$!attrs.get("fieldName")";
+
+			var success = function(data){
+				$.messager.progress('close');
+				if(data != ""){
+					if(data.indexOf('errCode')>=0){
+						data=eval("("+data+")");
+					}
+    				if(data.ret){
+    					EU.showTopTip("error",data.msg);
+    				}else{
+    					$("." + ns + "_path").val(data);
+    					var abs_path = '$!env.get('images')' + '/' + data;
+    					$("#" + ns + "_preview").attr('src', abs_path);
+					}
+				}else{
+					EU.showTopTip("error",data);
+				}
+			};
+			var error = function(data){
+				$.messager.progress('close');
+                EU.showTopTip("error","上传失败！");
+            };
+			upload_pic(ns,success,error);
+		}
+	</script>
+	<input class="ajaxfileupload_weburl" type="hidden" value="$!env.getWebURL('')"/>
+	<span name="form" action="$!env.getWebURL('store/upload_pic')" method="POST" enctype="multipart/form-data">
+        <input id="$!attrs.get("fieldName")_width" class="ajaxfileupload_width" type="text" name="width" value='$!attrs.get("width")' data-options="required:true" style="display: none"/>
+        <input id="$!attrs.get("fieldName")_height" class="ajaxfileupload_height" type="text" name="height" value='$!attrs.get("height")' data-options="required:true" style="display: none"/>
+        <input id="$!attrs.get("fieldName")_rates" class="ajaxfileupload_rates" type="text" name="rates" value='$!attrs.get("rates")' data-options="required:true" style="display: none"/>
+        <input id="$!attrs.get("fieldName")_maxSize" class="ajaxfileupload_maxSize" type="text" name="maxSize" value='$!attrs.get("maxSize")' data-options="required:true" style="display: none"/>
+        <input id="$!attrs.get("fieldName")" class="input" type="file" name="pic" onchange="$!attrs.get("fieldName")_upload()" data-options="validType:['$!attrs.get("fieldName")', length[0, 120]]" style="width:107px"/>
+		#if($!attrs.get("required") == false) #else <font color="red">（不能为空）</font> #end
+	</span>
+	<input name="$!attrs.get("fieldName")" type="hidden"
+		   class="input_ges_b easyui-validatebox $!attrs.get("fieldName")_path"
+		   data-options="#if($!attrs.get("required") == false)  #else required:true,  #end editable:true, validType:['name', 'length[0, 119]']"
+           value="$!attrs.get("src")"/>
+
+	<div><img id="$!attrs.get("fieldName")_preview" class=""
+		#if($!attrs.get("src") != "")
+			  src="$!env.get('images')/$!attrs.get("src")"
+		#else
+			  src="$!request.contextPath/assets/images/no_img.jpg"
+		#end
+		#if($!attrs.get('previewHeight'))
+			  height="$!attrs.get('previewHeight')px"
+		#else
+			  height="200px"
+		#end
+		#if($!attrs.get('previewWidth'))
+			  width="$!attrs.get('previewWidth')px"
+		#else
+			  width="200px"
+		#end
+			  style="margin: 5px 0 0 0;"/>
+	</div>
+
+#end
+
+#** -------------------------------
+ * Function: Uploader_head
+ *
+ * @author ZhangJL
+ * @date   2015-1-7
+ *
+ * @param  (String) name  组件名
+ *
+ * ------------------------------- **#
+#macro(Uploader_head $attrs)
+	<script>
+		function $!attrs.get("fieldName")_upload(){
+			var ns = "$!attrs.get("fieldName")";
+			var success = function(data){
+				if(data != ""){
+				    var datajson= eval('('+data+')');
+					if(datajson.ret){
+    					alert(datajson.msg);
+    				}else{
+    					$("#srcpath").val(datajson.path);
+    					var abs_path = '$!uploadImageUrl' + '/' + datajson.path;
+    					$(".headpic").attr('src', abs_path);
+						$(".baseinf_but1").show();
+					}
+				}
+			};
+			upload_pic(ns,success);
+		}
+	</script>
+	<input class="ajaxfileupload_weburl" type="hidden" value="$!request.contextPath"/>
+	<form name="form" action="$!request.contextPath/store/upload_pic')" method="POST" enctype="multipart/form-data">
+        <input id="$!attrs.get("fieldName")_width" class="ajaxfileupload_width" type="text" name="width" value='$!attrs.get("width")' data-options="required:true" style="display: none"/>
+        <input id="$!attrs.get("fieldName")_height" class="ajaxfileupload_height" type="text" name="height" value='$!attrs.get("height")' data-options="required:true" style="display: none"/>
+        <input id="$!attrs.get("fieldName")_rates" class="ajaxfileupload_rates" type="text" name="rates" value='$!attrs.get("rates")' data-options="required:true" style="display: none"/>
+        <input id="$!attrs.get("fieldName")_maxSize" class="ajaxfileupload_maxSize" type="text" name="maxSize" value='$!attrs.get("maxSize")' data-options="required:true" style="display: none"/>
+        <input id="$!attrs.get("fieldName")" class="input" type="file" name="pic" onchange="$!attrs.get("fieldName")_upload()" data-options="validType:['$!attrs.get("fieldName")', length[0, 120]]" style="width:200px"/>
+    </form>
+
+#end
+
+#** -------------------------------
+ * Function: kindeditor
+ *
+ * @author ZhangJL
+ * @date   2015-1-7
+ *
+ * @param  (String) name  组件名
+ *
+ * ------------------------------- **#
+#macro(kindeditor $attrs)
+		<textarea id="$!attrs.get("fieldName")" name="$!attrs.get("fieldName")" style="width:$!attrs.get("width")px;height:$!attrs.get("height")px;visibility:hidden;">$!attrs.get("fieldValue")</textarea>
+		<script>
+			var tp1 = {
+					#if($!attrs.get("allowPic")==true)img: ['src', 'width', 'height', 'border', 'alt', 'title', 'align', '.width', '.height', '.border'],#end
+						'div,font,span,a,strong,p,h1,h2,h3,h4,h5,h6': ['color', 'face', 'size', 'href', 'align', '.color','.font-size','.font-family','.background-color','.text-align'],
+						'br,b': []
+                    }
+			var editor;
+			KindEditor.ready(function(K) {		
+				editor = K.create('textarea[name="$!attrs.get("fieldName")"]', {
+					resizeType : 0,
+					pasteType:2,
+					htmlTags:tp1,
+					allowPreviewEmoticons : false,
+					allowImageUpload : true,
+					afterBlur: function(){this.sync();},
+					items : [
+						'fontname', 'fontsize', '|', 'forecolor', 'hilitecolor', 'bold', 'italic', 'underline',
+						'removeformat', '|', 'justifyleft', 'justifycenter', 'justifyright', '|','indent', 'outdent', '|','emoticons',  #if($!attrs.get("allowPic")==true)'image','multiimage'#end, 'link','|','fullscreen']
+				});
+
+			});
+		</script>
+		
+#end
+
+#** -------------------------------
+ * Function: RedirectUtil
+ *
+ * @author jipengfei
+ * @date   2015-1-7
+ *
+ * @param  (String) name  组件名
+ *
+ * ------------------------------- **#
+#macro(RedirectURL $url)#set($q = $!{request.queryString})#if("$!url" == "")#if("$!q" =="")$!redirect.redirectURL("$!{request.requestURL}")#else$!redirect.redirectURL("$!{request.requestURL}?$!q")#end#else$!redirect.getRedirectURL("$!url")#end#end
+
+
+#macro(Pagination $page)
+    <ul class="pagination">
+		#Hidden("pageSize", "$!page.pageSize")
+    	#if($!page.hasPre)
+    		<li class="first"><a href="#first" onclick="submitForm('1');">首页</a></li>
+    		<li class="prev"><a href="#prePage" onclick="submitForm('$page.prePage');"><i class="icon-double-angle-left"></i></a></li>
+    	#else
+    		<li class="first disabled"><a>首页</a></li>
+    		<li class="prev disabled"><a><i class="icon-double-angle-left"></i></a></li>
+    	#end
+    	#foreach($pNo in $page.closestPage)
+    		<li #if($page.pageNo == $pNo)class="active"#end><a href="#$!pNo" onclick="submitForm('$!pNo');">$!pNo</a></li>
+    	#end
+    	#if($!page.hasNext)
+    		<li class="next"><a href="#nextPage" onclick="submitForm('$page.nextPage');"><i class="icon-double-angle-right"></i></a></li>
+    		<li class="last"><a href="#totalPages" onclick="submitForm('$page.totalPages');">尾页</a></li>
+    	#else
+    		<li class="next disabled"><a><i class="icon-double-angle-right"></i></a></li>
+    		<li class="last disabled"><a>尾页</a></li>
+    	#end
+    		<li style="white-space:nowrap;display:inline-block">
+    		&nbsp;共$!page.totalPages页， 去第<input type="text" id="pageNo" name="pageNo" value="$!page.pageNo" style="width:40px" class="page-go" onkeypress="if(event.keyCode==13) { $(this).closest('ul').find('button').click(); }"/>页
+    		<button type="button" class="btn btn-xs btn-inverse" onclick="submitForm();">确认</button>
+    		</li>
+    </ul>
+	
+	<script>
+		function submitForm(pageNo){
+			if(!!pageNo && !isNaN(pageNo)){
+				$("#pageNo").val(pageNo);
+			}
+    		$("form")[0].submit();
+		}
+	</script>
+#end
+#** ------------------------------- 
+* Function: LabelPanel
+* 
+* @author FlounyCaesar
+* @date   2014-11-26
+*  
+* @param  (String) name  组件名
+* ------------------------------- **#
+#macro(LabelPanel $but_id $show_input $dialog_id $label_peroperty_number)
+	<script type="text/javascript">
+		var $!{dialog_id}_load_pop_ready_show_flag=true;
+	    $(document).ready(function(){
+	        $.post("$request.contextPath/label/listForPanel.htm",{show_input:'$!show_input',dialog_id:'$!dialog_id',number:$!label_peroperty_number},function(html,statusText){
+	            $("body").append(html);
+	        });
+	        $("#$!{but_id}").click(function(){
+	        	if($!{dialog_id}_load_pop_ready_show_flag){
+	        		$!{dialog_id}_load_pop_ready_show_flag=false;
+	        		label_pop_ready_show('$!dialog_id');
+	        	}
+	        	$("#$!{dialog_id}").modal({backdrop: 'static', keyboard: false});
+	            $("#$!{dialog_id}").modal('show');
+	        }); 
+	    });
+    </script>
+#end
+
+#macro(RecPosInfoTypeCh $type)
+	#if($!SysConstants.REC_INFO_TYPE_ALL == $!type)全部
+	#elseif($!SysConstants.REC_INFO_TYPE_SPECIAL_TOPIC == $!type)专题
+	#elseif($!SysConstants.REC_INFO_TYPE_TOPIC == $!type)话题
+	#elseif($!SysConstants.REC_INFO_TYPE_ARTICLE == $!type)文章
+	#elseif($!SysConstants.REC_INFO_TYPE_QUESTION == $!type)问答
+	#elseif($!SysConstants.REC_INFO_TYPE_PRODUCT == $!type)产品
+	#elseif($!SysConstants.REC_INFO_TYPE_OTHER == $!type)其他
+	#end
+#end
+
+#macro(RecPosImageNeedCh $imageNeeded)
+	#if($!SysConstants.REC_POS_IMAGE_NEED_NO == $!imageNeeded)不需要图片
+	#elseif($!SysConstants.REC_POS_IMAGE_NEED_YES == $!imageNeeded)需要图片
+	#end
+#end
+
+#macro(RecPosActiveStatusCh $deleteStatus)
+	#if($!SysConstants.DELETED_NO == $!deleteStatus)有效
+	#elseif($!SysConstants.DELETED_YES == $!deleteStatus)失效
+	#end
+#end
+
+#macro(RecInfoInfoStatusCh $infoStatus)
+	#if($!SysConstants.REC_INFO_INFO_STATUS_ACTIVE == $!infoStatus)有效
+	#elseif($!SysConstants.REC_INFO_INFO_STATUS_INACTIVE == $!infoStatus)失效
+	#end
+#end

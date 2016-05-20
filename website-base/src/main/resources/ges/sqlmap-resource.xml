@@ -1,0 +1,250 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.goujia.website.base.ges.dao.ResourceMapper">
+
+	<!-- - =============================================== - 返回resource POJO 
+		- @author jipengfei - @date 2014-06-13 - =============================================== -->
+	<resultMap type="com.goujia.website.base.ges.entity.Resource"
+		id="RM_Resource_View">
+		<id property="id" column="ID" jdbcType="INTEGER" javaType="java.lang.Integer" />
+		<result property="name" column="NAME" jdbcType="VARCHAR"
+			javaType="java.lang.String" />
+		<result property="orderIndex" column="ORDER_INDEX" jdbcType="INTEGER"
+			javaType="java.lang.Integer" />
+		<result property="type" column="TYPE" jdbcType="VARCHAR"
+			javaType="java.lang.String" />
+		<result property="isDeleted" column="IS_DELETED" jdbcType="VARCHAR"
+			javaType="java.lang.String" />
+	</resultMap>
+
+	<!-- - =============================================== - 新增Resource - @author 
+		jipengfei - @date 2014-06-13 - =============================================== -->
+	<insert id="create" parameterType="com.goujia.website.base.ges.entity.Resource"
+		useGeneratedKeys="true" keyProperty="id">
+		insert into G_RESOURCE (
+		ID,
+		NAME,
+		ORDER_INDEX,
+		TYPE,
+		IS_DELETED
+		) values (
+		#{id},
+		#{name},
+		#{orderIndex},
+		#{type},
+		'n'
+		)
+	</insert>
+
+	<!-- - =============================================== - 修改Resource - @author 
+		jipengfei - @date 2014-06-13 - =============================================== -->
+	<update id="update" parameterType="com.goujia.website.base.ges.entity.Resource">
+		update RESOURCE
+		<set>
+			<if test="name != null and name !=''">NAME = #{name},</if>
+			<if test="orderIndex != null and orderIndex >0">ORDER_INDEX=#{orderIndex},</if>
+			<if test="type != null and type !=''">TYPE=#{type}</if>
+		</set>
+		where ID=#{id}
+	</update>
+
+	<!-- - =============================================== - 查询Resource - @author 
+		jipengfei - @date 2014-06-13 - =============================================== -->
+	<select id="list" resultMap="RM_Resource_View"
+		parameterType="com.goujia.website.base.ges.entity.Resource">
+		select
+		ID,
+		NAME,
+		ORDER_INDEX,
+		TYPE ,
+		IS_DELETED
+		from G_RESOURCE where IS_DELETED = 'n'
+		<if test="type !=null and type !=''">and TYPE=#{type}</if>
+		<if test="name !=null and name !=''">and NAME like CONCAT('%','${name}','%' )</if>
+		order by ORDER_INDEX asc
+	</select>
+	<!-- <select id="list" resultMap="RM_Resource_View" parameterType="com.goujia.website.base.ges.vo.ResourceVO"> 
+		select DISTINCT a.ID, a.NAME, a.ORDER_INDEX, a.TYPE , a.IS_DELETED from G_RESOURCE 
+		a left join G_GOODS g on a.ID = g.STYLE_ID or a.ID = g.HOUSE_TYPE_ID LEFT 
+		JOIN G_HOUSE h on g.HOUSE_ID = h.ID LEFT JOIN g_building b on h.BUILDING 
+		= b.ID WHERE g.STATUS = 'published' and a.IS_DELETED = 'n' <if test="type 
+		!=null and type !=''">and a.TYPE=#{type}</if> <if test="name !=null and name 
+		!=''">and a.NAME like CONCAT('%','${name}','%' )</if> <if test="buildingId 
+		!= null and buildingId >0"> and b.ID = #{buildingId}</if> <if test="provinceId 
+		!= null and provinceId >0"> and b.PROVINCE_ID = #{provinceId}</if> <if test="cityId 
+		!= null and cityId >0"> and b.CITY_ID = #{cityId}</if> <if test="countyId 
+		!= null and countyId >0"> and b.COUNTY_ID = #{countyId}</if> order by ORDER_INDEX 
+		asc </select> -->
+
+	<!-- - =============================================== - 查询Resource - @author 
+		jipengfei - @date 2014-06-13 - =============================================== -->
+	<select id="query" resultMap="RM_Resource_View"
+		parameterType="com.goujia.website.base.ges.entity.Resource">
+		select
+		ID,
+		NAME,
+		ORDER_INDEX,
+		TYPE,
+		IS_DELETED
+		from G_RESOURCE where ID=#{id}
+	</select>
+
+    <select id="selectByType"
+        resultType="com.goujia.website.base.ges.entity.ProductResultType"
+        parameterType="com.goujia.website.base.ges.entity.ProductParam">
+        SELECT DISTINCT e.ID as id,e.`NAME` as name
+        from g_goods c LEFT JOIN g_house b on b.ID = c.HOUSE_ID
+        LEFT JOIN g_building d on b.BUILDING = d.ID
+        LEFT JOIN g_resource e on c.HOUSE_TYPE_ID=e.ID and e.IS_DELETED = 'n'
+        LEFT JOIN g_resource r on c.STYLE_ID = r.ID and r.IS_DELETED='n'
+        LEFT JOIN g_house h on c.HOUSE_ID=h.ID
+        where
+        b.ID is not NULL and c.`STATUS`='published'
+        and d.IS_DELETED = 'n'
+        and d.CITY_ID = #{cityId}
+        <if test="null!=countyId and ''!=countyId">
+            AND d.COUNTY_ID=#{countyId}
+        </if>
+        <if test="null!=house_type and ''!=house_type">
+            AND e.TYPE = #{house_type}
+        </if>
+        <if test="null!=house_style and ''!=house_style">
+            AND r.TYPE=#{house_style}
+        </if>
+        <if test="null!=buildingId and ''!=buildingId">
+            AND d.ID=#{buildingId}
+        </if>
+        <if test="null!=maxPrice and ''!=maxPrice">
+            AND c.DISCOUNT_PRICE &lt; #{maxPrice}
+        </if>
+        <if test="null!=minPrice and ''!=minPrice">
+            AND c.DISCOUNT_PRICE &gt; #{minPrice}
+        </if>
+        <if test="null!=maxArea and ''!=maxArea">
+            AND h.FLOOR_AREA &lt; #{maxArea}
+        </if>
+        <if test="null!=minArea and ''!=minArea">
+            AND h.FLOOR_AREA &gt; #{minArea}
+        </if>
+    </select>
+
+	<select id="selectByStyle"
+		resultType="com.goujia.website.base.ges.entity.ProductResultType"
+		parameterType="com.goujia.website.base.ges.entity.ProductParam">
+        SELECT DISTINCT r.ID as id,r.`NAME` as name
+        from g_goods c LEFT JOIN g_house b on b.ID = c.HOUSE_ID
+        LEFT JOIN g_building d on b.BUILDING = d.ID
+        LEFT JOIN g_resource e on c.HOUSE_TYPE_ID=e.ID and e.IS_DELETED = 'n'
+        LEFT JOIN g_resource r on c.STYLE_ID = r.ID and r.IS_DELETED='n'
+        LEFT JOIN g_house h on c.HOUSE_ID=h.ID
+        where
+        b.ID is not NULL and c.`STATUS`='published'
+        and d.IS_DELETED = 'n'
+        and d.CITY_ID = #{cityId}
+        <if test="null!=countyId and ''!=countyId">
+            AND d.COUNTY_ID=#{countyId}
+        </if>
+        <if test="null!=house_type and ''!=house_type">
+            AND e.TYPE = #{house_type}
+        </if>
+        <if test="null!=house_style and ''!=house_style">
+            AND r.TYPE=#{house_style}
+        </if>
+        <if test="null!=buildingId and ''!=buildingId">
+            AND d.ID=#{buildingId}
+        </if>
+        <if test="null!=maxPrice and ''!=maxPrice">
+            AND c.DISCOUNT_PRICE &lt; #{maxPrice}
+        </if>
+        <if test="null!=minPrice and ''!=minPrice">
+            AND c.DISCOUNT_PRICE &gt; #{minPrice}
+        </if>
+        <if test="null!=maxArea and ''!=maxArea">
+            AND h.FLOOR_AREA &lt; #{maxArea}
+        </if>
+        <if test="null!=minArea and ''!=minArea">
+            AND h.FLOOR_AREA &gt; #{minArea}
+        </if>
+	</select>
+	
+    <select id="selectByPriceAndArea"
+        resultType="com.goujia.website.base.ges.entity.ProductResultType"
+        parameterType="com.goujia.website.base.ges.entity.ProductParam">
+        SELECT DISTINCT r.ID as id,r.`NAME` as name,c.DISCOUNT_PRICE as price,h.FLOOR_AREA as area
+        from g_goods c LEFT JOIN g_house b on b.ID = c.HOUSE_ID
+        LEFT JOIN g_building d on b.BUILDING = d.ID
+        LEFT JOIN g_resource e on c.HOUSE_TYPE_ID=e.ID and e.IS_DELETED = 'n'
+        LEFT JOIN g_resource r on c.STYLE_ID = r.ID and r.IS_DELETED='n'
+        LEFT JOIN g_house h on c.HOUSE_ID=h.ID
+        where
+        b.ID is not NULL and c.`STATUS`='published'
+        and d.IS_DELETED = 'n'
+        and d.CITY_ID = #{cityId}
+        <if test="null!=countyId and ''!=countyId">
+            AND d.COUNTY_ID=#{countyId}
+        </if>
+        <if test="null!=house_type and ''!=house_type">
+            AND e.TYPE = #{house_type}
+        </if>
+        <if test="null!=house_style and ''!=house_style">
+            AND r.TYPE=#{house_style}
+        </if>
+        <if test="null!=buildingId and ''!=buildingId">
+            AND d.ID=#{buildingId}
+        </if>
+        <if test="null!=maxPrice and ''!=maxPrice">
+            AND c.DISCOUNT_PRICE &lt; #{maxPrice}
+        </if>
+        <if test="null!=minPrice and ''!=minPrice">
+            AND c.DISCOUNT_PRICE &gt; #{minPrice}
+        </if>
+        <if test="null!=maxArea and ''!=maxArea">
+            AND h.FLOOR_AREA &lt; #{maxArea}
+        </if>
+        <if test="null!=minArea and ''!=minArea">
+            AND h.FLOOR_AREA &gt; #{minArea}
+        </if>
+    </select>
+    
+    <select id="selectByProductParams"
+        resultType="com.goujia.website.base.ges.entity.ProductResultType"
+        parameterType="com.goujia.website.base.ges.entity.ProductParam">
+        SELECT DISTINCT r.ID as styleId,r.`NAME` as styleName,e.ID as houseTypeID,e.`NAME` as houseType,d.id as buidingId,d.`NAME` as buidingName, c.DISCOUNT_PRICE as price,h.FLOOR_AREA as area
+        from g_goods c LEFT JOIN g_house b on b.ID = c.HOUSE_ID
+        LEFT JOIN g_building d on b.BUILDING = d.ID
+        LEFT JOIN g_resource e on c.HOUSE_TYPE_ID=e.ID and e.IS_DELETED = 'n'
+        LEFT JOIN g_resource r on c.STYLE_ID = r.ID and r.IS_DELETED='n'
+        LEFT JOIN g_house h on c.HOUSE_ID=h.ID
+        where
+        b.ID is not NULL and c.`STATUS`='published'
+        and d.IS_DELETED = 'n'
+        and d.CITY_ID = ${cityId}
+        <if test="null!=countyId and ''!=countyId">
+            AND d.COUNTY_ID=${countyId}
+        </if>
+        <if test="null!=house_type and ''!=house_type">
+            AND e.TYPE = #{house_type}
+        </if>
+        <if test="null!=house_style and ''!=house_style">
+            AND r.TYPE=#{house_style}
+        </if>
+        <if test="null!=buildingId and ''!=buildingId">
+            AND d.ID = ${buildingId}
+        </if>
+        <if test="null!=maxPrice and ''!=maxPrice">
+            AND c.DISCOUNT_PRICE &lt;= ${maxPrice}
+        </if>
+        <if test="null!=minPrice and ''!=minPrice">
+            AND c.DISCOUNT_PRICE &gt;= ${minPrice}
+        </if>
+        <if test="null!=maxArea and ''!=maxArea">
+            AND h.FLOOR_AREA &lt;= ${maxArea}
+        </if>
+        <if test="null!=minArea and ''!=minArea">
+            AND h.FLOOR_AREA &gt;= ${minArea}
+        </if>
+    </select>
+</mapper>

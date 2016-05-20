@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+    
+<mapper namespace="com.goujia.website.base.ges.dao.OrderMatterMapper">
+	<!--
+      - ===============================================
+      - 返回 POJO
+      - @author caoqi
+      - @date 2015-03-17
+      - ===============================================
+	-->
+	<resultMap  type="com.goujia.website.base.ges.entity.OrderMatter" id="RM_OrderMatter">
+		<id     property="id"                 column="ID"  	             jdbcType="INTEGER"   javaType="java.lang.Integer"    />
+		<result property="orderId" 	          column="ORDER_ID" 	     jdbcType="INTEGER"   javaType="java.lang.Integer"    />
+        <result property="goodsMatterId"      column="GOODS_MATTER_ID" 	 jdbcType="INTEGER"   javaType="java.lang.Integer"    />
+        <result property="goodsId"            column="GOODS_ID" 	     jdbcType="INTEGER"   javaType="java.lang.Integer"    />
+        <result property="matterId"           column="MATTER_ID" 	     jdbcType="INTEGER"   javaType="java.lang.Integer"    />
+        <result property="takeAddressType"    column="TAKE_ADDRESS_TYPE" jdbcType="TINYINT"   javaType="java.lang.Integer"    />
+        <result property="purchaseDays"       column="PURCHASE_DAYS" 	 jdbcType="TINYINT"   javaType="java.lang.Integer"    />
+        <result property="supplierId"         column="SUPPLIER_ID"       jdbcType="INTEGER"   javaType="java.lang.Integer"    />
+        <result property="amount"             column="AMOUNT" 	         jdbcType="INTEGER"   javaType="java.lang.Integer"    />
+        <result property="roomId"             column="ROOM_ID" 	         jdbcType="INTEGER"   javaType="java.lang.Integer"    />
+	</resultMap>
+	
+	<!--
+      - ===============================================
+      - 创建
+      - @author caoqi
+      - @date 2015-03-17
+      - ===============================================
+	-->
+	<insert id="create" parameterType="com.goujia.website.base.ges.entity.OrderMatter" 
+	useGeneratedKeys="true" keyProperty="id">
+		insert into G_ORDER_MATTER (
+			ID, 
+			ORDER_ID,
+			GOODS_MATTER_ID,
+			GOODS_ID,
+			MATTER_ID,
+			TAKE_ADDRESS_TYPE,
+			PURCHASE_DAYS,
+			SUPPLIER_ID,
+			AMOUNT,
+			ROOM_ID
+		) values (
+			#{id}, 
+			#{orderId},
+			#{goodsMatterId},
+			#{goodsId},
+			#{matterId},
+			#{takeAddressType},
+			#{purchaseDays},
+			#{supplierId},
+			#{amount},
+			#{roomId}
+		)
+	</insert>
+	
+</mapper>

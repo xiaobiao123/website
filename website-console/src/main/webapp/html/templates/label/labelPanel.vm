@@ -1,0 +1,132 @@
+
+<style type="text/css">
+    #labelPanel{
+        font-size: 14px;
+    }
+    #labelPanel .mylabel{
+        color: #ccc;
+        font-size: 12px;
+        font-style: none;
+        padding-left:4px;
+        padding-right:4px;
+        margin-left: 3px;
+        padding-top: 1px;
+        padding-bottom: 1px;
+        line-height: 18px;
+        margin: 2px;
+        display: inline-block;
+    }
+
+	#labelPanel #pop_title{
+		background-color: #8FBAC4;
+        margin-top: 0px;
+        color: #fff;
+        font-size: 12px;
+
+	}
+    #labelPanel .left-title{
+        padding-right: 0px;
+        font-size: 14px;
+    }
+    #labelPanel hr{
+        margin-top:3px;
+        margin-bottom: 10px;
+    }
+	#labelPanel .row{
+		padding-top: 5px;
+        padding-bottom: 5px;
+	}
+	#labelPanel span{
+		padding-left:4px;
+		padding-right:4px;
+		margin-left: 3px;
+        display: inline-block;
+	}
+	#labelPanel .checked{
+		border-style: solid;
+		border-color: #2CA0FC;
+        border-width: 2px;
+	}
+    .pop_border{
+        width: 700px;
+        border-style: solid;
+        border-color: #8FBAC4;
+        border-width: 1px;
+    }
+    #labelPanel .back{
+        background-color: #eee;
+    }
+    #labelPanel .checked_label_row{
+        color:#2CA0FC;
+    }
+    #labelPanel #makesure_but{
+        padding-right: 4px;
+        padding-left:4px;
+        margin: 4px;
+        border-style: solid;
+        border-color: #fff;
+        border-width: 2px;
+        border-top-width: 0px;
+        border-bottom-width: 0px;
+        color: #fff;
+    }
+    #labelPanel #clear_but{
+         padding-right: 4px;
+        padding-left:4px;
+        margin: 0px;
+        border-style: solid;
+        border-color: #2CA0FC;
+        border-width: 2px;
+        color: #97BFC5;
+    }
+    #labelPanel .parentLabel{
+
+    }
+    #labelPanel .childLabel{
+        color: #ccc;
+        font-size: 12px;
+    }
+</style>
+
+<div class="modal fade" id="${dialog_id}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="false" >
+    <div class="modal-dialog">
+        <div id="labelPanel" class="modal-content container pop_border">
+            <div class="row" id="pop_title">
+                <div class="col-md-10 " style="margin-top:6px;">
+                    请在下表中选择商品对应的品类，若下表中没有所需品类，可以在“分类&AMP;标签”栏目中添加相关品类。
+                </div>
+                <div class="col-md-2">  
+                    <a href="javascript:void(0);" class="pull-right" id="makesure_but" onclick="pop_submit('${show_input}','${dialog_id}')">确定</a>
+                </div>
+            </div>
+            <div class="row checked_label_row">
+                <div class="col-md-2 left-title">
+                    您选择的标签：
+                </div>
+                <div class="col-md-10">
+                    <span id="checked_label" style="display:inline;"></span>
+                    <span><a href="javascript:void(0);" id="clear_but" onclick="pop_clear_label('${dialog_id}')" style="display:inline-block;">清空</a></span>
+                </div>
+            </div>
+            <hr>
+            #set ($i=0)
+            #foreach($parent in $list)
+            #if(${i}%2==1)
+                <div class="row">
+            #else
+                <div class="row back">
+            #end
+                <div class="col-md-2 .left-title parentLabel">
+                    $parent.name
+                </div>
+                <div class="col-md-9 childLabel">
+                    #foreach($child in $parent.childList)
+                        <a value="$!{child.id}" class="mylabel" onclick="pop_check_label('${dialog_id}',this,$!{child.id})" href="javascript:void(0);">$!{child.name}</a>
+                    #end
+                </div>
+            </div>
+            #set($i=$i+1)
+            #end
+        </div>
+    </div>
+</div>

@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+    
+<mapper namespace="com.goujia.website.base.ges.dao.OrderEarnestMapper">
+	<!--
+      - ===============================================
+      - 返回 POJO
+      - @author fengchun
+      - @date 2014-07-10
+      - ===============================================
+	-->
+	<resultMap  type="com.goujia.website.base.ges.entity.OrderEarnest"                   id="RM_OrderEarnest">
+		<id     property="id"          column="ID"  	     jdbcType="INTEGER"   javaType="java.lang.Integer"    />
+		<result property="code"        column="CODE"         jdbcType="VARCHAR"   javaType="java.lang.String"     />
+		<result property="orderId" 	   column="ORDER_ID" 	 jdbcType="INTEGER"   javaType="java.lang.Integer"    />
+		<result property="gmtCreate"   column="GMT_CREATE"   jdbcType="TIMESTAMP" javaType="java.util.Date"       />
+		<result property="gmtModified" column="GMT_MODIFIED" jdbcType="TIMESTAMP" javaType="java.util.Date"       />
+		<result property="amount"	   column="AMOUNT"		 jdbcType="DECIMAL"   javaType="java.math.BigDecimal" />
+		<result property="status" 	   column="STATUS"  	 jdbcType="VARCHAR"   javaType="java.lang.String"     />
+	</resultMap>
+	
+	<!--
+      - ===============================================
+      - 创建 POJO
+      - @author fengchun
+      - @date 2014-07-10
+      - ===============================================
+	-->
+	<insert id="create" parameterType="com.goujia.website.base.ges.entity.OrderEarnest"
+	 useGeneratedKeys="true" keyProperty="id">
+		insert into G_ORDER_EARNEST (
+			ID, 
+			CODE,
+			ORDER_ID,
+			GMT_CREATE,
+			GMT_MODIFIED,
+			AMOUNT,
+			STATUS
+		) values (
+			#{id}, 
+			CONCAT(cast(UNIX_TIMESTAMP(now()) as char),cast(floor(rand()*100) as char)), 
+			#{orderId},
+			now(),
+			now(),
+			#{amount},
+			'paying'
+		)
+	</insert>
+	
+	<!--
+      - ===============================================
+      - 查询
+      - @author fengchun
+      - @date 2014-07-10
+      - ===============================================
+	-->
+	<select id="query" resultMap="RM_OrderEarnest" parameterType="java.lang.Integer">
+		select 
+			ID, 
+			CODE,
+			ORDER_ID,
+			GMT_CREATE,
+			GMT_MODIFIED,
+			AMOUNT,
+			STATUS
+		from G_ORDER_EARNEST
+		where ID=#{id}
+	</select>
+	
+	<!--
+      - ===============================================
+      - 查询
+      - @author fengchun
+      - @date 2014-07-10
+      - ===============================================
+	-->
+	<select id="queryUnpaidByOrderId" resultMap="RM_OrderEarnest" parameterType="java.lang.Integer">
+		select 
+			ID, 
+			CODE,
+			ORDER_ID,
+			GMT_CREATE,
+			GMT_MODIFIED,
+			AMOUNT,
+			STATUS
+		from G_ORDER_EARNEST
+		where ORDER_ID=#{orderId} and STATUS = 'paying'
+	</select>
+	
+	<!--
+      - ===============================================
+      - 修改
+      - @author fengchun
+      - @date 2014-07-10
+      - ===============================================
+	-->
+	<update id="updateByNotice" parameterType="com.goujia.website.base.ges.entity.OrderEarnest">
+		update G_ORDER_EARNEST 
+		set 
+		GMT_MODIFIED=now()
+		, STATUS='payed'
+		, AMOUNT=#{amount}
+		
+		where 
+		CODE=#{code} and STATUS='paying'
+	</update>
+	
+	<!--
+      - ===============================================
+      - 修改
+      - @author fengchun
+      - @date 2014-07-17
+      - ===============================================
+	-->
+	<update id="updateOrderByNotice" parameterType="java.lang.String">
+		update G_ORDER set 
+			STATUS='arriving_earnest'
+		where 
+			ID = (select order_id from G_ORDER_EARNEST where CODE=#{code}) and STATUS='payed'
+	</update>
+</mapper>

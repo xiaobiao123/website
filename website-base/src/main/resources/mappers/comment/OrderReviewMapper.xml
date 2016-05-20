@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.goujia.website.base.dao.comment.OrderReviewMapper" >
+  <resultMap id="BaseResultMap" type="com.goujia.website.base.entity.comment.OrderReview" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="order_id" property="orderId" jdbcType="INTEGER" />
+    <result column="content" property="content" jdbcType="VARCHAR" />
+    <result column="user_id" property="userId" jdbcType="INTEGER" />
+    <result column="gmt_create" property="gmtCreate" jdbcType="TIMESTAMP" />
+    <result column="is_deleted" property="isDeleted" jdbcType="VARCHAR" />
+    <result column="gmt_modify" property="gmtModify" jdbcType="TIMESTAMP" />
+    <result column="goods_name" property="goodsName" jdbcType="VARCHAR" />
+  </resultMap>
+  
+     <!--
+      - ===============================================
+      - 返回 vo
+      - ===============================================
+    -->
+    <resultMap  type="com.goujia.website.base.vo.comment.OrderReviewVO" id="RM_Order_Review_VO" extends="BaseResultMap">
+       <result property="userName" column="user_name" jdbcType="VARCHAR" />
+       <result property="avatar" column="head_portrait"/>
+    </resultMap>
+  
+  <sql id="Base_Column_List" >
+    id, order_id, content, user_id, gmt_create, is_deleted, gmt_modify,goods_name
+  </sql>
+  <select id="getById" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from g_bbs_order_review
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="delete" parameterType="java.lang.Integer" >
+    delete from g_bbs_order_review
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <update id="disableList" parameterType="java.lang.Integer">
+    update g_bbs_order_review
+    set is_deleted='y'
+    where id in (
+        <foreach collection="list" item="item" separator=",">
+            #{item}
+        </foreach>
+        )
+  </update>
+  <insert id="add" parameterType="com.goujia.website.base.entity.comment.OrderReview" >
+    insert into g_bbs_order_review (order_id, content, 
+      user_id, gmt_create, is_deleted, 
+      gmt_modify,goods_name)
+    values (#{orderId,jdbcType=INTEGER}, #{content,jdbcType=VARCHAR}, 
+      #{userId,jdbcType=INTEGER}, now(), 'n', 
+      now(),#{goodsName,jdbcType=VARCHAR})
+  </insert>
+  <update id="update" parameterType="com.goujia.website.base.entity.comment.OrderReview" >
+    update g_bbs_order_review
+    <set >
+      <if test="orderId != null" >
+        order_id = #{orderId,jdbcType=INTEGER},
+      </if>
+      <if test="content != null" >
+        content = #{content,jdbcType=VARCHAR},
+      </if>
+      <if test="userId != null" >
+        user_id = #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="isDeleted != null" >
+        is_deleted = #{isDeleted,jdbcType=VARCHAR},
+      </if>
+      <if test="gmtModify != null" >
+        gmt_modify = now(),
+      </if>
+      <if test="goodsName != null" >
+        goods_name = #{goodsName,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <!-- 分页查看评论列表 -->
+  <select id="listPage" resultMap="RM_Order_Review_VO" parameterType="com.goujia.website.base.vo.comment.OrderReviewSearchParam">
+    select a.*,b.user_name from g_bbs_order_review a
+    left join g_user b on a.user_id = b.id
+    <where>
+   <if test="null != searchText and searchIf==1" > a.content like  CONCAT('%', #{searchText},'%') </if>
+    <if test="null != isDeleted and '' != isDeleted"> and a.is_deleted = #{isDeleted}</if>
+    <if test="null != searchText and searchIf==2">and b.user_name = #{searchText}</if>
+    <if test="null != userId and '' != userId"> and a.user_id = #{userId}</if>
+    <if test="null != goodsName and '' != goodsName">and goods_name like  CONCAT('%', #{goodsName},'%')</if>
+    </where>
+  </select>
+  <select id="countListPage" resultType="java.lang.Integer" parameterType="com.goujia.website.base.vo.comment.OrderReviewSearchParam">
+    select count(*) from g_bbs_order_review a
+    left join g_user b on a.user_id = b.id
+    <where>
+    <if test="null != searchText and searchIf==1" > a.content like  CONCAT('%', #{searchText},'%') </if>
+    <if test="null != isDeleted and '' != isDeleted"> and a.is_deleted = #{isDeleted}</if>
+    <if test="null != searchText and searchIf==2">and b.user_name = #{searchText}</if>
+    <if test="null != userId and '' != userId"> and a.user_id = #{userId}</if>
+    <if test="null != goodsName and '' != goodsName">and goods_name like  CONCAT('%', #{goodsName},'%')</if>
+    </where>
+  </select>
+  <select id="countByOrder" parameterType="map" resultType="int">
+    select count(1) from g_bbs_order_review where order_id=#{order} and is_deleted='n'
+  </select>
+  <select id="getAll" parameterType="map" resultMap="RM_Order_Review_VO">
+    select review.*,user.user_name,user.head_portrait 
+    from  (select * from g_bbs_order_review where order_id=#{order} and is_deleted='n') review 
+    join (select * from g_user where is_deleted='n') user on user.id=review.user_id
+    order by gmt_create desc
+  </select>
+  <select id="countOrderPage" resultType="long" parameterType="com.goujia.website.base.vo.comment.OrderReviewSearchParam">
+    select count(distinct(a.order_id)) from g_bbs_order_review a
+    where a.user_id = #{userId} and is_deleted='n'
+  </select>
+  <select id="listOrderPage" resultType="int" parameterType="com.goujia.website.base.vo.comment.OrderReviewSearchParam">
+    select distinct(a.order_id) from g_bbs_order_review a
+    where a.user_id = #{userId} and is_deleted='n'
+  </select>
+</mapper>

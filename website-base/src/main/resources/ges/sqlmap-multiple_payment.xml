@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+    
+<mapper namespace="com.goujia.website.base.ges.dao.MultiplePaymentMapper">
+
+    <resultMap type="com.goujia.website.base.ges.entity.MultiplePayment" id="rm_multiple_payment">
+        <id     property="id" column="ID" jdbcType="BIGINT" javaType="java.lang.Long" />
+        <result property="orderId" column="ORDER_ID" jdbcType="INTEGER" javaType="java.lang.Integer"/>
+        <result property="orderStatus" column="ORDER_STATUS" jdbcType="VARCHAR" javaType="java.lang.String" />
+        <result property="money" column="MONEY" jdbcType="BIGINT" javaType="java.lang.Long" />
+        <result property="period"   column="PERIOD" jdbcType="INTEGER" javaType="java.lang.Integer"/>
+        <result property="isDelete" column="IS_DELETE" jdbcType="TINYINT"  javaType="java.lang.Boolean" />
+        <result property="payWay"  column="PAY_WAY"    jdbcType="INTEGER" javaType="java.lang.Integer"/>
+        <result property="payStatus"  column="PAY_STATUS"    jdbcType="INTEGER" javaType="java.lang.Integer"/>
+        <result property="paySuccessTime" column="PAY_SUCCESS_TIME" jdbcType="TIMESTAMP" javaType="java.util.Date"/>
+    </resultMap>
+    
+    <resultMap type="com.goujia.website.base.ges.vo.MultiplePaymentVO" id="rm_multiple_paymentVO" extends="rm_multiple_payment">
+        <result property="realName" column="REAL_NAME"  jdbcType="VARCHAR" javaType="java.lang.String"/>
+    </resultMap>
+    
+    <insert id="addMultiplePayment" useGeneratedKeys="true" keyProperty="id" parameterType="com.goujia.website.base.ges.entity.MultiplePayment">
+        INSERT INTO g_multiple_payment (
+            ID,
+            ORDER_ID,
+            ORDER_STATUS,
+            MONEY,
+            PERIOD,
+            PAY_WAY,
+            PAY_STATUS,
+            IS_DELETE,
+            CREATE_TIME,
+            MODIFY_TIME,
+            MODIFY_USER,
+            SYSTEM_UPDATE_TIME,
+            PAY_SUCCESS_TIME,
+            RECORD_SOURCE
+        ) VALUES (
+            #{id},
+            #{orderId},
+            #{orderStatus},
+            #{money},
+            #{period},
+            #{payWay},
+            #{payStatus},
+            #{isDelete},
+            now(),
+            now(),
+            #{modifyUser},
+            now(),
+            #{paySuccessTime},
+            #{recordSource}
+        )
+    </insert>
+    
+    <!-- 删除记录 -->
+    <update id="deleteRecordById" parameterType="com.goujia.website.base.ges.entity.MultiplePayment">
+        UPDATE 
+            g_multiple_payment 
+        SET 
+            IS_DELETE=1,MODIFY_TIME=NOW(),MODIFY_USER=#{modifyUser} 
+        WHERE 
+            ID=#{id}
+    </update>
+    
+    <!-- 更新记录的支付状态 -->
+    <update id="updatePayStatus" parameterType="com.goujia.website.base.ges.entity.MultiplePayment" >
+        UPDATE 
+            g_multiple_payment 
+        SET 
+            PAY_STATUS=#{payStatus},SYSTEM_UPDATE_TIME=NOW(),PAY_WAY=#{payWay},PAY_SUCCESS_TIME=now()  
+        WHERE 
+            IS_DELETE=0 AND PAY_STATUS<![CDATA[<=]]>1 AND PERIOD=#{period} AND MONEY=#{money} AND ORDER_ID=#{orderId}
+    </update>
+    
+    <!-- 查询最新的未支付的记录 -->
+    <select id="queryLatestRecordNoPay" parameterType="com.goujia.website.base.ges.entity.MultiplePayment" resultMap="rm_multiple_payment">
+        SELECT 
+            ID,
+            ORDER_ID,
+            MONEY,
+            PERIOD  
+        FROM 
+            g_multiple_payment 
+        WHERE 
+            PAY_STATUS<![CDATA[<=]]>1 AND IS_DELETE=0 AND PERIOD=#{period} AND ORDER_ID=#{orderId}
+        ORDER BY 
+            CREATE_TIME DESC 
+        LIMIT 1
+    </select>
+    
+    <!-- 判断是否有未支付或者支付失败的记录  如果有，控制不能添加记录-->
+    <select id="queryRecordNoPay" parameterType="com.goujia.website.base.ges.entity.MultiplePayment" resultMap="rm_multiple_payment">
+        SELECT 
+            ID,
+            ORDER_ID,
+            MONEY,
+            PERIOD  
+        FROM 
+            g_multiple_payment 
+        WHERE 
+            PAY_STATUS<![CDATA[<=]]>1 AND IS_DELETE=0 AND PERIOD=#{period} AND ORDER_ID=#{orderId}
+    </select>
+    
+    <!-- 编辑支付信息 -->
+    <update id="updateRecordById" parameterType="com.goujia.website.base.ges.entity.MultiplePayment">
+        UPDATE 
+            g_multiple_payment 
+        SET 
+            money=#{money},
+            MODIFY_TIME=NOW(),
+            MODIFY_USER=#{modifyUser},
+            RECORD_SOURCE=#{recordSource} 
+        WHERE 
+            ID=#{id}
+    </update>
+    
+    <select id="queryPaymentRecord" parameterType="com.goujia.website.base.ges.entity.MultiplePayment" resultMap="rm_multiple_paymentVO">
+        SELECT 
+            m.ID,
+            m.ORDER_ID,
+            m.MONEY,
+            m.PERIOD,
+            m.PAY_WAY,
+            m.PAY_STATUS,
+            m.PAY_SUCCESS_TIME,
+            u.REAL_NAME 
+        FROM 
+            g_multiple_payment m left join g_user u on u.ID=m.MODIFY_USER
+        WHERE 
+              IS_DELETE=0 AND PERIOD=#{period} AND  m.ORDER_ID=#{orderId}
+    </select>
+    
+    <!-- 查询某一个阶段已经支付的金额 包括 支付成功和已支付待到账的 -->
+    <select id="queryPayedMoney" parameterType="com.goujia.website.base.ges.entity.MultiplePayment" resultType="java.lang.Long">
+        SELECT 
+            IFNULL(SUM(MONEY),0) 
+        FROM 
+            g_multiple_payment m 
+        WHERE 
+            m.PAY_STATUS >= 2 AND m.IS_DELETE=0 AND m.PERIOD=#{period} AND m.ORDER_ID=#{orderId}
+    </select>
+
+    <!-- 更新订单状态 (线上) -->
+    <update id="updateOrderStatus" parameterType="java.lang.Integer">
+        UPDATE
+            G_ORDER O
+        SET
+            O.STATUS = CASE O.STATUS WHEN 'prepaying' THEN 'arriving_earnest' WHEN 'accepted_AZZC' THEN 'arriving_credit' ELSE 'unknown' END
+        WHERE
+            O.ID=#{orderId}
+    
+    </update>
+    
+    <!-- 更新订单状态 （线下） -->
+    <update id="updateOrderStausOffline" parameterType="java.lang.Integer">
+        UPDATE
+            G_ORDER O
+        SET
+            O.STATUS = CASE O.STATUS WHEN 'prepaying' THEN 'starting_AZZC' WHEN 'arriving_earnest' THEN 'starting_AZZC' WHEN 'accepted_AZZC' THEN 'arriving_credit' ELSE 'unknown' END
+        WHERE
+            O.ID=#{orderId}
+            
+    </update>
+    
+    <!-- 更新支付流水号 -->
+    <update id="updateSerialPayNo" parameterType="com.goujia.website.base.ges.entity.MultiplePayment">
+        UPDATE 
+            g_multiple_payment 
+        SET 
+            SERIAL_PAY_NO=#{serialPayNo} 
+        WHERE 
+            PAY_STATUS<![CDATA[<=]]>1 AND IS_DELETE=0 AND PERIOD=#{period} AND ORDER_ID=#{orderId} 
+        ORDER BY 
+            CREATE_TIME DESC 
+        LIMIT 1
+    </update>
+    
+    <!-- 查询状态为"已支付"的记录的金额总和 -->
+    <select id="queryCompletePay" parameterType="com.goujia.website.base.ges.entity.MultiplePayment" resultType="java.lang.Long">
+        SELECT 
+            IFNULL(SUM(MONEY),0) 
+        FROM 
+            g_multiple_payment m 
+        WHERE 
+            m.PAY_STATUS = 3 AND m.IS_DELETE=0 AND m.PERIOD=#{period} AND m.ORDER_ID=#{orderId}
+    </select>
+    
+    <!-- 更新记录的支付状态 -->
+    <update id="updateMultiplePayStatus" parameterType="com.goujia.website.base.ges.entity.MultiplePayment" >
+        UPDATE 
+            g_multiple_payment 
+        SET 
+            PAY_STATUS=#{payStatus},SYSTEM_UPDATE_TIME=NOW(),PAY_WAY=#{payWay},PAY_SUCCESS_TIME=now()  
+        WHERE 
+            IS_DELETE=0 AND PAY_STATUS<![CDATA[<=]]>1 AND PERIOD=#{period} AND SERIAL_PAY_NO=#{serialPayNo} AND ORDER_ID=#{orderId}
+    </update>
+
+    <!--根据订单id查询订单的支付记录  -->
+    <select id="queryPersonalPaymentRecord" parameterType="java.lang.Integer" resultMap="rm_multiple_paymentVO">
+        SELECT 
+            m.ID,
+            m.MONEY,
+            m.PERIOD,
+            m.PAY_WAY,
+            m.PAY_SUCCESS_TIME 
+        FROM 
+            g_multiple_payment m 
+        WHERE 
+            m.IS_DELETE=0 
+            AND m.PAY_STATUS>=2 
+            AND m.ORDER_ID=#{orderId}
+    </select>
+    
+    <!-- 查询90%支付的金额 目前仅支持支付一次 -->
+    <select id="queryCreditPaymentRecord" parameterType="java.lang.Integer" resultType="java.lang.Long">
+        <!-- SELECT IFNULL(SUM(MONEY),0) FROM g_multiple_payment m WHERE m.PERIOD=1 AND m.IS_DELETE=0 AND m.ORDER_ID=#{orderId} -->
+        SELECT 
+            IFNULL(m.MONEY,0) 
+        FROM 
+            g_multiple_payment m 
+        WHERE 
+            m.PERIOD=1 AND m.IS_DELETE=0 AND m.ORDER_ID=#{orderId}
+    </select>
+    
+</mapper>

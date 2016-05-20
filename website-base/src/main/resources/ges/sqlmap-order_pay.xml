@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+    
+<mapper namespace="com.goujia.website.base.ges.dao.OrderPayMapper">
+
+    <resultMap type="com.goujia.website.base.ges.entity.OrderPay" id="rm_order_pay">
+        <id     property="id" column="ID" jdbcType="BIGINT" javaType="java.lang.Long" />
+        <result property="orderId" column="ORDER_ID" jdbcType="INTEGER" javaType="java.lang.Integer"/>
+        <result property="earnest"  column="EARNEST"    jdbcType="BIGINT" javaType="java.lang.Long"/>
+        <result property="deposit"  column="DEPOSIT"    jdbcType="BIGINT" javaType="java.lang.Long"/>
+        <result property="batchPay" column="BATCH_PAY"  jdbcType="BIGINT" javaType="java.lang.Long"/>
+        <result property="createTime" column="CREATE_TIME" jdbcType="TIMESTAMP" javaType="java.util.Date"/>
+        <result property="modifyTime" column="MODIFY_TIME" jdbcType="TIMESTAMP" javaType="java.util.Date"/>
+        <result property="isDelete" column="IS_DELETE" jdbcType="TINYINT"  javaType="java.lang.Boolean" />
+    </resultMap>
+    
+    <insert id="addOrderPay" useGeneratedKeys="true" keyProperty="id" parameterType="com.goujia.website.base.ges.entity.OrderPay">
+        INSERT INTO g_order_pay (
+            ID,
+            ORDER_ID,
+            EARNEST,
+            DEPOSIT,
+            BATCH_PAY,
+            CREATE_TIME,
+            MODIFY_TIME,
+            IS_DELETE
+        ) VALUES (
+            #{id},
+            #{orderId},
+            #{earnest},
+            #{deposit},
+            #{batchPay},
+            now(),
+            now(),
+            #{isDelete}
+        )
+    </insert>
+    
+    <update id="updateOrderPay" parameterType="com.goujia.website.base.ges.entity.OrderPay">
+        UPDATE 
+            g_order_pay 
+        SET 
+            MODIFY_TIME=NOW(),
+            <choose>
+                <when test=" earnest!=null and earnest>0 ">EARNEST=EARNEST+#{earnest} </when>
+                <when test=" deposit!=null and deposit>0 ">DEPOSIT=DEPOSIT+#{deposit} </when>
+                <when test=" batchPay!=null and batchPay>0 ">BATCH_PAY=BATCH_PAY+#{batchPay} </when>
+            </choose>
+        WHERE 
+            ORDER_ID=#{orderId}
+    </update>
+    
+
+</mapper>

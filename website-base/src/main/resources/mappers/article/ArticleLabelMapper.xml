@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.goujia.website.base.dao.article.ArticleLabelMapper" >
+  <resultMap id="baseMap" type="com.goujia.website.base.entity.article.ArticleLabel" >
+    <id column="ID" property="id" jdbcType="INTEGER" />
+    <association property="article" javaType="com.goujia.website.base.entity.article.Article">
+    	<id column="ARTICLE" property="id" />
+    </association>
+    <association property="label" javaType="com.goujia.website.base.entity.article.Label">
+    	<id column="LABEL" property="id"/>
+    	<result column="label_name" property="name"/>
+		<association property="peroperty" javaType="com.goujia.website.base.entity.dict.Dictionary">
+			<result column="label_peroperty_number" property="number"/>
+			<result column="label_peroperty_name" property="name"/>
+		</association>    	
+    </association>
+  </resultMap>
+  <insert id="addBatch" parameterType="map">
+  	insert into G_BBS_ARTICLE_LABEL(ARTICLE,LABEL) values
+  	<foreach collection="list" item="item" separator=",">
+  	(
+  		#{item.article.id},#{item.label.id}
+  	)
+  	</foreach>
+  </insert>
+  <select id="findByArticleId" parameterType="map" resultMap="baseMap">
+  	select 
+		al.ID,
+		al.LABEL,
+		label.NAME as label_name,
+		label.PEROPERTY as label_peroperty_number
+	 from (select * from G_BBS_ARTICLE_LABEL where ARTICLE=#{article}) al 
+	left join G_BBS_LABEL label on label.ID=al.LABEL
+  </select>
+  <delete id="realDeleteByArticleId" parameterType="map">
+  	delete from G_BBS_ARTICLE_LABEL where ARTICLE=#{article}
+  </delete>
+  
+  <select id="getArticleLabelName" resultType="com.goujia.website.base.entity.topic.TopicLabel" parameterType="java.lang.Integer">
+        select 
+        G_BBS_LABEL.NAME as name
+        from G_BBS_ARTICLE,G_BBS_ARTICLE_LABEL,G_BBS_LABEL
+        WHERE G_BBS_ARTICLE.ID =#{articleId}
+        AND G_BBS_ARTICLE.ID=G_BBS_ARTICLE_LABEL.ARTICLE
+        AND G_BBS_ARTICLE_LABEL.LABEL=G_BBS_LABEL.ID
+        AND G_BBS_ARTICLE.IS_DELETED='n'
+  </select>
+</mapper>

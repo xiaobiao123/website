@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.goujia.website.base.ges.dao.GoodsDiyMatterMapper" >
+	<!--
+      - ===============================================
+      - 返回goods_diy POJO
+      - @author guojianbin
+      - @date 2015-09-18
+      - ===============================================
+	-->
+  <resultMap id="RM_Goods_Diy_MATTER" 	type="com.goujia.website.base.ges.entity.GoodsDiyMatter" >
+    <id 	column="ID" 				property="id" 				jdbcType="INTEGER" 	javaType="java.lang.Integer"/>
+    <result column="GOODS_ID" 			property="goodsId" 			jdbcType="INTEGER" 	javaType="java.lang.Integer"/>
+    <result column="MATTER_ID" 			property="matterId" 		jdbcType="INTEGER" 	javaType="java.lang.Integer"/>
+    <result column="MARK_ID" 			property="markId" 			jdbcType="INTEGER" 	javaType="java.lang.Integer"/>
+    <result column="TYPE" 				property="type" 			jdbcType="VARCHAR" 	javaType="java.lang.String"/>
+    <result column="PURCHASE_DAYS" 		property="purchaseDays" 	jdbcType="TINYINT" 	javaType="java.lang.Integer"/>
+    <result column="SUPPLIER_ID" 		property="supplierId" 		jdbcType="INTEGER" 	javaType="java.lang.Integer"/>
+    <result column="AMOUNT" 			property="amount" 			jdbcType="INTEGER" 	javaType="java.lang.Integer"/>
+    <result column="ROOM_ID" 			property="roomId" 			jdbcType="INTEGER" 	javaType="java.lang.Integer"/>
+    <result column="IS_STANDARD" 		property="isStandard" 		jdbcType="VARCHAR" 	javaType="java.lang.String"/>
+    <result column="OPRATE_TYPE" 		property="oprateType" 		jdbcType="INTEGER" 	javaType="java.lang.Integer"/>
+    <result column="ORIGINAL_ID" 		property="originalId" 		jdbcType="INTEGER" 	javaType="java.lang.Integer"/>
+    <result column="FINAL_AMOUNT" 		property="finalAmount" 		jdbcType="INTEGER" 	javaType="java.lang.Integer"/>
+  </resultMap>
+  
+  <!--
+      - ===============================================
+      - 返回DIY清单的物料信息
+      - @author guojianbin
+      - @date 2015-09-25
+      - ===============================================
+    -->
+  <resultMap id="RM_Goods_Diy_MATTER_VO"    type="com.goujia.website.base.ges.vo.GoodsDiyMatterVO" extends="RM_Goods_Diy_MATTER" >
+        <result property="name"        column="NAME"         jdbcType="VARCHAR"   javaType="java.lang.String"  />
+        <result property="model"       column="MODEL"        jdbcType="VARCHAR"   javaType="java.lang.String"  />
+        <result property="color"       column="COLOR"        jdbcType="VARCHAR"   javaType="java.lang.String"  />
+        <result property="materials"   column="MATERIALS"    jdbcType="VARCHAR"   javaType="java.lang.String"  />
+        <result property="unit"        column="UNIT"         jdbcType="VARCHAR"   javaType="java.lang.String"  />
+        <result property="dimension"   column="DIMENSION"    jdbcType="VARCHAR"   javaType="java.lang.String"  />
+        <result property="pric"        column="PRIC"         jdbcType="DOUBLE"    javaType="java.lang.Double"  />
+        <result property="salesPrice"  column="SALES_PRICE"  jdbcType="DOUBLE"    javaType="java.lang.Double"  />
+        <result property="imagePath"   column="IMAGE_PATH"   jdbcType="VARCHAR"   javaType="java.lang.String"  />
+        <result property="brandId"     column="BRAND_ID"     jdbcType="INTEGER"   javaType="java.lang.Integer" />
+        <result property="brandName"        column="BRAND_NAME"         jdbcType="VARCHAR"   javaType="java.lang.String"   />
+        <result property="buyPrice"             column="BUY_PRICE"              jdbcType="DOUBLE"    javaType="java.lang.Double"  />
+        <result property="gouJiaPrice"          column="GOUJIA_PRICE"           jdbcType="DOUBLE"    javaType="java.lang.Double"  />
+        <result property="effectPath"           column="EFFECT_PATH"            jdbcType="VARCHAR"   javaType="java.lang.String"  />
+  </resultMap>
+  
+  <sql id="Base_Column_List" >
+    ID, GOODS_ID, MATTER_ID, MARK_ID, TYPE, PURCHASE_DAYS, SUPPLIER_ID, AMOUNT, ROOM_ID, 
+    IS_STANDARD, OPRATE_TYPE, ORIGINAL_ID, FINAL_AMOUNT
+  </sql>
+  
+  <select id="selectByPrimaryKey" resultMap="RM_Goods_Diy_MATTER" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from g_goods_diy_matter
+    where ID = #{id,jdbcType=INTEGER}
+  </select>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from g_goods_diy_matter
+    where ID = #{id,jdbcType=INTEGER}
+  </delete>
+  
+  <!--
+      - ===============================================
+      - 查询单个空间的DIY清单的物料信息
+      - @author guojianbin
+      - @date 2015-09-26
+      - ===============================================
+    -->
+    <select id="listRoomDiyMatter" resultMap="RM_Goods_Diy_MATTER_VO" parameterType="com.goujia.website.base.ges.entity.GoodsDiyMatter" >
+        select
+            gm.ID, 
+            gm.GOODS_ID, 
+            gm.MATTER_ID, 
+            gm.MARK_ID, 
+            gm.TYPE, 
+            gm.PURCHASE_DAYS, 
+            gm.SUPPLIER_ID, 
+            gm.AMOUNT as m, 
+            gm.ROOM_ID, 
+            gm.IS_STANDARD, 
+            gm.OPRATE_TYPE, 
+            gm.ORIGINAL_ID, 
+            gm.FINAL_AMOUNT, 
+            m.NAME, 
+            m.MODEL, 
+            m.COLOR, 
+            m.MATERIALS, 
+            m.DIMENSION, 
+            m.PRIC, 
+            m.SALES_PRICE, 
+            m.IMAGE_PATH,
+            m.BRAND_ID,  
+            b.NAME as BRAND_NAME,
+            m.GOUJIA_PRICE,
+            m.BUY_PRICE,
+            m.EFFECT_PATH
+        from g_goods_diy_matter gm inner join G_MATTER m on gm.MATTER_ID = m.ID
+            left join G_BRAND b on m.BRAND_ID = b.ID
+        WHERE gm.ROOM_ID = #{roomId} and m.IS_DELETED='n' and m.STATUS = '1'
+        AND gm.OPRATE_TYPE=#{oprateType}
+        order by gm.OPRATE_TYPE
+    </select>
+    
+    <!-- 查看是否为减配 -->
+    <select id="isDecrease" resultMap="RM_Goods_Diy_MATTER" parameterType="com.goujia.website.base.ges.entity.GoodsDiyMatter" >
+        select
+            *
+        from 
+            g_goods_diy_matter 
+        WHERE 
+            GOODS_ID=#{goodsId}
+        <if test="null != roomId and '' != roomId">AND ROOM_ID = #{roomId}</if>
+        <if test="null != markId and '' != markId">AND MARK_ID=#{markId}</if>
+        <if test="null != matterId and '' != matterId">AND MATTER_ID=#{matterId}</if>
+        <if test="null != oprateType and '' != oprateType">AND OPRATE_TYPE=#{oprateType}</if>
+    </select>
+  
+    <!--
+      - ===============================================
+      - 查询更换前物料的信息
+      - @author guojianbin
+      - @date 2015-09-26
+      - ===============================================
+    -->
+    <select id="queryOriginalMatter" resultMap="RM_Goods_Diy_MATTER_VO" parameterType="com.goujia.website.base.ges.entity.GoodsDiyMatter" >
+        select
+            gm.ID, 
+            gm.GOODS_ID, 
+            gm.MARK_ID, 
+            gm.ROOM_ID, 
+            gm.OPRATE_TYPE, 
+            gm.ORIGINAL_ID MATTER_ID, 
+            m.NAME, 
+            m.MODEL, 
+            m.COLOR, 
+            m.MATERIALS, 
+            m.DIMENSION, 
+            m.PRIC, 
+            m.SALES_PRICE, 
+            m.IMAGE_PATH,
+            m.BRAND_ID,  
+            b.NAME as BRAND_NAME,
+            m.GOUJIA_PRICE,
+            m.BUY_PRICE,
+            m.EFFECT_PATH
+        from g_goods_diy_matter gm inner join G_MATTER m on gm.ORIGINAL_ID = m.ID
+            left join G_BRAND b on m.BRAND_ID = b.ID
+        WHERE gm.GOODS_ID = #{goodsId} and m.IS_DELETED='n' and m.STATUS = '1'
+          and gm.MATTER_ID = #{matterId} and gm.ROOM_ID = #{roomId}
+    </select>
+</mapper>

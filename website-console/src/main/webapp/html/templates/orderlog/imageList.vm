@@ -1,0 +1,97 @@
+#Html("begin")
+#Head("begin")
+#Title("系统管理-日志管理")
+#LoadBootstrap("default")
+#LoadSUI("default")
+#LoadSUI("editor")
+#LoadSUI("upload")
+#Head("end")
+<body>
+	#parse("header.vm")
+	
+	<!--nav-table start-->
+	<ul class="nav nav-tabs" id="">
+		<li class="active">
+			<a href="javascript:;">
+				日志相册
+			</a>
+		</li>
+	</ul>
+	<!--nav-table end-->
+	
+	<!-- PAGE CONTENT BEGINS -->
+	<p></p>
+	<form id="J_Form" name="J_Form" class="form-horizontal" role="form" method="post" >
+		#Hidden("logId", "$!log.id")
+	   <div class="page-content">
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <!-- PAGE CONTENT BEGINS -->
+                                <div class="row-fluid">
+                                    <ul class="ace-thumbnails">
+                                        #foreach($info in $!images)
+                                        <li>
+                                            <a href="" data-rel="colorbox">
+                                                <img height="150" width="150" alt="150x150" src="$!reviewImagePath/$info.imagePath" />
+                                            </a>
+
+                                            <div class="tools tools-bottom">
+                                                <a href="#">
+                                                    <i class="icon-remove red"></i>
+                                                </a>
+                                            </div>
+                                        </li>
+                                        #end
+                                         <li>
+                                    <span class="profile-picture">
+                                        <img src="$!request.contextPath/assets/images/no_img.jpg" alt="Avatar" class="editable img-responsive editable-click editable-empty" id="infoImage_preview" style="width:150px; height:150px"/>
+                                        #Uploader_pic({
+                                            "width":334,
+                                            "height":288,
+                                            "rates":"m,s",
+                                            "maxSize":40000000,
+                                            "fieldName": "infoImage", 
+                                            "fileFieldName": "infoImageFile", 
+                                             "src": "",
+                                            "required":"false"
+                                        })
+                                    </span>
+                                        </li>
+                                    </ul>
+                                </div><!-- PAGE CONTENT ENDS -->
+                            </div><!-- /.col -->
+                        </div><!-- /.row -->
+                    </div><!-- /.page-content -->
+                </div><!-- /.main-content -->
+
+		</div>
+
+	</form>
+	
+	<script>
+		$("#J_SAVE").click(function(){
+			if($('#J_Form').valid()){
+ 				$.ajax({
+				   dataTpe: "json",
+				   type: "POST",
+				   url: '$!request.contextPath/order/log/save.htm',
+				   data: $("#J_Form").serialize(),
+				   success: function(res){
+				     if(res[0]){
+					 	alert("保存成功");
+						window.location.href="$!request.contextPath/order/log/logListPage.htm?orderId="+$!log.orderId;
+				     } else {
+					 	jAlert("保存失败，请稍后再试");
+				     }
+				   },
+				   error: function() {
+					alert(DS.msg.error, DS.msg.tip);
+				   }
+				});
+			}
+		});
+    </script>
+	<!-- PAGE CONTENT ENDS -->
+	#parse("footer.vm")
+</body>
+#Html("end")

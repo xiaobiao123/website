@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.goujia.website.base.dao.article.ArticleReviewReplyMapper">
+  <resultMap id="RM_ArticleReviewReply" type="com.goujia.website.base.entity.article.ArticleReviewReply">
+    <id column="ID" jdbcType="INTEGER" property="id" />
+    <result column="REVIEW_ID" jdbcType="INTEGER" property="reviewId" />
+    <result column="CONTENT" jdbcType="VARCHAR" property="content" />
+    <result column="FROM_USER_ID" jdbcType="INTEGER" property="fromUserId" />
+    <result column="TO_USER_ID" jdbcType="BIGINT" property="toUserId" />
+    <result column="GMT_CREATE" jdbcType="TIMESTAMP" property="gmtCreate" />
+    <result column="GMT_MODIFY" jdbcType="TIMESTAMP" property="gmtModify" />
+    <result column="IS_DELETED" jdbcType="VARCHAR" property="isDeleted" />
+  </resultMap>
+  <resultMap id="RM_ArticleReviewReplyVO" type="com.goujia.website.base.vo.article.ArticleReviewReplyVO" extends="RM_ArticleReviewReply">
+  	</resultMap>
+  <sql id="Base_Column_List">
+    ID, REVIEW_ID, CONTENT, FROM_USER_ID, TO_USER_ID, GMT_CREATE, GMT_MODIFY, IS_DELETED
+  </sql>
+  <sql id="Base_Query_Condition">
+  		<where>
+  			<if test="reviewId >= 0">
+				and REVIEW_ID = #{reviewId,jdbcType=INTEGER}
+			</if>
+			<if test="content != null">
+				CONTENT = #{content,jdbcType=VARCHAR} 
+			</if>
+			<if test="peroperty != null">
+				and PEROPERTY = #{peroperty,jdbcType=VARCHAR}
+			</if>
+			<if test="fromUserId >= 0">
+				and FROM_USER_ID = #{fromUserId,jdbcType=INTEGER}
+			</if>
+			<if test="toUserId >= 0">
+				and TO_USER_ID = #{toUserId,jdbcType=INTEGER}
+			</if>
+			<if test="isDeleted != null">
+				and IS_DELETED = #{isDeleted,jdbcType=VARCHAR}
+			</if>
+		</where>
+  </sql>
+  <select id="list" resultMap="RM_ArticleReviewReplyVO" parameterType="com.goujia.website.base.vo.article.ArticleReviewReplyVO" >
+	    select 
+	    <include refid="Base_Column_List" />
+	    from G_BBS_ARTICLE_REVIEW_REPLY
+	   <include refid="Base_Query_Condition" />
+  </select>
+  
+  <select id="count" resultType="int" parameterType="com.goujia.website.base.vo.article.ArticleReviewReplyVO">
+		select count(*) from G_BBS_ARTICLE_REVIEW_REPLY
+		<include refid="Base_Query_Condition" />
+  </select>
+  <select id="get" parameterType="java.lang.Integer" resultMap="RM_ArticleReviewReply">
+    select 
+    <include refid="Base_Column_List" />
+    from G_BBS_ARTICLE_REVIEW_REPLY
+    where ID = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="delete" parameterType="java.lang.Integer">
+    delete from G_BBS_ARTICLE_REVIEW_REPLY
+    where ID = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.goujia.website.base.entity.article.ArticleReviewReply">
+    insert into G_BBS_ARTICLE_REVIEW_REPLY (ID, REVIEW_ID, CONTENT, 
+      FROM_USER_ID, TO_USER_ID, GMT_CREATE, 
+      GMT_MODIFY, IS_DELETED)
+    values (#{id,jdbcType=INTEGER}, #{reviewId,jdbcType=INTEGER}, #{content,jdbcType=VARCHAR}, 
+      #{fromUserId,jdbcType=INTEGER}, #{toUserId,jdbcType=BIGINT}, #{gmtCreate,jdbcType=TIMESTAMP}, 
+      #{gmtModify,jdbcType=TIMESTAMP}, #{isDeleted,jdbcType=VARCHAR})
+  </insert>
+  
+  <update id="update" parameterType="com.goujia.website.base.entity.article.ArticleReviewReply">
+    update G_BBS_ARTICLE_REVIEW_REPLY
+    <set>
+      <if test="reviewId != null">
+        REVIEW_ID = #{reviewId,jdbcType=INTEGER},
+      </if>
+      <if test="content != null">
+        CONTENT = #{content,jdbcType=VARCHAR},
+      </if>
+      <if test="fromUserId != null">
+        FROM_USER_ID = #{fromUserId,jdbcType=INTEGER},
+      </if>
+      <if test="toUserId != null">
+        TO_USER_ID = #{toUserId,jdbcType=BIGINT},
+      </if>
+      <if test="gmtCreate != null">
+        GMT_CREATE = #{gmtCreate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="gmtModify != null">
+        GMT_MODIFY = #{gmtModify,jdbcType=TIMESTAMP},
+      </if>
+      <if test="isDeleted != null">
+        IS_DELETED = #{isDeleted,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=INTEGER}
+  </update>
+
+</mapper>

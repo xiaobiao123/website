@@ -1,0 +1,7 @@
+#pager .pages {FONT-SIZE: 12px; BORDER-TOP: medium none; HEIGHT: 20px; FONT-FAMILY: Microsoft YaHei; BORDER-RIGHT: medium none; BORDER-BOTTOM: medium none; TEXT-TRANSFORM: uppercase; PADDING-BOTTOM: 0px; PADDING-TOP: 0px; PADDING-LEFT: 0px; MARGIN: 5px; BORDER-LEFT: medium none; DISPLAY: block; PADDING-RIGHT: 0px}
+#pager UL.pages LI {LIST-STYLE-TYPE: none; BORDER-TOP: #ccc 1px solid; BORDER-RIGHT: #ccc 1px solid; BORDER-BOTTOM: #ccc 1px solid; FLOAT: left; LIST-STYLE-IMAGE: none; PADDING-BOTTOM: 5px; PADDING-TOP: 5px; PADDING-LEFT: 8px; TEXT-DECORATION: none; MARGIN: 0px 5px 0px 0px; BORDER-LEFT: #ccc 1px solid; LINE-HEIGHT: 13px; PADDING-RIGHT: 8px
+}
+#pager UL.pages LI:hover {BORDER: #32b543 1px solid;}
+#pager UL.pages LI.pgEmpty {BORDER: #eee 1px solid; COLOR: #eee;}
+#pager UL.pages LI.pgCurrent {FONT-WEIGHT: 700; COLOR: #fff; BACKGROUND-COLOR: #32b543}
+#pagebox{padding-left:350px; margin-top:20px; margin-bottom:20px;}

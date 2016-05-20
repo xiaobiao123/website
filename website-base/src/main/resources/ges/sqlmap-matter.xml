@@ -1,0 +1,488 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+    
+<mapper namespace="com.goujia.website.base.ges.dao.MatterMapper">
+	<!--
+      - ===============================================
+      - 返回matter POJO
+      - @author jipengfei
+      - @date 2014-06-26
+      - ===============================================
+	-->
+	<resultMap  type="com.goujia.website.base.ges.entity.Matter"               id="RM_Matter">
+		<id     property="id"               		column="ID"  	            		jdbcType="INTEGER"   javaType="java.lang.Integer"    />
+		<result property="code"             		column="CODE"     	       	 		jdbcType="VARCHAR"   javaType="java.lang.String"     />
+		<result property="name"             		column="NAME"     	        		jdbcType="VARCHAR"   javaType="java.lang.String"     />
+		<result property="model"            		column="MODEL"     	        		jdbcType="VARCHAR"   javaType="java.lang.String"     />
+		<result property="color"            		column="COLOR"     	        		jdbcType="VARCHAR"   javaType="java.lang.String"     />
+		<result property="materials"        		column="MATERIALS"     	    		jdbcType="VARCHAR"   javaType="java.lang.String"     />
+		<result property="status"           		column="STATUS"             		jdbcType="VARCHAR"   javaType="java.lang.String"     />
+		<result property="dimension"        		column="DIMENSION"          		jdbcType="VARCHAR"   javaType="java.lang.String"     />
+		<result property="unit"        				column="UNIT"          				jdbcType="VARCHAR"   javaType="java.lang.String"     />
+		<result property="pric"        				column="PRIC"          				jdbcType="DOUBLE"    javaType="java.lang.Double"     />
+		<result property="salesPrice"       		column="SALES_PRICE"        		jdbcType="DOUBLE"    javaType="java.lang.Double"     />
+		<result property="imagePath"        		column="IMAGE_PATH"         		jdbcType="VARCHAR"   javaType="java.lang.String"     />
+		<result property="brandId"       			column="BRAND_ID"        			jdbcType="INTEGER"   javaType="java.lang.Integer"    />
+		<result property="categoryId"       		column="CATEGORY_ID"        		jdbcType="INTEGER"   javaType="java.lang.Integer"    />
+		<result property="ownerId"       			column="OWNER_ID"        			jdbcType="INTEGER"   javaType="java.lang.Integer"    />
+		<result property="memo"             		column="MEMO"            			jdbcType="VARCHAR"   javaType="java.lang.String"     />
+		<result property="isDeleted"        		column="IS_DELETED"         		jdbcType="VARCHAR"   javaType="java.lang.String"     />
+		<result property="gmtCreate"        		column="GMT_CREATE"        			jdbcType="TIMESTAMP" javaType="java.util.Date"       />
+		<result property="gmtModified"      		column="GMT_MODIFIED"       		jdbcType="TIMESTAMP" javaType="java.util.Date"       />
+		<result property="useNature"        		column="USE_NATURE"         		jdbcType="INTEGER"   javaType="java.lang.Integer"     />
+		<result property="processProp"      		column="PROCESS_PROP"       		jdbcType="INTEGER"   javaType="java.lang.Integer"     />
+		<result property="distributionPhase"      	column="DISTRIBUTION_PHASE"     	jdbcType="INTEGER"   javaType="java.lang.Integer"     />
+		<result property="shippingMethods"      	column="SHIPPING_METHODS"       	jdbcType="INTEGER"   javaType="java.lang.Integer"     />
+		<result property="processingMethods"      	column="PROCESSING_METHODS"       	jdbcType="INTEGER"   javaType="java.lang.Integer"     />
+		<result property="conversionUnit"      		column="CONVERSION_UNIT"       		jdbcType="INTEGER"   javaType="java.lang.Integer"     />
+		<result property="conversionFormula"        column="CONVERSION_FORMULA"       	jdbcType="VARCHAR"   javaType="java.lang.String"  />
+        <result property="installer"      			column="INSTALLER"       			jdbcType="INTEGER"   javaType="java.lang.Integer" />
+        <result property="isHaveInventory" 			column="IS_HAVE_INVENTORY" 			jdbcType="VARCHAR"   javaType="java.lang.String" />
+        <result property="takeAddressType"       	column="TAKE_ADDRESS_TYPE"        	jdbcType="INTEGER"   javaType="java.lang.Integer" />
+		<result property="goujiaPrice"        		column="GOUJIA_PRICE"         		jdbcType="DOUBLE"   javaType="java.lang.Double"    />
+	    <result property="buyPrice"                 column="BUY_PRICE"                  jdbcType="DOUBLE"   javaType="java.lang.Double"    />
+	    <result property="amount"                   column="AMOUNT"                     jdbcType="INTEGER"   javaType="java.lang.Integer" />
+	    <result property="effectPath"               column="EFFECT_PATH"                jdbcType="VARCHAR"   javaType="java.lang.String"  />
+        <result property="effectWidth"              column="EFFECT_WIDTH"               jdbcType="INTEGER"   javaType="java.lang.Integer" />
+        <result property="effectHeight"             column="EFFECT_HEIGHT"              jdbcType="INTEGER"   javaType="java.lang.Integer" />
+	</resultMap>
+	
+	<!--
+      - ===============================================
+      - 返回物料信息
+      - @author caoqi
+      - @date 2014-07-04
+      - ===============================================
+	-->
+	<resultMap  type="com.goujia.website.base.ges.vo.MatterVO" id="RM_Matter_Brand" extends="RM_Matter">
+		<result property="brandName" 		column="BRAND_NAME"    		jdbcType="VARCHAR"  javaType="java.lang.String" />
+		<result property="type" 			column="TYPE"    			jdbcType="VARCHAR"  javaType="java.lang.String" />
+		<result property="goodsMatterId" 	column="GOODS_MATTER_ID"    jdbcType="INTEGER"  javaType="java.lang.Integer" />
+	</resultMap>
+	
+	<!--
+      - ===============================================
+      - 返回带有物料供应商和类目名称的物料信息
+      - @author jipengfei
+      - @date 2014-06-26
+      - ===============================================
+	-->
+	<resultMap  type="com.goujia.website.base.ges.vo.MatterVO"        id="RM_Matter_DETAIL" extends="RM_Matter">
+		<result property="categoryName" column="CATEGORY_NAME" jdbcType="VARCHAR"    javaType="java.lang.String" />
+	</resultMap>
+	
+	<!--
+      - ===============================================
+      - 返回物料信息
+      - @author caoqi
+      - @date 2014-07-04
+      - ===============================================
+	-->
+	<resultMap  type="com.goujia.website.base.ges.vo.MatterVO" id="RM_Matter_View" extends="RM_Matter_DETAIL">
+		<result property="goodsId" 			column="GOODS_ID"    		jdbcType="INTEGER"  javaType="java.lang.Integer" />
+		<result property="goodsMatterId" 	column="GOODS_MATTER_ID"    jdbcType="INTEGER"  javaType="java.lang.Integer" />
+		<result property="brandName" 		column="BRAND_NAME"    		jdbcType="VARCHAR"  javaType="java.lang.String" />
+		<result property="isStandard"      column="IS_STANDARD"         jdbcType="VARCHAR"  javaType="java.lang.String" />
+	</resultMap>
+	
+	<!--
+      - ===============================================
+      - 新增Matter
+      - @author jipengfei
+      - @date 2014-06-13
+      - ===============================================
+	-->
+	<insert id="create" parameterType="com.goujia.website.base.ges.entity.Matter"
+	 useGeneratedKeys="true" keyProperty="id">
+		insert into G_MATTER (
+			ID, 
+			CODE, 
+			NAME, 
+			MODEL, 
+			COLOR, 
+			MATERIALS, 
+			STATUS, 
+            DIMENSION, 
+            UNIT, 
+            PRIC, 
+			SALES_PRICE, 
+			IMAGE_PATH, 
+			BRAND_ID, 
+			CATEGORY_ID, 
+			OWNER_ID, 
+			USE_NATURE, 
+			PROCESS_PROP,
+			DISTRIBUTION_PHASE,
+			SHIPPING_METHODS,
+			PROCESSING_METHODS,
+			CONVERSION_UNIT,
+			CONVERSION_FORMULA,
+			INSTALLER,
+			IS_HAVE_INVENTORY,
+			TAKE_ADDRESS_TYPE,
+			MEMO,
+			IS_DELETED,
+			GMT_CREATE,
+			GMT_MODIFIED,
+			GOUJIA_PRICE
+		) values (
+			#{id}, 
+			#{code}, 
+			#{name}, 
+			#{model}, 
+			#{color}, 
+			#{materials}, 
+			#{status}, 
+			#{dimension}, 
+			#{unit}, 
+			#{pric}, 
+			#{salesPrice}, 
+			#{imagePath}, 
+			#{brandId}, 
+			#{categoryId}, 
+			#{ownerId}, 
+			'n', 
+			now(),
+			now(),
+			#{useNature},
+			#{processProp},
+			#{distributionPhase},
+			#{shippingMethods},
+			#{processingMethods},
+			#{conversionUnit},
+			#{conversionFormula},
+			#{installer},
+			#{isHaveInventory},
+			#{takeAddressType},
+			#{goujiaPrice}
+		)
+	</insert>
+	
+	<!--
+      - ===============================================
+      - 修改Matter
+      - @author jipengfei
+      - @date 2014-06-13
+      - ===============================================
+	-->
+	<update id="update" parameterType="com.goujia.website.base.ges.entity.Matter">
+		update G_MATTER set GMT_MODIFIED = now()
+		<if test="brandId != null and brandId >0">, BRAND_ID=#{brandId}</if>
+		<if test="categoryId != null and categoryId >0">, CATEGORY_ID=#{categoryId}</if>
+        <if test="pric != null and pric >0">, PRIC=#{pric}</if>
+        <if test="salesPrice != null and salesPrice >0">, SALES_PRICE=#{salesPrice}</if>
+        <if test="goujiaPrice != null and goujiaPrice >0">, GOUJIA_PRICE=#{goujiaPrice}</if>
+		<if test="name != null and name !=''">, NAME=#{name}</if>
+		<if test="code != null and code !=''">, CODE=#{code}</if>
+		<if test="model != null and model !=''">, MODEL=#{model}</if>
+		<if test="imagePath != null and imagePath !=''">, IMAGE_PATH=#{imagePath}</if>
+		<if test="memo != null and memo !=''">, MEMO=#{memo}</if>
+		<if test="status != null and status !=''">, STATUS=#{status}</if>
+		<if test="isDeleted != null and isDeleted !=''">, IS_DELETED=#{isDeleted}</if>
+		where ID=#{id}
+	</update>
+	
+
+	<!--
+      - ===============================================
+      - 根据产品包查询，物料标配总数
+      - @author jipengfei
+      - @date 2014-06-20
+      - ===============================================
+	-->
+	<select id="countByGoodsId" resultType="java.lang.Integer"
+	 parameterType="com.goujia.website.base.ges.vo.MatterVO">
+		select
+			count(*)
+		from (
+			select
+				m.ID
+			from G_GOODS_MATTER gm left join G_MATTER m  on gm.MATTER_ID = m.ID
+				left join G_MATERIALS_CATEGORY mc 	     on m.CATEGORY_ID = mc.ID
+				left join G_MATERIALS_CATEGORY gmc       on gmc.ID = mc.PARENT_ID
+				left join G_MATERIALS_CATEGORY aa        on aa.ID = gmc.PARENT_ID
+                left join G_MATERIALS_CATEGORY bb        on bb.ID = aa.PARENT_ID
+			    left join G_BRAND b on m.BRAND_ID = b.ID
+			where gm.GOODS_ID = #{goodsId} and m.IS_DELETED = 'n'
+				<if test=" type != null and type !=''"> and gm.TYPE = #{type}</if>
+				<if test=" categoryId != null and categoryId > 0"> and (mc.ID=#{categoryId} or gmc.ID=#{categoryId} or aa.ID=#{categoryId} or bb.ID=#{categoryId})</if>
+				<if test=" code != null and code !=''"> and m.CODE like CONCAT('%','${code}','%' )</if>
+				<if test=" model != null and model !=''"> and m.MODEL like CONCAT('%','${model}','%' )</if>
+				<if test=" name != null and name !=''"> and m.NAME like CONCAT('%','${name}','%' )</if>
+				<if test=" brandName != null and brandName !=''"> and b.BRAND_NAME like CONCAT('%','${brandName}','%' )</if>
+				<if test=" parentCategoryId != null and parentCategoryId >0"> and aa.ID = #{parentCategoryId}</if>
+			group by m.ID
+		) as s
+	</select>
+	
+	<!--
+      - ===============================================
+      - 根据产品包查询，分页查询物料信息
+      - @author jipengfei
+      - @date 2014-06-20
+      - ===============================================
+	-->
+	<select id="pageForByGoodsId" resultMap="RM_Matter_View"
+	parameterType="com.goujia.website.base.ges.vo.MatterVO" >
+		select
+			m.ID, 
+			m.CODE, 
+			m.NAME, 
+			m.MODEL, 
+			m.COLOR, 
+			m.MATERIALS, 
+			m.STATUS, 
+            m.DIMENSION, 
+            m.UNIT, 
+            m.PRIC, 
+			m.SALES_PRICE, 
+			m.IMAGE_PATH, 
+			m.BRAND_ID, 
+			m.CATEGORY_ID, 
+			m.OWNER_ID, 
+			m.USE_NATURE, 
+			m.PROCESS_PROP,
+			m.DISTRIBUTION_PHASE,
+			m.SHIPPING_METHODS,
+			m.PROCESSING_METHODS,
+			m.CONVERSION_UNIT,
+			m.CONVERSION_FORMULA,
+			m.INSTALLER,
+			m.IS_HAVE_INVENTORY,
+			m.TAKE_ADDRESS_TYPE,
+			m.MEMO,
+			m.IS_DELETED,
+			m.GMT_CREATE,
+			m.GMT_MODIFIED,
+			m.GOUJIA_PRICE,
+			gm.GOODS_ID,
+			gm.ID as GOODS_MATTER_ID,
+			b.NAME as BRAND_NAME
+		from G_GOODS_MATTER gm left join G_MATTER m  on gm.MATTER_ID = m.ID
+		    left join G_MATERIALS_CATEGORY mc 	     on m.CATEGORY_ID = mc.ID
+		    left join G_MATERIALS_CATEGORY gmc       on gmc.ID = mc.PARENT_ID
+		    left join G_MATERIALS_CATEGORY aa        on aa.ID = gmc.PARENT_ID
+            left join G_MATERIALS_CATEGORY bb        on bb.ID = aa.PARENT_ID
+		    left join G_BRAND b on m.BRAND_ID = b.ID
+		where gm.GOODS_ID = #{goodsId} and m.IS_DELETED = 'n'
+		<if test=" type != null and type !=''"> and gm.TYPE = #{type}</if>
+		<if test=" null != roomId and  '' != roomId"> and gm.ROOM_ID=#{roomId}</if>
+		<if test=" categoryId != null and categoryId > 0"> and (mc.ID=#{categoryId} or gmc.ID=#{categoryId} or aa.ID=#{categoryId} or bb.ID=#{categoryId})</if>
+		<if test=" code != null and code !=''"> and m.CODE like CONCAT('%','${code}','%' )</if>
+		<if test=" model != null and model !=''"> and m.MODEL like CONCAT('%','${model}','%' )</if>
+		<if test=" name != null and name !=''"> and m.NAME like CONCAT('%','${name}','%' )</if>
+		<if test=" parentCategoryId != null and parentCategoryId >0"> and aa.ID = #{parentCategoryId}</if>
+		<if test=" brandName != null and brandName !=''"> and b.BRAND_NAME like CONCAT('%','${brandName}','%' )</if>
+		group by m.ID
+		order by m.GMT_CREATE desc
+	</select>
+	
+	<!-- 物料列表 -->
+	<select id="listForByGoodsId" resultMap="RM_Matter_View"
+    parameterType="com.goujia.website.base.ges.vo.MatterVO" >
+        select
+            m.*,
+            gm.GOODS_ID,
+            gm.ID as GOODS_MATTER_ID,
+            gm.AMOUNT as matterAmount,
+            gm.IS_STANDARD as isStandard,
+            b.NAME as BRAND_NAME
+        from G_GOODS_MATTER gm left join G_MATTER m  on gm.MATTER_ID = m.ID
+            left join G_MATERIALS_CATEGORY mc        on m.CATEGORY_ID = mc.ID
+            left join G_MATERIALS_CATEGORY gmc       on gmc.ID = mc.PARENT_ID
+            left join G_MATERIALS_CATEGORY aa        on aa.ID = gmc.PARENT_ID
+            left join G_MATERIALS_CATEGORY bb        on bb.ID = aa.PARENT_ID
+            left join G_BRAND b on m.BRAND_ID = b.ID
+        where gm.GOODS_ID = #{goodsId} and m.IS_DELETED = 'n' AND m.`STATUS`='1'
+        <if test=" type != null and type !=''"> and gm.TYPE = #{type}</if>
+        <if test=" isStandard != null and isStandard != ''"> and gm.IS_STANDARD=#{isStandard} </if>
+        <if test=" null != roomId and  '' != roomId"> and gm.ROOM_ID=#{roomId}</if>
+        <if test=" categoryId != null and categoryId > 0"> and (mc.ID=#{categoryId} or gmc.ID=#{categoryId} or aa.ID=#{categoryId} or bb.ID=#{categoryId})</if>
+        <if test=" code != null and code !=''"> and m.CODE like CONCAT('%','${code}','%' )</if>
+        <if test=" model != null and model !=''"> and m.MODEL like CONCAT('%','${model}','%' )</if>
+        <if test=" name != null and name !=''"> and m.NAME like CONCAT('%','${name}','%' )</if>
+        <if test=" parentCategoryId != null and parentCategoryId >0"> and aa.ID = #{parentCategoryId}</if>
+        <if test=" brandName != null and brandName !=''"> and b.BRAND_NAME like CONCAT('%','${brandName}','%' )</if>
+        group by m.ID
+        order by m.GMT_CREATE desc
+    </select>
+	
+	<select id="getMatterIds" parameterType="java.lang.Integer"
+	resultType="String">
+	   SELECT group_concat(ID) 
+	   FROM g_goods_matter 
+	   WHERE GOODS_ID=#{goodsId}
+	</select>
+	
+	<!--
+      - ===============================================
+      - 根据产品查询物料信息
+      - @author caoqi
+      - @date 2014-07-04
+      - ===============================================
+	-->
+	<select id="listForMatterByGoods" resultMap="RM_Matter_View"
+	 parameterType="com.goujia.website.base.ges.vo.MatterVO">
+		select
+			m.ID, 
+			m.CODE, 
+			m.NAME, 
+			m.MODEL, 
+			m.COLOR, 
+			m.MATERIALS, 
+			m.STATUS, 
+            m.DIMENSION, 
+            m.UNIT, 
+            m.PRIC, 
+			m.SALES_PRICE, 
+			m.IMAGE_PATH, 
+			m.BRAND_ID, 
+			m.CATEGORY_ID, 
+			m.OWNER_ID, 
+			m.USE_NATURE, 
+			m.PROCESS_PROP,
+			m.DISTRIBUTION_PHASE,
+			m.SHIPPING_METHODS,
+			m.PROCESSING_METHODS,
+			m.CONVERSION_UNIT,
+			m.CONVERSION_FORMULA,
+			m.INSTALLER,
+			m.IS_HAVE_INVENTORY,
+			m.TAKE_ADDRESS_TYPE,
+			m.MEMO,
+			m.IS_DELETED,
+			m.GMT_CREATE,
+			m.GMT_MODIFIED,
+			m.GOUJIA_PRICE,
+			gm.GOODS_ID,
+			gm.ID as GOODS_MATTER_ID,
+			b.NAME as BRAND_NAME,
+			mc.NAME as CATEGORY_NAME
+		from
+			G_GOODS_MATTER as gm
+		inner join G_MATTER as m on gm.MATTER_ID = m.ID
+		inner join G_MATERIALS_CATEGORY as mc on m.CATEGORY_ID = mc.ID
+		left join G_BRAND b on m.BRAND_ID = b.ID
+		left join G_MATERIALS_CATEGORY as thi on mc.PARENT_ID = thi.ID
+		left join G_MATERIALS_CATEGORY as sec on thi.PARENT_ID = sec.ID
+		left join G_MATERIALS_CATEGORY as fir on sec.PARENT_ID = fir.ID
+		where
+			m.STATUS = 'enable' and m.IS_DELETED='n' 
+		and mc.IS_COMPARED = 'y'
+		and mc.IS_DELETED = 'n'
+		and gm.GOODS_ID = #{goodsId}
+		and mc.PARENT_ID = #{parentCategoryId}
+		order by
+			mc.ORDER_INDEX ASC,
+			mc.ID ASC
+	</select>
+	
+	<!--
+      - ===============================================
+      - 根据标记Id查询标配物料信息
+      - @author jipengfei
+      - @date 2014-06-20
+      - ===============================================
+	-->
+	<select id="queryForMatterByMark" resultMap="RM_Matter">
+		select
+			m.ID, 
+			m.CODE, 
+			m.NAME, 
+			m.MODEL, 
+			m.COLOR, 
+			m.MATERIALS, 
+			m.STATUS, 
+            m.DIMENSION, 
+            m.UNIT, 
+            m.PRIC, 
+			m.SALES_PRICE, 
+			m.IMAGE_PATH, 
+			m.BRAND_ID, 
+			m.CATEGORY_ID, 
+			m.OWNER_ID, 
+			m.USE_NATURE, 
+			m.PROCESS_PROP,
+			m.DISTRIBUTION_PHASE,
+			m.SHIPPING_METHODS,
+			m.PROCESSING_METHODS,
+			m.CONVERSION_UNIT,
+			m.CONVERSION_FORMULA,
+			m.INSTALLER,
+			m.IS_HAVE_INVENTORY,
+			m.TAKE_ADDRESS_TYPE,
+			m.MEMO,
+			m.IS_DELETED,
+			m.GMT_CREATE,
+			m.GMT_MODIFIED,
+			m.GOUJIA_PRICE
+		from G_GOODS_MATTER gm left join G_MATTER m on gm.MATTER_ID = m.ID
+		where gm.TYPE = #{type} and gm.MARK_ID = #{markId} and m.IS_DELETED='n'
+		order by m.GMT_CREATE desc
+	</select>
+	
+	<!--
+      - ===============================================
+      - 查询物料
+      - @author FlounyCaesar
+      - @date 2014-08-18
+      - ===============================================
+	-->
+	<select id="query" resultMap="RM_Matter" parameterType="java.lang.Integer">
+		select
+			m.ID, 
+			m.CODE, 
+			m.NAME, 
+			m.MODEL, 
+			m.COLOR, 
+			m.MATERIALS, 
+			m.STATUS,
+            m.DIMENSION, 
+            m.UNIT, 
+            m.PRIC, 
+			m.SALES_PRICE, 
+			m.IMAGE_PATH, 
+			m.BRAND_ID, 
+			m.CATEGORY_ID, 
+			m.OWNER_ID, 
+			m.USE_NATURE, 
+			m.PROCESS_PROP,
+			m.DISTRIBUTION_PHASE,
+			m.SHIPPING_METHODS,
+			m.PROCESSING_METHODS,
+			m.CONVERSION_UNIT,
+			m.CONVERSION_FORMULA,
+			m.INSTALLER,
+			m.IS_HAVE_INVENTORY,
+			m.TAKE_ADDRESS_TYPE,
+			m.MEMO,
+			m.IS_DELETED,
+			m.GMT_CREATE,
+			m.GMT_MODIFIED,
+			m.GOUJIA_PRICE
+		from G_MATTER m
+		where m.ID = #{id}
+	</select>
+	<!--
+      - ===============================================
+      - 根据标配ID查询选配物料列表
+      - @author jipengfei
+      - @date 2014-06-20
+      - ===============================================
+    -->
+    <select id="listForMatterByMark" resultMap="RM_Matter_Brand">
+        select
+            m.*,
+            b.NAME as BRAND_NAME,
+            gm.ID as GOODS_MATTER_ID,
+            gm.TYPE 
+        from G_GOODS_MATTER gm left join G_MATTER m on gm.MATTER_ID = m.ID
+        left join G_BRAND b on m.BRAND_ID =b.ID
+        where gm.MARK_ID = #{markId} and m.IS_DELETED='n'
+        <if test="type !='' and type !=null"> and gm.TYPE = #{type}</if>
+        order by gm.TYPE desc
+    </select>
+	
+</mapper>

@@ -1,0 +1,92 @@
+#Html("begin")
+#Head("begin")
+#Title("系统管理-问题管理")
+#LoadBootstrap("default")
+#LoadSUI("default")
+#Head("end")
+<body>
+	#parse("header.vm")
+	<form class="form-inline align-right" action="$request.contextPath/question/question.htm?isDeleted=y" method="post">
+		<div class="page-header">
+			<div class="form-group">
+				<label> 废弃问题标题： </label>
+    				<input type="text" name="subject" value="$!searchParam.subject" class="input-medium">
+			</div>
+
+			<div class="vspace-sm"></div>
+
+			<div class="form-group">
+				<button class="btn btn-sm btn-primary" type="submit">
+					<i class="icon-search align-top"></i>查询
+				</button>
+			</div>
+			</div>
+    	<!-- /.page-header -->
+    
+      <ul class="nav nav-tabs" id="online">
+    	  <li class="">
+    	    <a href="$request.contextPath/question/question.htm?isDeleted=n">
+    	       在线的问题
+    	    </a>
+			
+    	  </li>
+		  <li class="active">
+    	   <a href="$request.contextPath/question/question.htm?isDelete=y">
+    	       作废的问题
+    	    </a>
+    	  </li>
+    	</ul>
+    	<!--nav-table end-->
+    	<!--在线的问题——-->
+    	<div class="tab-content">
+    		<div class="table-responsive">
+    			<div class="dataTables_wrapper">
+    				<!-- 结账 多个class "amount1-list" -->
+    				<table id="" class="table table-striped table-bordered table-hover J_Table amount-list">
+    					<thead>
+    						<tr>
+    							<th width="80px" class="center">#</th>
+    							<th width="480px" class="center">问题的标题</th>
+    							<th width="280px" class="center">创建时间</th>
+    							<th width="280px" class="center">答案数量</th>
+    						</tr>
+    					</thead>
+    
+    					<tbody>
+    						#if($page && $page.result)
+    							#foreach($info in $!page.result)
+            						<tr data-id="$!info.id">
+    									<td class="center">$!info.id</td>
+            							<td class="center">$!info.subject</td>
+    									<td class="center">$!info.createTime</td>
+            							<td class="center"><p>$!info.anwserAmount</p></td>
+            						</tr>
+    							#end
+    						#end
+    					</tbody>
+    				</table>
+    
+    				<!--批量操作+分页 start-->
+    				<div class="row">
+    					<div class="col-xs-12">
+    						<div class="dataTables_paginate paging_bootstrap">
+    							#Pagination($page)
+    						</div>
+    					</div>
+    				</div>
+    				<!--批量操作+分页 end-->
+    			</div>
+    		</div><!-- /.table-responsive -->
+    	</div><!-- /.table-content -->
+	</form>
+	<!-- PAGE CONTENT ENDS -->
+	
+	<script>
+		$("#addQuestion").bind("click", function(){
+			window.location.href="$!request.contextPath/question/details.htm";
+		})
+		
+    </script>
+	#parse("footer.vm")
+</body>
+#Html("end")

@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Error</title>
+	<link rel="stylesheet" type="text/css" href="http://www.goujiawang.com/goujia/css/default/common.css" />
+	<script type="text/javascript" src="http://www.goujiawang.com/goujia/js/jquery-1.6.4.min.js"></script>
+</head>
+<body>
+<div class="container">
+	<div class="errorCon">
+		<div class="errorL">
+			<img src="http://www.goujiawang.com/goujia/images/default/logo.png" />
+		</div>
+		<div class="errorR">
+			<p class="floatL"><a href="http://www.goujiawang.com" class="aBlock"><img src="http://www.goujiawang.com/goujia/images/default/error.png" /></a></p>
+			<p class="floatL">
+				<span class="errorTit">抱歉，您访问的页面不存在！</span>
+				<span class="return padTop30">您可以尝试：</span>
+				<span class="return padTop10">1. 检查输入的网址，或者返回 
+				<a href="javascript:" onclick="goBack();" class="yellow">上一页</a>
+				</span>
+				<span class="return padTop10">快速进入
+				<a href="http://www.goujiawang.com" class="yellow">首页</a>、
+				<a href="http://www.goujiawang.com/product/" class="yellow">构家方案</a>、
+				<a href="http://www.goujiawang.com/home/index.htm" class="yellow">构家知识</a>、
+				<a href="http://www.goujiawang.com/craft" class="yellow">构家工艺</a></span>
+			</p>
+		</div>
+	</div>
+	<div class="errorBot">
+		<p class="errorBotDiv">
+			<a href="http://www.goujiawang.com/aboutus.htm">关于我们</a>
+			<a href="http://www.goujiawang.com/contactus.htm">联系我们</a>
+			<a href="http://www.goujiawang.com/attention.htm">关注我们</a>
+			<a href="http://www.goujiawang.com/joinus.htm">加入我们</a>
+			<a href="http://www.goujiawang.com/merchants.htm">招商加盟</a>
+			<a href="http://www.goujiawang.com/contact.htm">客服中心</a>
+			<a href="http://www.goujiawang.com/faq.htm">常见问题</a>
+			<a href="http://www.goujiawang.com/legalnotices.htm" class="noBorder">法律声明</span>
+		</p>
+		<p class="errorBotTit">
+			Copyright 2003-2015, 版权所有:杭州构家网络科技有限公司 浙ICP备14021018号
+		</p>
+	</div>
+</div>	
+<script type="text/javascript">
+function goBack(){
+	window.location.go(-1);
+}
+</script>
+</body>
+</html>

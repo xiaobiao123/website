@@ -1,0 +1,426 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.goujia.website.base.ges.dao.BuildingMapper">
+	<!-- - =============================================== - 返回Building POJO 
+		- @author caoqi - @date 2014-06-13 - =============================================== -->
+	<resultMap type="com.goujia.website.base.ges.entity.Building"
+		id="RM_Building_View">
+		<id property="id" column="ID" jdbcType="INTEGER" javaType="java.lang.Integer" />
+		<result property="name" column="NAME" jdbcType="VARCHAR"
+			javaType="java.lang.String" />
+		<result property="developer" column="DEVELOPER" jdbcType="VARCHAR"
+			javaType="java.lang.String" />
+		<result property="photoPath" column="PHOTO_PATH" jdbcType="VARCHAR"
+			javaType="java.lang.String" />
+		<result property="summary" column="SUMMARY" jdbcType="VARCHAR"
+			javaType="java.lang.String" />
+		<result property="contactName" column="CONTACT_NAME" jdbcType="VARCHAR"
+			javaType="java.lang.String" />
+		<result property="phone" column="PHONE" jdbcType="VARCHAR"
+			javaType="java.lang.String" />
+		<result property="address" column="ADDRESS" jdbcType="VARCHAR"
+			javaType="java.lang.String" />
+		<result property="longitude" column="LONGITUDE" jdbcType="DOUBLE"
+			javaType="java.lang.Double" />
+		<result property="latitude" column="LATITUDE" jdbcType="DOUBLE"
+			javaType="java.lang.Double" />
+		<result property="provinceId" column="PROVINCE_ID" jdbcType="INTEGER"
+			javaType="java.lang.Integer" />
+		<result property="cityId" column="CITY_ID" jdbcType="INTEGER"
+			javaType="java.lang.Integer" />
+		<result property="countyId" column="COUNTY_ID" jdbcType="INTEGER"
+			javaType="java.lang.Integer" />
+		<result property="isDeleted" column="IS_DELETED" jdbcType="VARCHAR"
+			javaType="java.lang.String" />
+		<result property="gmtCreate" column="GMT_CREATE" jdbcType="TIMESTAMP"
+			javaType="java.util.Date" />
+		<result property="ownerId" column="OWNER_ID" jdbcType="INTEGER"
+			javaType="java.lang.Integer" />
+	</resultMap>
+
+	<!-- - =============================================== - 返回Building VO - 
+		@author caoqi - @date 2014-06-13 - =============================================== -->
+	<resultMap type="com.goujia.website.base.ges.vo.BuildingVO"
+		id="RM_BuildingVO" extends="RM_Building_View">
+		<result property="provinceName" column="PROVINCE_NAME"
+			jdbcType="VARCHAR" javaType="java.lang.String" />
+		<result property="cityName" column="CITY_NAME" jdbcType="VARCHAR"
+			javaType="java.lang.String" />
+		<result property="countyName" column="COUNTY_NAME" jdbcType="VARCHAR"
+			javaType="java.lang.String" />
+	</resultMap>
+
+	<!-- - =============================================== - 返回Developer VO 
+		- @author caoqi - @date 2014-10-24 - =============================================== -->
+	<resultMap type="com.goujia.website.base.ges.vo.DeveloperVO"
+		id="RM_DeveloperVO">
+		<result property="developerName" column="DEVELOPER_NAME"
+			jdbcType="VARCHAR" javaType="java.lang.String" />
+	</resultMap>
+
+	<!-- - =============================================== - 新增Building - @author 
+		caoqi - @date 2014-06-13 - =============================================== -->
+	<insert id="create" parameterType="com.goujia.website.base.ges.entity.Building"
+		useGeneratedKeys="true" keyProperty="id">
+		insert into G_BUILDING (
+		ID,
+		NAME,
+		DEVELOPER,
+		PHOTO_PATH,
+		SUMMARY,
+		CONTACT_NAME,
+		PHONE,
+		ADDRESS,
+		LONGITUDE,
+		LATITUDE,
+		PROVINCE_ID,
+		CITY_ID,
+		COUNTY_ID,
+		IS_DELETED,
+		GMT_CREATE,
+		GMT_MODIFIED,
+		OWNER_ID
+		) values (
+		#{id},
+		#{name},
+		#{developer},
+		#{photoPath},
+		#{summary},
+		#{contactName},
+		#{phone},
+		#{address},
+		#{longitude},
+		#{latitude},
+		#{provinceId},
+		#{cityId},
+		#{countyId},
+		'n',
+		now(),
+		now(),
+		#{ownerId}
+		)
+	</insert>
+
+	<!-- - =============================================== - 修改Building - @author 
+		caoqi - @date 2014-06-13 - =============================================== -->
+	<update id="update" parameterType="com.goujia.website.base.ges.entity.Building">
+		update G_BUILDING set GMT_MODIFIED=now()
+		<if test="name != null and name !=''">, NAME=#{name}</if>
+		<if test="developer != null and developer != ''">, DEVELOPER=#{developer}</if>
+		<if test="photoPath != null and photoPath != ''">, PHOTO_PATH=#{photoPath}</if>
+		<if test="summary != null and summary != ''">, SUMMARY=#{summary}</if>
+		<if test="contactName != null and contactName != ''">, CONTACT_NAME=#{contactName}</if>
+		<if test="phone != null and phone !=''">, PHONE=#{phone}</if>
+		<if test="address != null and address != ''">, ADDRESS=#{address}</if>
+		<if test="longitude != null and longitude >0">, LONGITUDE=#{longitude}</if>
+		<if test="latitude != null and latitude >0">, LATITUDE=#{latitude}</if>
+		<if test="provinceId != null and provinceId >0">, PROVINCE_ID=#{provinceId}</if>
+		<if test="cityId != null and cityId >0">, CITY_ID=#{cityId}</if>
+		<if test="countyId != null and countyId >0">, COUNTY_ID=#{countyId}</if>
+		<if test="isDeleted != null and isDeleted !=''">, IS_DELETED=#{isDeleted}</if>
+		where ID=#{id}
+	</update>
+
+	<!-- - =============================================== - 查询Building信息 - 
+		@author caoqi - @date 2014-06-13 - =============================================== -->
+	<select id="queryForBuilding" resultMap="RM_BuildingVO"
+		parameterType="com.goujia.website.base.ges.vo.BuildingVO">
+		select
+		b.ID,
+		b.NAME,
+		b.DEVELOPER,
+		b.PHOTO_PATH,
+		b.SUMMARY,
+		b.CONTACT_NAME,
+		b.PHONE,
+		b.ADDRESS,
+		b.LONGITUDE,
+		b.LATITUDE,
+		b.PROVINCE_ID,
+		b.CITY_ID,
+		b.COUNTY_ID,
+		b.IS_DELETED,
+		b.GMT_CREATE,
+		b.OWNER_ID,
+		b.GMT_MODIFIED,
+		(select NAME from G_AREA a where a.ID = b.PROVINCE_ID) as PROVINCE_NAME,
+		(select NAME from G_AREA a where a.ID = b.CITY_ID) as CITY_NAME,
+		(select NAME from G_AREA a where a.ID = b.COUNTY_ID) as COUNTY_NAME
+		from
+		G_BUILDING as b
+		where b.IS_DELETED='n'
+		<if test="name !=null and name !=''">and b.NAME like CONCAT('%','${name}','%' )</if>
+		<if test="developer !=null and developer !=''">and b.DEVELOPER like CONCAT('%','${developer}','%' )</if>
+		<if test="provinceId != null and provinceId >0">and b.PROVINCE_ID=#{provinceId}</if>
+		<if test="cityId != null and cityId >0">and b.CITY_ID=#{cityId}</if>
+		<if test="countyId != null and countyId >0">and b.COUNTY_ID=#{countyId}</if>
+		<if test="id != null and id >0">and b.ID=#{id}</if>
+		order by b.ID desc
+
+	</select>
+
+	<!-- - =============================================== - 查询Building信息 - 
+		@author caoqi - @date 2014-06-13 - =============================================== -->
+	<select id="queryForBuildingById" resultMap="RM_BuildingVO"
+		parameterType="java.lang.Integer">
+		select
+		b.ID,
+		b.NAME,
+		b.DEVELOPER,
+		b.PHOTO_PATH,
+		b.SUMMARY,
+		b.CONTACT_NAME,
+		b.PHONE,
+		b.ADDRESS,
+		b.LONGITUDE,
+		b.LATITUDE,
+		b.PROVINCE_ID,
+		b.CITY_ID,
+		b.COUNTY_ID,
+		b.IS_DELETED,
+		b.GMT_CREATE,
+		b.OWNER_ID,
+		b.GMT_MODIFIED,
+		(select NAME from G_AREA a where a.ID = b.PROVINCE_ID) as PROVINCE_NAME,
+		(select NAME from G_AREA a where a.ID = b.CITY_ID) as CITY_NAME,
+		(select NAME from G_AREA a where a.ID = b.COUNTY_ID) as COUNTY_NAME
+		from
+		G_BUILDING as b
+		where b.IS_DELETED='n'
+		and b.ID = #{id}
+		order by b.ID desc
+
+	</select>
+
+	<!-- - =============================================== - 查询Building列表信息 
+		- @author caoqi - @date 2014-06-13 - =============================================== -->
+	<select id="listForBuilding" resultMap="RM_BuildingVO"
+		parameterType="com.goujia.website.base.ges.vo.BuildingVO">
+		select
+		b.ID,
+		b.NAME,
+		b.DEVELOPER,
+		b.PHOTO_PATH,
+		b.SUMMARY,
+		b.CONTACT_NAME,
+		b.PHONE,
+		b.ADDRESS,
+		b.LONGITUDE,
+		b.LATITUDE,
+		b.PROVINCE_ID,
+		b.CITY_ID,
+		b.COUNTY_ID,
+		b.IS_DELETED,
+		b.GMT_CREATE,
+		b.OWNER_ID,
+		b.GMT_MODIFIED,
+		(select NAME from G_AREA a where a.ID = b.PROVINCE_ID) as PROVINCE_NAME,
+		(select NAME from G_AREA a where a.ID = b.CITY_ID) as CITY_NAME,
+		(select NAME from G_AREA a where a.ID = b.COUNTY_ID) as COUNTY_NAME
+		from
+		G_BUILDING as b
+		where b.IS_DELETED='n'
+		<if test="name !=null and name !=''">and b.NAME like CONCAT('%','${name}','%' )</if>
+		<if test="developer !=null and developer !=''">and b.DEVELOPER like CONCAT('%','${developer}','%' )</if>
+		<if test="provinceId != null and provinceId >0">and b.PROVINCE_ID=#{provinceId}</if>
+		<if test="cityId != null and cityId >0">and b.CITY_ID=#{cityId}</if>
+		<if test="countyId != null and countyId >0">and b.COUNTY_ID=#{countyId}</if>
+		order by b.ID desc
+
+	</select>
+
+	<!-- - =============================================== - 查询Developer列表信息 
+		- @author caoqi - @date 2014-10-24 - =============================================== -->
+	<select id="listForDeveloper" resultMap="RM_DeveloperVO"
+		parameterType="com.goujia.website.base.ges.entity.Building">
+		select distinct
+		b.DEVELOPER as DEVELOPER_NAME
+		from
+		G_BUILDING as b
+		where
+		b.IS_DELETED='n'
+		<if test="name !=null and name !=''">and b.NAME like CONCAT('%','${name}','%' )</if>
+		<if test="provinceId != null and provinceId >0">and b.PROVINCE_ID=#{provinceId}</if>
+		<if test="cityId != null and cityId >0">and b.CITY_ID=#{cityId}</if>
+		<if test="countyId != null and countyId >0">and b.COUNTY_ID=#{countyId}</if>
+		order by b.ID desc
+
+	</select>
+
+	<!-- - =============================================== - 分页查询Building信息 
+		- @author jipengfei - @date 2014-06-13 - =============================================== -->
+	<select id="pageForBuilding" resultMap="RM_BuildingVO"
+		parameterType="com.goujia.website.base.ges.vo.BuildingVO">
+		select distinct
+		b.ID,
+		b.NAME,
+		b.DEVELOPER,
+		b.PHOTO_PATH,
+		b.SUMMARY,
+		b.CONTACT_NAME,
+		b.PHONE,
+		b.ADDRESS,
+		b.LONGITUDE,
+		b.LATITUDE,
+		b.PROVINCE_ID,
+		b.CITY_ID,
+		b.COUNTY_ID,
+		b.IS_DELETED,
+		b.GMT_CREATE,
+		b.OWNER_ID,
+		b.GMT_MODIFIED,
+		(select NAME from G_AREA a where a.ID = b.PROVINCE_ID) as PROVINCE_NAME,
+		(select NAME from G_AREA a where a.ID = b.CITY_ID) as CITY_NAME,
+		(select NAME from G_AREA a where a.ID = b.COUNTY_ID) as COUNTY_NAME
+		from
+		G_BUILDING as b
+		left join G_HOUSE as h on h.BUILDING = b.ID
+		left
+		join G_GOODS as g on g.HOUSE_ID = h.ID
+		left join G_SHOP_GOODS as sg on
+		sg.GOODS_ID = g.ID
+		where b.IS_DELETED='n'
+		<if test="name !=null and name !=''">and b.NAME like CONCAT('%','${name}','%' )</if>
+		<if test="developer !=null and developer !=''">and b.DEVELOPER like CONCAT('%','${developer}','%' )</if>
+		<if test="provinceId != null and provinceId >0">and b.PROVINCE_ID=#{provinceId}</if>
+		<if test="cityId != null and cityId >0">and b.CITY_ID=#{cityId}</if>
+		<if test="countyId != null and countyId >0">and b.COUNTY_ID=#{countyId}</if>
+		<if test="shopId != null and shopId >0">and sg.SHOP_ID=#{shopId}</if>
+		order by
+		<if test="sort == 'gmtCreate_asc'.toString()">b.GMT_CREATE asc,</if>
+		<if test="sort == 'gmtCreate_desc'.toString()">b.GMT_CREATE desc,</if>
+		<if test="sort == 'default'.toString()">b.GMT_MODIFIED desc,</if>
+		b.GMT_CREATE desc
+	</select>
+
+	<!-- - =============================================== - 查询Building信息总数 
+		- @author jipengfei - @date 2014-06-13 - =============================================== -->
+	<select id="count" resultType="java.lang.Integer"
+		parameterType="com.goujia.website.base.ges.vo.BuildingVO">
+		select
+		count(b.ID)
+		from
+		G_BUILDING as b
+		where b.IS_DELETED='n'
+		<if test="name !=null and name !=''">and b.NAME like CONCAT('%','${name}','%' )</if>
+		<if test="developer !=null and developer !=''">and b.DEVELOPER like CONCAT('%','${developer}','%' )</if>
+		<if test="provinceId != null and provinceId >0 ">and b.PROVINCE_ID=#{provinceId}</if>
+		<if test="cityId != null and cityId >0 ">and b.CITY_ID=#{cityId}</if>
+		<if test="countyId != null and countyId >0">and b.COUNTY_ID=#{countyId}</if>
+	</select>
+
+	<!-- - =============================================== - 根据区县查询指定数量楼盘信息 
+		- @author jipengfei - @date 2014-06-13 - =============================================== -->
+	<select id="listForLimitBuilding" resultMap="RM_BuildingVO"
+		parameterType="com.goujia.website.base.ges.vo.BuildingVO">
+		select
+		b.ID,
+		b.NAME,
+		b.DEVELOPER,
+		b.PHOTO_PATH,
+		b.SUMMARY,
+		b.CONTACT_NAME,
+		b.PHONE,
+		b.ADDRESS,
+		b.LONGITUDE,
+		b.LATITUDE,
+		b.PROVINCE_ID,
+		b.CITY_ID,
+		b.COUNTY_ID,
+		b.IS_DELETED,
+		b.GMT_CREATE,
+		b.OWNER_ID,
+		b.GMT_MODIFIED,
+		(select NAME from G_AREA a where a.ID = b.PROVINCE_ID) as PROVINCE_NAME,
+		(select NAME from G_AREA a where a.ID = b.CITY_ID) as CITY_NAME,
+		(select NAME from G_AREA a where a.ID = b.COUNTY_ID) as COUNTY_NAME
+		from
+		G_BUILDING as b
+		where b.IS_DELETED='n'
+		<if test="cityId !=null and cityId >0"> and b.CITY_ID = #{cityId} </if>
+		<if test="countyId !=null and countyId >0"> and b.COUNTY_ID = #{countyId} </if>
+		limit #{pageSize}
+	</select>
+
+
+	<!-- - =============================================== - 根据区县查询可能感兴趣的楼盘 
+		- @author caoqi - @date 2014-07-08 - =============================================== -->
+	<select id="pageForPopularBuilding" parameterType="com.goujia.website.base.ges.entity.Building"
+		resultMap="RM_Building_View">
+		select distinct
+		b.ID,
+		b.`NAME`,
+		b.DEVELOPER,
+		b.PHOTO_PATH,
+		b.SUMMARY,
+		b.CONTACT_NAME,
+		b.PHONE,
+		b.ADDRESS,
+		b.LONGITUDE,
+		b.LATITUDE,
+		b.PROVINCE_ID,
+		b.CITY_ID,
+		b.COUNTY_ID,
+		b.IS_DELETED,
+		b.GMT_CREATE,
+		b.OWNER_ID,
+		b.GMT_MODIFIED
+		from
+		G_BUILDING as b
+		inner join G_HOUSE as h on h.BUILDING = b.ID
+		inner join G_GOODS as g on g.HOUSE_ID = h.ID
+		inner join G_SHOP_GOODS as sg on sg.GOODS_ID = g.ID
+		where
+		sg.STATUS = 'enable'
+		and g.STATUS = 'published'
+		and h.IS_DELETED = 'n'
+		and b.IS_DELETED = 'n'
+		<if test="cityId != null and cityId >0">and b.CITY_ID=#{cityId}</if>
+		<if test="countyId != null and countyId >0">and b.COUNTY_ID=#{countyId}</if>
+		order by
+		sg.SALE_NUM DESC
+	</select>
+
+	<select id="selectBuilDing"
+		resultType="com.goujia.website.base.ges.entity.ProductResultType"
+		parameterType="com.goujia.website.base.ges.entity.ProductParam">
+		SELECT DISTINCT d.ID as id,d.`NAME` as name
+		from g_goods c LEFT JOIN g_house b on b.ID = c.HOUSE_ID
+		LEFT JOIN g_building d on b.BUILDING = d.ID
+		LEFT JOIN g_resource e on c.HOUSE_TYPE_ID=e.ID and e.IS_DELETED = 'n'
+		LEFT JOIN g_resource r on c.STYLE_ID = r.ID and r.IS_DELETED='n'
+		LEFT JOIN g_house h on c.HOUSE_ID=h.ID
+		where
+		b.ID is not NULL and c.`STATUS`='published'
+		and d.IS_DELETED = 'n'
+		and d.CITY_ID = #{cityId}
+		<if test="null!=countyId and ''!=countyId">
+			AND d.COUNTY_ID=#{countyId}
+		</if>
+		<if test="null!=house_type and ''!=house_type">
+			AND e.TYPE = #{house_type}
+		</if>
+		<if test="null!=house_style and ''!=house_style">
+			AND r.TYPE=#{house_style}
+		</if>
+		<if test="null!=buildingId and ''!=buildingId">
+			AND d.ID=#{buildingId}
+		</if>
+		<if test="null!=maxPrice and ''!=maxPrice">
+			AND c.DISCOUNT_PRICE &lt; #{maxPrice}
+		</if>
+		<if test="null!=minPrice and ''!=minPrice">
+			AND c.DISCOUNT_PRICE &gt; #{minPrice}
+		</if>
+		<if test="null!=maxArea and ''!=maxArea">
+			AND h.FLOOR_AREA &lt; #{maxArea}
+		</if>
+		<if test="null!=minArea and ''!=minArea">
+			AND h.FLOOR_AREA &gt; #{minArea}
+		</if>
+	</select>
+
+</mapper>

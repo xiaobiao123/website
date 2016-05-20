@@ -1,0 +1,571 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.goujia.website.base.dao.article.ArticleMapper">
+	<resultMap id="RM_Article"
+		type="com.goujia.website.base.entity.article.Article">
+		<id column="ID" property="id" jdbcType="INTEGER" />
+		<result column="IMAGE_PATH" property="imagePath" jdbcType="VARCHAR" />
+		<result column="ARTICLE_NAME" property="articleName" jdbcType="VARCHAR" />
+		<result column="USER_ID" property="userId" jdbcType="INTEGER" />
+		<result column="USER_TYPE" property="userType" jdbcType="VARCHAR" />
+		<result column="HIT_NUM" property="hitNum" jdbcType="INTEGER" />
+		<result column="REPORT_NUMBER" property="reportNumber"
+			jdbcType="INTEGER" />
+		<result column="LOVE_NUM" property="loveNum" jdbcType="INTEGER" />
+		<result column="SHARE_NUM" property="shareNum" jdbcType="INTEGER" />
+		<result column="COLLECTION_NUM" property="collectionNum"
+			jdbcType="INTEGER" />
+		<result column="IS_ESSENCE" property="isEssence" jdbcType="VARCHAR" />
+		<result column="IS_TOP" property="isTop" jdbcType="VARCHAR" />
+		<result column="GMT_CREATE" property="gmtCreate" jdbcType="TIMESTAMP" />
+		<result column="GMT_MODIFIED" property="gmtModified" jdbcType="TIMESTAMP" />
+		<result column="IS_DELETED" property="isDeleted" jdbcType="VARCHAR" />
+		<result column="INTRODUCTION" property="introduction" jdbcType="VARCHAR" />
+	</resultMap>
+	<resultMap id="RM_ArticleBLOBS"
+		type="com.goujia.website.base.entity.article.Article" extends="RM_Article">
+		<result column="CONTENT" property="content" jdbcType="LONGVARCHAR" />
+	</resultMap>
+	<resultMap id="RM_ArticleVO" type="com.goujia.website.base.vo.article.ArticleVO"
+		extends="RM_Article">
+		<result column="userName" property="userName" />
+		<result column="headImage" property="headImage" />
+		<result column="collectId" property="collectId" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		ID, IMAGE_PATH, ARTICLE_NAME, USER_ID, USER_TYPE, HIT_NUM, REPORT_NUMBER,
+		LOVE_NUM, SHARE_NUM, COLLECTION_NUM, IS_ESSENCE, IS_TOP, GMT_CREATE,
+		GMT_MODIFIED,
+		IS_DELETED,INTRODUCTION
+	</sql>
+	<sql id="Base_Query_Condition">
+		<where>
+			<if test="imagePath != null">
+				IMAGE_PATH = #{imagePath,jdbcType=VARCHAR}
+			</if>
+			<if test="articleName != null">
+				and ARTICLE_NAME = #{articleName,jdbcType=VARCHAR}
+			</if>
+			<if test="userId >= 0">
+				and USER_ID = #{userId,jdbcType=INTEGER}
+			</if>
+			<if test="userType != null">
+				and USER_TYPE = #{userType,jdbcType=VARCHAR}
+			</if>
+			<if test="hitNum >= 0">
+				and HIT_NUM = #{hitNum,jdbcType=INTEGER}
+			</if>
+			<if test="reportNumber >= 0">
+				and REPORT_NUMBER = #{reportNumber,jdbcType=INTEGER}
+			</if>
+			<if test="loveNum >= 0">
+				and LOVE_NUM = #{loveNum,jdbcType=INTEGER}
+			</if>
+			<if test="shareNum >= 0">
+				and SHARE_NUM = #{shareNum,jdbcType=INTEGER}
+			</if>
+			<if test="collectionNum >= 0">
+				and COLLECTION_NUM = #{collectionNum,jdbcType=INTEGER}
+			</if>
+			<if test="isEssence != null">
+				and IS_ESSENCE = #{isEssence,jdbcType=VARCHAR}
+			</if>
+			<if test="isTop != null">
+				and IS_TOP = #{isTop,jdbcType=VARCHAR}
+			</if>
+			<if test="isDeleted != null">
+				and IS_DELETED = #{isDeleted,jdbcType=VARCHAR}
+			</if>
+			<if test="introduction != null">
+				and INTRODUCTION = #{introduction,jdbcType=VARCHAR}
+			</if>
+		</where>
+	</sql>
+	<sql id="Blob_Column_List">
+		CONTENT
+	</sql>
+	<select id="get" resultMap="RM_ArticleBLOBS" parameterType="java.lang.Integer">
+		select
+		<include refid="Base_Column_List" />
+		,
+		<include refid="Blob_Column_List" />
+		from G_BBS_ARTICLE
+		where ID = #{id,jdbcType=INTEGER} and IS_DELETED='n'
+	</select>
+	<select id="countFormalByName" parameterType="map" resultType="int">
+		select count(1) from G_BBS_ARTICLE where IS_DELETED='n'
+		<if test="name!=null and name!=''">
+			and ARTICLE_NAME like '%${name}%'
+		</if>
+	</select>
+
+	<select id="countNullifyByName" parameterType="map" resultType="int">
+		select count(1) from G_BBS_ARTICLE where IS_DELETED='y'
+		<if test="name!=null and name!=''">
+			and ARTICLE_NAME like '%${name}%'
+		</if>
+	</select>
+	<select id="findFormalByName" parameterType="map" resultMap="RM_ArticleVO">
+		select
+		atricle.*,
+		user.USER_NAME userName
+		from G_BBS_ARTICLE atricle
+		left join G_USER user on user.ID=atricle.USER_ID
+		where atricle.IS_DELETED='n'
+		<if test="name!=null and name!=''">
+			and atricle.ARTICLE_NAME like '%${name}%'
+		</if>
+	</select>
+
+	<select id="findNullifyByName" parameterType="map" resultMap="RM_ArticleVO">
+		select
+		atricle.*,
+		user.USER_NAME userName
+		from G_BBS_ARTICLE atricle
+		left join G_USER user on user.ID=atricle.USER_ID
+		where atricle.IS_DELETED='y'
+		<if test="name!=null and name!=''">
+			and atricle.ARTICLE_NAME like '%${name}%'
+		</if>
+	</select>
+
+	<select id="list" resultMap="RM_ArticleVO"
+		parameterType="com.goujia.website.base.vo.article.ArticleVO">
+		select
+		<include refid="Base_Column_List" />
+		,
+		<include refid="Blob_Column_List" />
+		from G_BBS_ARTICLE
+		<include refid="Base_Query_Condition"></include>
+	</select>
+
+	<select id="count" resultType="int"
+		parameterType="com.goujia.website.base.vo.article.ArticleVO">
+		select count(*) from G_BBS_ARTICLE
+		<include refid="Base_Query_Condition" />
+	</select>
+
+	<delete id="delete" parameterType="java.lang.Integer">
+		update G_BBS_ARTICLE set IS_DELETED='y'
+		where ID = #{id,jdbcType=INTEGER}
+	</delete>
+	<insert id="insert" parameterType="com.goujia.website.base.entity.article.Article">
+		<selectKey resultType="int" order="AFTER" keyProperty="id">
+			SELECT @@IDENTITY AS ID
+		</selectKey>
+		insert into G_BBS_ARTICLE (IMAGE_PATH, ARTICLE_NAME,
+		USER_ID, USER_TYPE,
+		HIT_NUM, REPORT_NUMBER, LOVE_NUM,
+		SHARE_NUM, COLLECTION_NUM, IS_ESSENCE,
+		IS_TOP, GMT_CREATE, GMT_MODIFIED,
+		IS_DELETED, CONTENT,INTRODUCTION)
+		values (#{imagePath,jdbcType=VARCHAR}, #{articleName,jdbcType=VARCHAR},
+		#{userId,jdbcType=INTEGER}, #{userType,jdbcType=VARCHAR},
+		#{hitNum,jdbcType=INTEGER}, #{reportNumber,jdbcType=INTEGER},
+		#{loveNum,jdbcType=INTEGER},
+		#{shareNum,jdbcType=INTEGER}, #{collectionNum,jdbcType=INTEGER}, #{isEssence,jdbcType=VARCHAR},
+		#{isTop,jdbcType=VARCHAR}, now(), now(),
+		'n', #{content,jdbcType=LONGVARCHAR},#{introduction,jdbcType=VARCHAR})
+	</insert>
+
+	<update id="update" parameterType="com.goujia.website.base.entity.article.Article">
+		update G_BBS_ARTICLE
+		<set>
+			GMT_MODIFIED = now(),
+			<if test="imagePath != null and imagePath!=''">
+				IMAGE_PATH = #{imagePath,jdbcType=VARCHAR},
+			</if>
+			<if test="articleName != null and articleName!=''">
+				ARTICLE_NAME = #{articleName,jdbcType=VARCHAR},
+			</if>
+			<if test="userId != null and userId!=''">
+				USER_ID = #{userId,jdbcType=INTEGER},
+			</if>
+			<if test="userType != null and userType!=''">
+				USER_TYPE = #{userType,jdbcType=VARCHAR},
+			</if>
+			<if test="hitNum != null and hitNum!=''">
+				HIT_NUM = #{hitNum,jdbcType=INTEGER},
+			</if>
+			<if test="reportNumber != null and reportNumber!=''">
+				REPORT_NUMBER = #{reportNumber,jdbcType=INTEGER},
+			</if>
+			<if test="loveNum != null and loveNum!=''">
+				LOVE_NUM = #{loveNum,jdbcType=INTEGER},
+			</if>
+			<if test="shareNum != null and shareNum!=''">
+				SHARE_NUM = #{shareNum,jdbcType=INTEGER},
+			</if>
+			<if test="collectionNum != null and collectionNum!=''">
+				COLLECTION_NUM = #{collectionNum,jdbcType=INTEGER},
+			</if>
+			<if test="isEssence != null and isEssence!=''">
+				IS_ESSENCE = #{isEssence,jdbcType=VARCHAR},
+			</if>
+			<if test="isTop != null and isTop!=''">
+				IS_TOP = #{isTop,jdbcType=VARCHAR},
+			</if>
+			<if test="content != null and content!=''">
+				CONTENT = #{content,jdbcType=LONGVARCHAR},
+			</if>
+			<if test="introduction != null and introduction!=''">
+				INTRODUCTION = #{introduction,jdbcType=VARCHAR},
+			</if>
+		</set>
+		where ID = #{id,jdbcType=INTEGER}
+	</update>
+	<update id="batchDelete" parameterType="map">
+		update G_BBS_ARTICLE set IS_DELETED="y" where
+		ID in (
+		<foreach collection="list" item="item" separator=",">
+			#{item}
+		</foreach>
+
+		)
+	</update>
+	<update id="batchReturn" parameterType="map">
+		update G_BBS_ARTICLE set IS_DELETED="n" where
+		ID in (
+		<foreach collection="list" item="item" separator=",">
+			#{item}
+		</foreach>
+		)
+	</update>
+	<update id="addHitNum" parameterType="map">
+		update G_BBS_ARTICLE set
+		HIT_NUM=HIT_NUM+1 where
+		ID = #{id}
+	</update>
+	<update id="addLoveNum" parameterType="map">
+		update G_BBS_ARTICLE set
+		LOVE_NUM=LOVE_NUM+1 where
+		ID = #{id}
+	</update>
+	<select id="getById" parameterType="map" resultMap="RM_ArticleVO">
+		select * from G_BBS_ARTICLE
+		where ID = #{id} and IS_DELETED='n'
+	</select>
+	<select id="getWithUsernaemById" parameterType="map" resultMap="RM_ArticleVO">
+		select article.*,user.USER_NAME as userName from G_BBS_ARTICLE article
+		left join G_USER user on article.USER_ID=user.ID
+		where article.ID = #{id} and article.IS_DELETED='n'
+	</select>
+
+	<select id="recArticle" resultMap="RM_ArticleBLOBS"
+		parameterType="java.lang.Integer">
+		select G_BBS_ARTICLE.ID as ID,G_BBS_ARTICLE.IMAGE_PATH as
+		IMAGE_PATH,G_BBS_ARTICLE.ARTICLE_NAME as
+		ARTICLE_NAME,G_BBS_ARTICLE.CONTENT as CONTENT from
+		G_BBS_ARTICLE,G_BBS_ARTICLE_LABEL
+		WHERE
+		G_BBS_ARTICLE.ID=G_BBS_ARTICLE_LABEL.ARTICLE
+		AND
+		G_BBS_ARTICLE.IS_DELETED='n'
+		AND
+		G_BBS_ARTICLE_LABEL.LABEL=#{labelId,jdbcType=INTEGER}
+		ORDER BY GMT_CREATE DESC LIMIT 6
+	</select>
+
+	<select id="recParentArticle" resultMap="RM_ArticleBLOBS"
+		parameterType="java.lang.Integer">
+		select G_BBS_ARTICLE.ID as ID,G_BBS_ARTICLE.IMAGE_PATH as
+		IMAGE_PATH,G_BBS_ARTICLE.ARTICLE_NAME as
+		ARTICLE_NAME,G_BBS_ARTICLE.CONTENT as CONTENT from
+		G_BBS_ARTICLE,G_BBS_ARTICLE_LABEL
+		WHERE
+		G_BBS_ARTICLE.ID=G_BBS_ARTICLE_LABEL.ARTICLE
+		AND
+		G_BBS_ARTICLE.IS_DELETED='n'
+		AND
+		G_BBS_ARTICLE_LABEL.LABEL=#{labelId,jdbcType=INTEGER}
+		ORDER BY GMT_CREATE DESC LIMIT 6
+	</select>
+
+	<select id="getLoveNumById" parameterType="map" resultType="int">
+		select LOVE_NUM from G_BBS_ARTICLE where ID=#{id}
+	</select>
+	<select id="recommentArticle" resultMap="RM_Article">
+		select
+		<include refid="Base_Column_List" />
+		from G_BBS_ARTICLE where LOVE_NUM>0 AND IS_DELETED='n'
+	</select>
+	<select id="getTopicArticle" resultMap="RM_ArticleVO"
+		parameterType="java.lang.Integer">
+		select DISTINCT
+        G_BBS_ARTICLE.ID,G_BBS_ARTICLE.CONTENT, G_BBS_ARTICLE.IMAGE_PATH, G_BBS_ARTICLE.ARTICLE_NAME,
+        G_BBS_ARTICLE.USER_ID, G_BBS_ARTICLE.USER_TYPE, G_BBS_ARTICLE.HIT_NUM,
+        G_BBS_ARTICLE.REPORT_NUMBER,
+        G_BBS_ARTICLE.LOVE_NUM, G_BBS_ARTICLE.SHARE_NUM, G_BBS_ARTICLE.COLLECTION_NUM,
+        G_BBS_ARTICLE.IS_ESSENCE, G_BBS_ARTICLE.IS_TOP,
+        G_BBS_ARTICLE.GMT_CREATE, G_BBS_ARTICLE.GMT_MODIFIED,
+        G_BBS_ARTICLE.IS_DELETED,G_BBS_ARTICLE.INTRODUCTION,G_USER.USER_NAME
+        as userName,G_USER.HEAD_PORTRAIT as headImage
+         <if test="userId != null and userId != ''">
+        ,G_BBS_USER_COLLECTION.ID  as collectId
+        </if>
+        from
+        G_BBS_TOPIC_ARTICLE LEFT JOIN G_BBS_ARTICLE on G_BBS_ARTICLE.id=G_BBS_TOPIC_ARTICLE.ARTICLE_ID
+        <if test="userId != null and userId != ''">
+     left join G_BBS_USER_COLLECTION on G_BBS_ARTICLE.ID =
+        G_BBS_USER_COLLECTION.COLLECTION_CONTENT_ID
+        AND G_BBS_USER_COLLECTION.PROPERTY_TYPE ='100603'
+            and G_BBS_USER_COLLECTION.USER_ID =#{userId,jdbcType=INTEGER}
+        </if>
+        LEFT JOIN G_USER on  G_USER.ID=G_BBS_ARTICLE.USER_ID
+        where G_BBS_TOPIC_ARTICLE.TOPIC_ID=#{topicId}
+        AND G_BBS_ARTICLE.IS_DELETED='n'
+        ORDER BY G_BBS_ARTICLE.GMT_CREATE
+	</select>
+
+	<select id="getTopicArticleCount" resultType="int"
+		parameterType="java.lang.Integer">
+		  select count(DISTINCT G_BBS_ARTICLE.ID)
+        from
+        G_BBS_TOPIC_ARTICLE LEFT JOIN G_BBS_ARTICLE on G_BBS_ARTICLE.id=G_BBS_TOPIC_ARTICLE.ARTICLE_ID
+        LEFT JOIN G_USER on  G_USER.ID=G_BBS_ARTICLE.USER_ID
+        where G_BBS_TOPIC_ARTICLE.TOPIC_ID=#{topicId}
+        AND G_BBS_ARTICLE.IS_DELETED='n'
+        ORDER BY G_BBS_ARTICLE.GMT_CREATE
+	</select>
+
+	<!-- 分页查询标签下的文章 -->
+	<select id="getArticalsByLabel" resultType="com.goujia.website.base.vo.article.ArticleVO"
+		parameterType="java.lang.Integer">
+		SELECT
+		DISTINCT b.ID as id, b.ARTICLE_NAME as articleName,b.CONTENT as content,
+		b.HIT_NUM as hitNum,
+		b.SHARE_NUM as shareNum,b.GMT_CREATE as gmtCreate,b.INTRODUCTION as introduction,
+		u.USER_NAME as userName,u.HEAD_PORTRAIT as
+		headImage
+		<if test="userId != null and userId != ''">
+		,G_BBS_USER_COLLECTION.ID as collectId
+		</if>
+		FROM
+		G_BBS_ARTICLE_LABEL a
+		LEFT JOIN G_BBS_ARTICLE b on a.ARTICLE = b.ID
+		LEFT JOIN G_USER u on b.USER_ID = u.ID
+		<if test="userId != null and userId != ''">
+		LEFT join G_BBS_USER_COLLECTION on b.ID =
+		G_BBS_USER_COLLECTION.COLLECTION_CONTENT_ID
+		AND G_BBS_USER_COLLECTION.PROPERTY_TYPE ='100603'
+		and G_BBS_USER_COLLECTION.USER_ID =#{userId,jdbcType=INTEGER}
+		</if>
+		WHERE b.IS_DELETED ='n' and a.LABEL = #{labelId}
+	</select>
+
+	<select id="getArticalsByLabelCount" resultType="java.lang.Integer"
+		parameterType="java.lang.Integer">
+		SELECT
+		count(DISTINCT b.ID)
+		FROM
+		G_BBS_ARTICLE_LABEL a
+		LEFT JOIN G_BBS_ARTICLE b on a.ARTICLE = b.ID
+		LEFT JOIN G_USER u on b.USER_ID = u.ID
+		WHERE a.LABEL = #{labelId}
+	</select>
+	<!-- 个人后台文章列表 -->
+	<select id="getMyArticles" resultType="com.goujia.website.base.vo.article.ArticleVO"
+		parameterType="com.goujia.website.base.vo.article.ArticleSearchParam">
+		SELECT DISTINCT ID as id,ARTICLE_NAME as articleName,
+		CONTENT as content,INTRODUCTION as introduction,GMT_CREATE as gmtCreate
+		FROM G_BBS_ARTICLE
+		WHERE  id != 0
+		<if test="null != userId and '' != userId">
+	       and USER_ID=#{userId}
+		</if>
+		<if test="null != isDeleted and '' != isDeleted">
+			AND IS_DELETED =#{isDeleted}
+		</if>
+		<if test="null != isTop and '' != isTop">
+			AND IS_TOP = #{isTop}
+		</if>
+		<if test="null != isEssence and '' != isEssence">
+			and IS_ESSENCE =#{isEssence}
+		</if>
+		<if test="null != articleName and '' != articleName">
+		    and ARTICLE_NAME like '%${articleName}%'
+		</if>
+	</select>
+
+	<select id="getMyArticlesCount" resultType="java.lang.Integer"
+		parameterType="com.goujia.website.base.vo.article.ArticleSearchParam">
+		SELECT DISTINCT COUNT(*)
+		FROM G_BBS_ARTICLE
+		WHERE id != 0
+        <if test="null != userId and '' != userId">
+           and USER_ID=#{userId}
+        </if>
+		<if test="null != isDeleted and '' != isDeleted">
+			AND IS_DELETED = #{isDeleted}
+		</if>
+		<if test="null != isTop and '' != isTop">
+			AND IS_TOP = #{isTop}
+		</if>
+		<if test="null != isEssence and '' != isEssence">
+			and IS_ESSENCE =#{isEssence}
+		</if>
+		<if test="null != articleName and '' != articleName">
+            and ARTICLE_NAME like '%${articleName}%'
+        </if>
+	</select>
+	
+	<!-- 前台搜索文章标题用 -->
+    <select id="getSearchArticles" resultMap="RM_ArticleVO"
+        parameterType="com.goujia.website.base.vo.article.ArticleSearchParam">
+        SELECT DISTINCT a.ID as id,a.ARTICLE_NAME as articleName,
+        a.CONTENT as content,a.INTRODUCTION as introduction,a.GMT_CREATE as gmtCreate,a.hit_num as hitNum,
+        b.user_name as userName, b.head_portrait as headImage
+        FROM G_BBS_ARTICLE a left join g_user b on a.user_id=b.id
+        <if test="null != labelId and '' != labelId">
+            left join g_bbs_article_label c on a.id = c.article
+        </if>
+        WHERE  a.id != 0
+        <if test="null != userId and '' != userId">
+           and a.USER_ID=#{userId}
+        </if>
+        <if test="null != isDeleted and '' != isDeleted">
+            AND a.IS_DELETED =#{isDeleted}
+        </if>
+        <if test="null != isTop and '' != isTop">
+            AND a.IS_TOP = #{isTop}
+        </if>
+        <if test="null != isEssence and '' != isEssence">
+            and a.IS_ESSENCE =#{isEssence}
+        </if>
+        <if test="null != articleName and '' != articleName">
+            and a.ARTICLE_NAME like '%${articleName}%'
+        </if>
+         <if test="null != labelId and '' != labelId">
+            and c.label=#{labelId}
+        </if>
+    </select>
+
+    <select id="getSearchArticlesCount" resultType="java.lang.Integer"
+        parameterType="com.goujia.website.base.vo.article.ArticleSearchParam">
+        SELECT DISTINCT COUNT(*)
+        FROM G_BBS_ARTICLE a left join g_user b on a.user_id=b.id
+        <if test="null != labelId and '' != labelId">
+            left join g_bbs_article_label c on a.id = c.article
+        </if>
+        WHERE a.id != 0
+        <if test="null != userId and '' != userId">
+           and a.USER_ID=#{userId}
+        </if>
+        <if test="null != isDeleted and '' != isDeleted">
+            AND a.IS_DELETED = #{isDeleted}
+        </if>
+        <if test="null != isTop and '' != isTop">
+            AND a.IS_TOP = #{isTop}
+        </if>
+        <if test="null != isEssence and '' != isEssence">
+            and a.IS_ESSENCE =#{isEssence}
+        </if>
+        <if test="null != articleName and '' != articleName">
+            and a.ARTICLE_NAME like '%${articleName}%'
+        </if>
+         <if test="null != labelId and '' != labelId">
+            and c.label=#{labelId}
+        </if>
+    </select>
+
+	<select id="myAttentionArticle" resultMap="RM_ArticleVO" parameterType="java.lang.Integer">
+		select
+		g_bbs_article.ID,
+		g_bbs_article.CONTENT,
+		g_bbs_article.ARTICLE_NAME,
+		g_bbs_article.introduction,
+		g_bbs_article.GMT_CREATE,
+		g_bbs_article.IMAGE_PATH,
+		g_user.HEAD_PORTRAIT as headImage,
+		g_bbs_user_collection.ID as collectId
+		from
+		g_bbs_article,g_bbs_user_collection,g_user
+		where
+		g_bbs_article.id=g_bbs_user_collection.COLLECTION_CONTENT_ID
+		And g_bbs_user_collection.PROPERTY_TYPE='100603'
+		AND g_bbs_article.USER_ID=g_user.ID
+		AND g_bbs_user_collection.USER_ID=#{userId,jdbcType=INTEGER}
+		order by g_bbs_user_collection.GMT_CREATE desc
+	</select>
+	
+	<select id="myAttentionArticleCount" resultType="java.lang.Integer" parameterType="java.lang.Integer">
+        select
+        count(g_bbs_article.ID)
+        from
+        g_bbs_article,g_bbs_user_collection,g_user
+        where
+        g_bbs_article.id=g_bbs_user_collection.COLLECTION_CONTENT_ID
+        And g_bbs_user_collection.PROPERTY_TYPE='100603'
+        AND g_bbs_article.USER_ID=g_user.ID
+        AND g_bbs_user_collection.USER_ID=#{userId,jdbcType=INTEGER}
+    </select>
+    
+    
+    <select id="myPublishArticle" resultMap="RM_ArticleVO" parameterType="java.lang.Integer">
+        select
+        g_bbs_article.ID,
+        g_bbs_article.CONTENT,
+        g_bbs_article.ARTICLE_NAME,
+        g_bbs_article.introduction,
+        g_bbs_article.GMT_CREATE,
+        g_user.HEAD_PORTRAIT as headImage
+        from
+        g_bbs_article,g_user
+        where
+        g_bbs_article.USER_ID=g_user.ID
+        AND g_bbs_article.IS_DELETED='n'
+        AND g_bbs_article.USER_ID=#{userId,jdbcType=INTEGER}
+        order by g_bbs_article.GMT_CREATE desc
+    </select>
+    
+    <select id="myPublishArticleCount" resultType="java.lang.Integer" parameterType="java.lang.Integer">
+        select
+        count(g_bbs_article.ID)
+        from
+        g_bbs_article,g_user
+        where
+        g_bbs_article.USER_ID=g_user.ID
+        AND g_bbs_article.IS_DELETED='n'
+        AND g_bbs_article.USER_ID=#{userId,jdbcType=INTEGER}
+        order by g_bbs_article.GMT_CREATE desc
+    </select>
+    
+    <!-- 我点赞的文章 -->
+    <select id="mySupportArticle" resultMap="RM_ArticleVO" parameterType="java.lang.Integer">
+        select
+        a.ID,
+        a.CONTENT,
+        a.ARTICLE_NAME,
+        a.introduction,
+        a.GMT_CREATE,
+        a.IMAGE_PATH,
+        c.HEAD_PORTRAIT as headImage
+        from
+        g_bbs_article a,g_bbs_user_support b,g_user c
+        where
+        a.id=b.info_id
+        And b.PROPERTY_TYPE='100503'
+        AND a.USER_ID=c.ID
+        AND b.user_id=#{userId,jdbcType=INTEGER}
+        order by b.gmt_create desc
+    </select>
+    <select id="findByLabel" resultMap="RM_ArticleVO" parameterType="map">
+        select * from (select * from g_bbs_article where IS_DELETED='n') article
+		inner join (select * from g_bbs_article_label where LABEL=#{label}) al on al.article=article.ID
+		order by  article.GMT_CREATE desc
+		limit #{limit}
+    </select>
+    
+    <select id="mySupportArticleCount" resultType="java.lang.Integer" parameterType="java.lang.Integer">
+        select
+        count(a.ID)
+        from
+        g_bbs_article a,g_bbs_user_support b,g_user c
+        where
+        a.id=b.info_id
+        And b.PROPERTY_TYPE='100503'
+        AND a.USER_ID=c.ID
+        AND b.user_id=#{userId,jdbcType=INTEGER}
+    </select>
+    
+</mapper>

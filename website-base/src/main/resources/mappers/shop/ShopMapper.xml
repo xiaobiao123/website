@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.goujia.website.base.dao.shop.ShopMapper" >
+  <resultMap id="baseMap" type="com.goujia.website.base.entity.shop.Shop" >
+    <id column="ID" property="id"/>
+   	<result column="OPERATOR_ID" property="operatorId"/>
+   	<result column="SHOP_TYPE" property="shopType"/>
+   	<result column="NAME" property="name"/>
+   	<result column="PHOTO_PATH" property="photoPath"/>
+   	<result column="BANNER_PATH" property="bannerPath"/>
+   	<result column="SUMMARY" property="summary"/>
+   	<result column="CONTACT_NAME" property="contactName"/>
+   	<result column="PHONE" property="phone"/>
+   	<result column="ADDRESS" property="address"/>
+   	<result column="FOUND_DATE" property="foundDate"/>
+   	<result column="LONGITUDE" property="longitude"/>
+   	<result column="LATITUDE" property="latitude"/>
+   	<result column="PROVINCE_ID" property="provinceId"/>
+   	<result column="CITY_ID" property="cityId"/>
+   	<result column="COUNTY_ID" property="countyId"/>
+   	<result column="IS_DELETED" property="isDeleted"/>
+   	<result column="GMT_CREATE" property="gmtCreate"/>
+   	<result column="OWNER_ID" property="ownerId"/>
+   	<result column="PROJECT_QUALITY" property="projectQuality"/>
+   	<result column="CUSTOM_SATISFIED" property="customStatisfied"/>
+   	<result column="STATUS" property="status"/>
+  </resultMap>
+  <resultMap id="VoMap" type="com.goujia.website.base.vo.shop.ShopVO" extends="baseMap" >
+  </resultMap>
+  <resultMap id="buildMap" type="com.goujia.website.base.entity.shop.Building" >
+  		<id column="ID" property="id"/>
+  		<result column="NAME" property="name"/>
+  		<result column="PHOTO_PATH" property="photoPath"/>
+  		<result column="AVG_PRICE" property="avgPrice"/>
+  		<result column="OPENING_TIME" property="openingTime"/>
+  		<result column="DEVELOPER" property="developer"/>
+  </resultMap>
+   <resultMap id="goodsMap" type="com.goujia.website.base.entity.shop.Goods" >
+  		<id column="ID" property="id"/>
+  		<result column="NAME" property="name"/>
+  		<result column="STYLE_NAME" property="styleName"/>
+  		<result column="HOUSE_TYPE_NAME" property="houseTypeName"/>
+  		<result column="FLOOR_AREA" property="floorArea"/>
+  		<result column="PHOTO_PATH" property="photoPath"/>
+  		<result column="DISCOUNT_PRICE" property="discountPrice"/>
+  </resultMap>
+  <select id="count" parameterType="com.goujia.website.base.vo.shop.ShopVO" resultType="long">
+  		select count(1) from g_shop 
+  		where 
+  			IS_DELETED='n' 
+  		<if test="cityId!=null and cityId!=''">
+  			and CITY_ID=#{cityId}
+  		</if>
+  		<if test="countyId!=null and countyId!=''">
+  			and COUNTY_ID=#{countyId}
+  		</if>
+  </select>
+  <select id="findAll" parameterType="com.goujia.website.base.vo.shop.ShopVO" resultMap="VoMap">
+  		select * from g_shop 
+  		where 
+  			IS_DELETED='n' 
+  		<if test="cityId!=null and cityId!=''">
+  			and CITY_ID=#{cityId}
+  		</if>
+  		<if test="countyId!=null and countyId!=''">
+  			and COUNTY_ID=#{countyId}
+  		</if>
+  </select>
+  <select id="findNeighborhoodByShopId" parameterType="map" resultType="String">
+  		select DISTINCT build.NAME from (select OPERATOR_ID from g_shop where id=#{shop}) shop
+		join (select * from g_city_operator where IS_DELETED='n') gco on gco.ID=shop.OPERATOR_ID
+		join (select * from g_building_city_operator where IS_DELETED='n') gbco on gbco.CITY_OPERATOR_ID=gco.ID
+		join (select * from g_building where IS_DELETED='n') build on build.ID=gbco.BUILDING_ID
+  </select>
+  <select id="findNeighborhoodDetailByShopId" parameterType="map" resultMap="buildMap">
+  		select DISTINCT build.ID,build.NAME,build.PHOTO_PATH,build.AVG_PRICE,build.OPENING_TIME,build.DEVELOPER from (select OPERATOR_ID from g_shop where id=#{shop}) shop
+		join (select * from g_city_operator where IS_DELETED='n') gco on gco.ID=shop.OPERATOR_ID
+		join (select * from g_building_city_operator where IS_DELETED='n') gbco on gbco.CITY_OPERATOR_ID=gco.ID
+		join (select * from g_building where IS_DELETED='n') build on build.ID=gbco.BUILDING_ID
+  </select>
+  <select id="getById" parameterType="map" resultMap="VoMap">
+  		select * from g_shop where ID=#{shop}
+  </select>
+ <select id="getAllImageById" parameterType="map" resultType="string">
+ 	select PHOTO_PATH from g_shop_photo where SHOP_ID=#{shop}
+ </select>
+ <select id="getAllGoodsById" parameterType="map" resultMap="goodsMap">
+ 	select goods.ID,goods.PHOTO_PATH,goods.NAME,goods.HOUSE_TYPE_NAME,goods.STYLE_NAME,goods.DISCOUNT_PRICE,house.FLOOR_AREA 
+	from (select * from g_shop where ID=#{shop}) shop 
+	join g_shop_goods gsg on shop.ID=gsg.SHOP_ID
+	join g_goods goods on goods.ID=gsg.GOODS_ID
+	join g_house house on house.ID=goods.HOUSE_ID
+ </select>
+ <select id="findAllByCity" parameterType="map" resultMap="VoMap">
+	select * from g_shop where  CITY_ID=#{city} and IS_DELETED='n' and STATUS="success"
+ </select>
+ <select id="findAllByCounty" parameterType="map" resultMap="VoMap">
+	select * from g_shop where  COUNTY_ID=#{county} and IS_DELETED='n' and STATUS="success"
+ </select>
+</mapper>

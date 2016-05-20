@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper
+	namespace="com.goujia.website.base.dao.specialtopic.SpecialTopicAssociationMapper">
+	<resultMap id="BaseResultMap"
+		type="com.goujia.website.base.entity.specialtopic.SpecialTopicAssociation">
+		<id column="ID" property="id" jdbcType="INTEGER" />
+		<result column="CONTENT_TYPE" property="contentType" jdbcType="VARCHAR" />
+		<result column="TOPIC_ID" property="topicId" jdbcType="INTEGER" />
+		<result column="ASSOCIAED_CONTENT_ID" property="associaedContentId"
+			jdbcType="INTEGER" />
+		<result column="GMT_CREATE" property="gmtCreate" jdbcType="TIMESTAMP" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		ID, CONTENT_TYPE, TOPIC_ID, ASSOCIAED_CONTENT_ID,
+		GMT_CREATE
+	</sql>
+	<select id="get" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+		select
+		<include refid="Base_Column_List" />
+		from G_BBS_SPECIAL_TOPIC_ASSOCIATION
+		where ID = #{id,jdbcType=INTEGER}
+	</select>
+	<delete id="delete" parameterType="java.lang.Integer">
+		delete from
+		G_BBS_SPECIAL_TOPIC_ASSOCIATION
+		where ID = #{id,jdbcType=INTEGER}
+	</delete>
+	<insert id="insert"
+		parameterType="com.goujia.website.base.entity.specialtopic.SpecialTopicAssociation">
+		insert into G_BBS_SPECIAL_TOPIC_ASSOCIATION (ID,
+		CONTENT_TYPE,
+		TOPIC_ID,
+		ASSOCIAED_CONTENT_ID, GMT_CREATE)
+		values
+		(#{id,jdbcType=INTEGER}, #{contentType,jdbcType=VARCHAR},
+		#{topicId,jdbcType=INTEGER},
+		#{associaedContentId,jdbcType=INTEGER},
+		#{gmtCreate,jdbcType=TIMESTAMP})
+	</insert>
+	<update id="update"
+		parameterType="com.goujia.website.base.entity.specialtopic.SpecialTopicAssociation">
+		update G_BBS_SPECIAL_TOPIC_ASSOCIATION
+		<set>
+			<if test="contentType != null">
+				CONTENT_TYPE = #{contentType,jdbcType=VARCHAR},
+			</if>
+			<if test="topicId != null">
+				TOPIC_ID = #{topicId,jdbcType=INTEGER},
+			</if>
+			<if test="associaedContentId != null">
+				ASSOCIAED_CONTENT_ID =
+				#{associaedContentId,jdbcType=INTEGER},
+			</if>
+			<if test="gmtCreate != null">
+				GMT_CREATE = #{gmtCreate,jdbcType=TIMESTAMP},
+			</if>
+		</set>
+		where ID = #{id,jdbcType=INTEGER}
+	</update>
+
+	<!-- 批量添加专题关联记录 -->
+	<insert id="batchCreate" parameterType="java.util.List">
+		insert into G_BBS_SPECIAL_TOPIC_ASSOCIATION (CONTENT_TYPE,
+		TOPIC_ID,
+		ASSOCIAED_CONTENT_ID, GMT_CREATE)
+		values
+		<foreach collection="list" item="item" index="index"
+			separator=",">
+			(#{item.contentType},#{item.topicId},#{item.associaedContentId},#{item.gmtCreate})
+		</foreach>
+	</insert>
+
+	<!-- 批量移除专题关联记录 -->
+	<delete id="batchDelete" parameterType="java.util.Map">
+		delete from G_BBS_SPECIAL_TOPIC_ASSOCIATION
+		where CONTENT_TYPE =
+		#{contentType} and ASSOCIAED_CONTENT_ID in
+		<foreach collection="ids" item="item" index="index" open="("
+			separator="," close=")">
+			#{item}
+		</foreach>
+	</delete>
+
+	<!-- 移除一条专题关联记录 -->
+	<delete id="deleteOne" parameterType="java.util.Map">
+		delete from
+		G_BBS_SPECIAL_TOPIC_ASSOCIATION
+		where CONTENT_TYPE = #{contentType} and
+		ASSOCIAED_CONTENT_ID = #{id}
+	</delete>
+
+
+	<!-- 查询关联文章 -->
+	<select id="findAssociationArticle" resultType="com.goujia.website.base.vo.article.ArticleVO"
+		parameterType="java.lang.Integer">
+		select a.ID as id,a.ARTICLE_NAME as
+		articleName,u.USER_NAME as userName,a.GMT_CREATE as gmtCreate
+		from
+		G_BBS_SPECIAL_TOPIC_ASSOCIATION s
+		LEFT JOIN G_BBS_ARTICLE a on s.ASSOCIAED_CONTENT_ID = a.ID
+		LEFT JOIN G_USER u on a.USER_ID = u.ID
+		where s.CONTENT_TYPE='article' and a.IS_DELETED = 'n' 
+		and s.TOPIC_ID = #{id}
+	</select>
+
+	<!-- 分页查询关联文章 -->
+	<select id="associationArticlePageList" resultType="com.goujia.website.base.vo.article.ArticleVO"
+		parameterType="java.lang.Integer">
+		SELECT 
+            DISTINCT b.ID as id, b.ARTICLE_NAME as articleName,b.CONTENT as content, b.HIT_NUM as hitNum,
+            b.SHARE_NUM as shareNum,b.GMT_CREATE as gmtCreate,b.INTRODUCTION as introduction,
+            u.USER_NAME as userName,u.HEAD_PORTRAIT as headImage
+            <if test="userId != null and userId != ''">
+            ,G_BBS_USER_COLLECTION.ID as collectId
+            </if>
+        FROM 
+            G_BBS_SPECIAL_TOPIC_ASSOCIATION a 
+        LEFT JOIN G_BBS_ARTICLE b on a.ASSOCIAED_CONTENT_ID = b.ID
+        LEFT JOIN G_USER u on b.USER_ID = u.ID  
+        <if test="userId != null and userId != ''">  
+        LEFT join G_BBS_USER_COLLECTION  on b.ID = G_BBS_USER_COLLECTION.COLLECTION_CONTENT_ID
+        AND  G_BBS_USER_COLLECTION.PROPERTY_TYPE ='100603'
+              and G_BBS_USER_COLLECTION.USER_ID =#{userId,jdbcType=INTEGER} 
+        </if>
+        WHERE a.CONTENT_TYPE='article' and b.IS_DELETED = 'n' and a.TOPIC_ID=#{id}
+	</select>
+	
+	<select id="count" resultType="java.lang.Integer" parameterType="java.lang.Integer">
+	SELECT count(DISTINCT b.ID)
+        FROM 
+            G_BBS_SPECIAL_TOPIC_ASSOCIATION a 
+        LEFT JOIN G_BBS_ARTICLE b on a.ASSOCIAED_CONTENT_ID = b.ID
+        LEFT JOIN G_USER u on b.USER_ID = u.ID
+        WHERE a.CONTENT_TYPE='article' and b.IS_DELETED = 'n' and a.TOPIC_ID=#{id}
+	</select>
+	
+	<!-- 获得标签数组 -->
+	<select id="getLabels" resultType="com.goujia.website.base.entity.article.Label"
+	parameterType="java.lang.Integer">
+	SELECT DISTINCT b.ID as id,b.`NAME` as name
+    FROM
+        G_BBS_ARTICLE_LABEL a 
+    LEFT JOIN G_BBS_LABEL b on a.LABEL = b.ID
+    WHERE a.ARTICLE=#{articleId}
+	</select>
+	<!-- 获得评论个数 -->
+    <select id="getCommentNums" resultType="java.lang.Integer"
+    parameterType="java.lang.Integer">
+    SELECT count(*)
+    FROM  G_BBS_ARTICLE_REVIEW 
+    WHERE ARTICLE = #{articleId}
+    </select>
+	<!-- 查询关联话题 -->
+	<select id="findAssociationTopic" resultType="com.goujia.website.base.vo.topic.TopicVo"
+		parameterType="java.lang.Integer">
+		select a.ID as id,a.Name as name,a.GMT_CREATE as gmtCreate,
+		a.ASSOCIATED_ARTICLE_NUMBER as associatedArticleNumber,
+		a.PARTICIPANT_NUMBER as participantNumber
+		from
+		G_BBS_SPECIAL_TOPIC_ASSOCIATION s
+		LEFT JOIN G_BBS_TOPIC a on s.ASSOCIAED_CONTENT_ID = a.ID
+		where s.CONTENT_TYPE='topic' and a.IS_DELETED = 'n' and s.TOPIC_ID = #{id}
+	</select>
+
+	<!-- 查询关联问题 -->
+	<select id="findAssociationQuestion" resultType="com.goujia.website.base.entity.question.Question"
+		parameterType="java.lang.Integer">
+		select a.ID as id,a.SUBJECT as subject,a.GMT_CREATE as
+		gmtCreate,a.ANWSER_AMOUNT as anwserAmount
+		from
+		G_BBS_SPECIAL_TOPIC_ASSOCIATION s
+		LEFT JOIN G_BBS_QUESTION a on s.ASSOCIAED_CONTENT_ID = a.ID
+		where s.CONTENT_TYPE='question' and a.IS_DELETED = 'n' and s.TOPIC_ID = #{id}
+	</select>
+</mapper>

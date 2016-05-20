@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.goujia.website.base.dao.topic.TopicLabelMapper" >
+  <resultMap id="BaseResultMap" type="com.goujia.website.base.entity.topic.TopicLabel" >
+    <id column="ID" property="id" jdbcType="INTEGER" />
+    <result column="TOPIC_ID" property="topicId" jdbcType="INTEGER" />
+    <result column="LABEL_ID" property="labelId" jdbcType="INTEGER" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    ID, TOPIC_ID, LABEL_ID
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from G_BBS_TOPIC_LABEL
+    where ID = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from G_BBS_TOPIC_LABEL
+    where ID = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.goujia.website.base.entity.topic.TopicLabel" >
+    insert into G_BBS_TOPIC_LABEL (ID, TOPIC_ID, LABEL_ID
+      )
+    values (#{id,jdbcType=INTEGER}, #{topicId,jdbcType=INTEGER}, #{labelId,jdbcType=INTEGER}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.goujia.website.base.entity.topic.TopicLabel" >
+    insert into G_BBS_TOPIC_LABEL
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        ID,
+      </if>
+      <if test="topicId != null" >
+        TOPIC_ID,
+      </if>
+      <if test="labelId != null" >
+        LABEL_ID,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="topicId != null" >
+        #{topicId,jdbcType=INTEGER},
+      </if>
+      <if test="labelId != null" >
+        #{labelId,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.goujia.website.base.entity.topic.TopicLabel" >
+    update G_BBS_TOPIC_LABEL
+    <set >
+      <if test="topicId != null" >
+        TOPIC_ID = #{topicId,jdbcType=INTEGER},
+      </if>
+      <if test="labelId != null" >
+        LABEL_ID = #{labelId,jdbcType=INTEGER},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.goujia.website.base.entity.topic.TopicLabel" >
+    update G_BBS_TOPIC_LABEL
+    set TOPIC_ID = #{topicId,jdbcType=INTEGER},
+      LABEL_ID = #{labelId,jdbcType=INTEGER}
+    where ID = #{id,jdbcType=INTEGER}
+  </update>
+  
+  <select id="getTopicLableListFor" resultType="com.goujia.website.base.entity.topic.TopicLabel" parameterType="java.lang.Integer">
+    select 
+    G_BBS_LABEL.NAME as name
+    from G_BBS_TOPIC_LABEL,G_BBS_LABEL
+    WHERE TOPIC_ID = #{topicId,jdbcType=INTEGER}
+    AND G_BBS_TOPIC_LABEL.LABEL_ID=G_BBS_LABEL.ID
+  </select>
+</mapper>

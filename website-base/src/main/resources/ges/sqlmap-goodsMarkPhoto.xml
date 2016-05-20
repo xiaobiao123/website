@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+    
+<mapper namespace="com.goujia.website.base.ges.dao.GoodsMarkPhotoMapper">
+	<!--
+      - ===============================================
+      - 返回GoodsMarkPhoto POJO
+      - @author caoqi
+      - @date 2014-06-16
+      - ===============================================
+	-->
+	<resultMap  type="com.goujia.website.base.ges.entity.GoodsMarkPhoto"           id="RM_GoodsMarkPhoto_View">
+		<result property="markId"    column="MARK_ID"    jdbcType="INTEGER" javaType="java.lang.Integer" />
+		<result property="photoPath" column="PHOTO_PATH" jdbcType="VARCHAR" javaType="java.lang.String"  />
+	</resultMap>
+	
+	<!--
+      - ===============================================
+      - 新增GoodsMarkPhoto
+      - @author caoqi
+      - @date 2014-06-16
+      - ===============================================
+	-->
+	<insert id="create" parameterType="com.goujia.website.base.ges.entity.GoodsMarkPhoto" useGeneratedKeys="true" keyProperty="id">
+		insert into G_GOODS_MARK_PHOTO(
+			MARK_ID,
+			PHOTO_PATH
+		)values(
+			#{markId},
+			#{photoPath}
+		)
+	</insert>
+	
+	<!--
+      - ===============================================
+      - 修改GoodsMarkPhoto
+      - @author caoqi
+      - @date 2014-06-13
+      - ===============================================
+	-->
+	<update id="update" parameterType="com.goujia.website.base.ges.entity.GoodsMarkPhoto">
+		update G_GOODS_MARK_PHOTO set
+		PHOTO_PATH=#{photoPath}
+		where MARK_ID=#{markId}
+	</update>
+	
+	<!--
+      - ===============================================
+      - 查询GoodsMarkPhoto
+      - @author caoqi
+      - @date 2014-06-13
+      - ===============================================
+	-->
+	<select id="query" parameterType="java.lang.Integer" resultMap="RM_GoodsMarkPhoto_View">
+		select 
+			MARK_ID, 
+			PHOTO_PATH
+		from G_GOODS_MARK_PHOTO
+		where MARK_ID=#{markId}
+	</select>
+</mapper>

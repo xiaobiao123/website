@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.goujia.website.base.dao.code.email.EmailCodeMapper" >
+  <resultMap id="baseMap" type="com.goujia.website.base.entity.code.email.EmailCode" >
+    <id column="id" property="id"/>
+    <result column="user" property="user"/>
+    <result column="code" property="code"/>
+    <result column="email" property="email"/>
+    <result column="pubdate" property="pubdate"/>
+  </resultMap>
+  <insert id="create" parameterType="com.goujia.website.base.entity.code.email.EmailCode">
+    insert into g_email_code(user,code,email,pubdate) values(#{user},#{code},#{email},now())
+  </insert>
+  <select id="findLastByEmail" parameterType="map" resultMap="baseMap">
+  	 select * from g_email_code where email=#{email} order by pubdate desc limit 1
+  </select>
+</mapper>

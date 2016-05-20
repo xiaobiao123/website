@@ -1,0 +1,421 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.goujia.website.base.dao.topic.TopicMapper">
+    <!-- 
+	  -==============================
+	  -话题管理
+	  -@author liuxinyu
+	  -@date 2015-06-03
+	  -==============================
+	 -->
+	 <resultMap  id="RM_Topic" type="com.goujia.website.base.entity.topic.Topic"  >
+		<id      column="ID"                           property="id"             		 jdbcType="INTEGER"   javaType="java.lang.Integer"  />
+		<result  column="IMAGE_PATH"                   property="imagePath"              jdbcType="VARCHAR"   javaType="java.lang.String" />
+		<result  column="NAME"                  	   property="name"                   jdbcType="VARCHAR"   javaType="java.lang.String"/>
+		<result  column="LABEL_IDS"     			   property="labelIds"       		 jdbcType="VARCHAR"   javaType="java.lang.String"/>
+		<result  column="INTRODUCTION"   			   property="introduction"   		 jdbcType="VARCHAR"   javaType="java.lang.String"/>
+		<result  column="ASSOCIATED_ARTICLE_NUMBER"    property="associatedArticleNumber"  jdbcType="INTEGER"   javaType="java.lang.Integer" />
+		<result  column="PARTICIPANT_NUMBER"           property="participantNumber"		 jdbcType="INTEGER"   javaType="java.lang.Integer" />
+		<result  column="IS_TOP"                       property="isTop"					 jdbcType="VARCHAR"   javaType="java.lang.String"/>
+		<result  column="IS_ESSENCE"                   property="isEssence"   			 jdbcType="VARCHAR"   javaType="java.lang.String"/>
+		<result  column="USER_ID"                      property="userId"			     jdbcType="INTEGER"   javaType="java.lang.Integer"/>
+		<result  column="GMT_CREATE"                   property="gmtCreate"				 jdbcType="TIMESTAMP" javaType="java.util.Date"  />
+		<result  column="GMT_MODIFIED"                 property="gmtModified"		     jdbcType="TIMESTAMP" javaType="java.util.Date"  />
+		<result  column="IS_DELETED"                   property="isDeleted"				 jdbcType="VARCHAR"   javaType="java.lang.String"/>
+		<result  column="CRAFT_LABELS"                 property="craftLabels"		     jdbcType="VARCHAR"   javaType="java.lang.String"/>
+		<result  column="MATERIAL_LABELS"              property="materialLabels"		 jdbcType="VARCHAR"   javaType="java.lang.String"/>
+		<result  column="STYLE_LABELS"                 property="styleLabels"		     jdbcType="VARCHAR"   javaType="java.lang.String"/>
+		
+		
+	</resultMap>
+	 <resultMap  type="com.goujia.website.base.vo.topic.TopicVo"     extends="RM_Topic" id="RM_TopicVo">
+	   <result column="joinNum" property="joinNum"/>
+		<result column="USER_NAME"                    property="userName"               jdbcType="VARCHAR"   javaType="java.lang.String"  />		
+	 </resultMap> 
+	<!-- 
+	  -==============================
+	  -话题管理关联页面
+	  -@author liuxinyu
+	  -@date 2015-06-03
+	  -==============================
+	 -->
+	   <!-- <resultMap  type="com.goujia.website.base.vo.topic.TopicVo"     extends="RM_Topic" id="RM_TopicVo">
+		<result column="USER_NAME"                    property="userName"               jdbcType="VARCHAR"   javaType="java.lang.String"  />		
+	 </resultMap>   -->
+	 
+	 <!-- 
+	  -==============================
+	  -新增话题
+	  -@author liuxinyu
+	  -@date 2015-06-03
+	  -==============================
+	 -->
+	 <insert id="creat" parameterType="com.goujia.website.base.entity.topic.Topic" useGeneratedKeys="true" keyProperty="id">
+	      insert into G_BBS_TOPIC (
+	        IMAGE_PATH,
+	        NAME,
+	        LABEL_IDS,
+	        INTRODUCTION,
+	        ASSOCIATED_ARTICLE_NUMBER,
+	        PARTICIPANT_NUMBER,
+	        IS_TOP,
+	        IS_ESSENCE,
+	        USER_ID,
+	        GMT_CREATE,
+	        GMT_MODIFIED,
+	        IS_DELETED,
+	        CRAFT_LABELS,
+	        MATERIAL_LABELS,
+	        STYLE_LABELS
+	      )value(
+	        #{imagePath},
+	        #{name},
+	        #{labelIds},
+	        #{introduction},
+	        #{associatedArticleNumber},
+	        #{participantNumber},
+	        #{isTop},
+	        #{isEssence},
+	        #{userId},
+	        now(),
+	        now(),
+	        'n',
+	        #{craftLabels},
+	        #{materialLabels},
+	        #{styleLabels}
+	      )
+	 </insert> 
+	 
+	  
+	 <!-- 
+	  -==============================
+	  -修改话题
+	  -@author liuxinyu
+	  -@date 2015-06-03
+	  -==============================
+	 -->
+	  <update   id="update" parameterType="com.goujia.website.base.entity.topic.Topic">
+	       update G_BBS_TOPIC set GMT_MODIFIED=now()
+	       <if test="imagePath != null and imagePath != ''">,IMAGE_PATH=#{imagePath}</if>
+	       <if test="name != null and name != ''">, NAME=#{name}</if>
+	       <if test="labelIds != null and labelIds != ''">, LABEL_IDS=#{labelIds}</if>
+	       <if test="introduction != null and introduction != ''">, INTRODUCTION=#{introduction}</if>
+	       <if test="associatedArticleNumber != null and associatedArticleNumber != ''">, ASSOCIATED_ARTICLE_NUMBER=#{associatedArticleNumber}</if> 
+	       <if test="participantNumber != null and participantNumber != ''">, PARTICIPANT_NUMBER=#{participantNumber}</if>
+	       <if test="isTop != null and isTop != ''">, IS_TOP=#{isTop}</if>
+	       <if test="isEssence != null and isEssence != ''">, IS_ESSENCE=#{isEssence}</if>
+	       <if test="userId != null and userId != ''">, USER_ID=#{userId}</if>
+	       <if test="isDeleted != null and isDeleted != ''">, IS_DELETED=#{isDeleted}</if>
+	       <if test="craftLabels != null and craftLabels != ''">, CRAFT_LABELS=#{craftLabels}</if>
+	       <if test="materialLabels != null and materialLabels != ''">, MATERIAL_LABELS=#{materialLabels}</if>
+	       <if test="styleLabels != null and styleLabels != ''">, STYLE_LABELS=#{styleLabels}</if>
+	       where ID = #{id}
+	 </update> 
+	 
+	 
+	 <!-- 
+	  -==============================
+	  -查询话题
+	  -@author liuxinyu
+	  -@date 2015-06-03
+	  -==============================
+	 -->
+	  <select id="get" resultMap="RM_Topic" parameterType="Integer">
+	        select *
+		     from G_BBS_TOPIC 
+		     where IS_DELETED = 'n' 
+		      and ID = #{id}
+	 </select> 
+	 
+	 
+	 <!-- 
+	  -==============================
+	  -查询话题数量
+	  -@author liuxinyu
+	  -@date 2015-06-03
+	  -==============================
+	 -->
+	  <select id="count" resultType="java.lang.Integer" parameterType="com.goujia.website.base.vo.topic.TopicSearchParam">
+	           select count(*) 
+	           from G_BBS_TOPIC 
+	           where IS_DELETED = 'n'
+	           <if test=" name != null and name != ''"> 
+	           and NAME like CONCAT('%',#{name},'%')</if>   
+	 </select> 
+	 
+	 <!-- 
+	  -==============================
+	  -查询话题分页
+	  -@author liuxinyu
+	  -@date 2015-06-03
+	  -==============================
+	 -->
+	  <select id="page" resultType="com.goujia.website.base.vo.topic.TopicVo" parameterType="com.goujia.website.base.vo.topic.TopicSearchParam">
+	    select
+		        ID as id ,
+		        IMAGE_PATH as imagePath,
+		        NAME as name,
+		        INTRODUCTION as introduction,
+		       ASSOCIATED_ARTICLE_NUMBER as associatedArticleNumber,
+		        PARTICIPANT_NUMBER as participantNumber,
+		        USER_ID as userId,
+		        GMT_CREATE as gmtCreate,
+		        GMT_MODIFIED as gmtModified,
+		        IS_DELETED as isDeleted
+		     from G_BBS_TOPIC  
+		     where IS_DELETED = 'n' 
+	         <if test=" name != null and name != ''"> 
+	         and NAME like CONCAT('%',#{name},'%')
+	         </if>
+		     
+	 </select>
+	 <!-- 
+	  -==============================
+	  -查询话题分页
+	  -@author liuxinyu
+	  -@date 2015-06-03
+	  -==============================
+	 -->
+	 <select id="topicList" resultType="com.goujia.website.base.vo.topic.TopicVo"
+	  parameterType="com.goujia.website.base.vo.topic.TopicSearchParam">
+	    select
+		          ID,
+		        IMAGE_PATH as imagePath,
+		        NAME,
+		        INTRODUCTION,
+		       ASSOCIATED_ARTICLE_NUMBER as associatedArticleNumber,
+		        PARTICIPANT_NUMBER as participantNumber,
+		        USER_ID,
+		        GMT_CREATE,
+		        GMT_MODIFIED,
+		        IS_DELETED
+		     from G_BBS_TOPIC
+		     where IS_DELETED = 'n' 
+	        
+	         order by PARTICIPANT_NUMBER desc 
+	   </select>
+	         
+		     
+	
+	 
+	 <!-- 
+	  -==============================
+	  -删除话题
+	  -@author liuxinyu
+	  -@date 2015-06-03
+	  -==============================
+	 -->
+	<delete id="delete" parameterType="java.lang.Integer">
+		update G_BBS_TOPIC set IS_DELETED = 'y' where ID=#{id}
+	</delete>
+	
+	 <!-- 
+	  -==============================
+	  -恢复话题查询
+	  -@author liuxinyu
+	  -@date 2015-06-03
+	  -==============================
+	 -->         
+	 
+	   <select id="countDelete" resultType="java.lang.Integer" parameterType="com.goujia.website.base.vo.topic.TopicSearchParam">
+	           select count(*) 
+		     from G_BBS_TOPIC
+		     where IS_DELETED = 'y' 
+	         <if test=" name != null and name != ''">
+	          and NAME like CONCAT('%',#{name},'%')
+	          </if>  
+	 </select> 
+	 
+	 <select id="recoverylist" resultType="com.goujia.website.base.vo.topic.TopicVo"
+	  parameterType="com.goujia.website.base.vo.topic.TopicSearchParam">
+	    select
+		          ID as id,
+		        IMAGE_PATH as imagePath,
+		        NAME as name,
+		        INTRODUCTION as introduction,
+		        PARTICIPANT_NUMBER as participantNumber,
+		        USER_ID as userId ,
+		        GMT_CREATE as gmtCreate
+		     from G_BBS_TOPIC
+		     where IS_DELETED = 'y' 
+	         <if test=" name != null and name != ''"> 
+	         and NAME like CONCAT('%',#{name},'%')
+	         </if>  
+		     
+	 </select>
+	 <!-- 
+	  -==============================
+	  -话题列表查询
+	  -@author liuxinyu
+	  -@date 2015-06-03
+	  -==============================
+	 -->
+	
+	 
+	 <select id="queryById" resultMap="RM_Topic" parameterType="Integer">
+	        select
+		       s.ID ,
+		       s.IMAGE_PATH,
+		       s. NAME,
+		       s. LABEL_IDS,
+		        s.INTRODUCTION,
+		        s.ASSOCIATED_ARTICLE_NUMBER,
+		        s.PARTICIPANT_NUMBER,
+		        s.IS_TOP,
+		        s.IS_ESSENCE,
+		        s.USER_ID,
+		        s.GMT_CREATE,
+		        s.GMT_MODIFIED,
+		        s.IS_DELETED,
+		        s.CRAFT_LABELS,
+		        s.MATERIAL_LABELS,
+		        s.STYLE_LABELS
+		     from G_BBS_TOPIC s
+		   
+		     where s.IS_DELETED = 'n' 
+		      and s.ID = #{id}
+	 </select> 
+	 
+	 <!-- 
+	  -==============================
+	  -恢复话题
+	  -@author liuxinyu
+	  -@date 2015-06-03
+	  -==============================
+	 -->
+	 <delete id="recoveryMessage" parameterType="java.lang.Integer">
+		update G_BBS_TOPIC set IS_DELETED = 'n' where ID=#{id}
+	</delete>
+	
+	<!-- 
+	  -==============================
+	  -相关文章删除
+	  -@author liuxinyu
+	  -@date 2015-06-03
+	  -==============================
+	 -->
+	 
+	<delete id="delArticle" parameterType="java.lang.Integer">
+		update G_BBS_TOPIC set IS_DELETED = 'n' where ID=#{id}
+	</delete>
+	
+	
+		<!-- 
+	  -==============================
+	  -话题列表查询
+	  -@author liuxinyu
+	  -@date 2015-06-03
+	  -==============================
+	 -->
+	  <select id="pageList" resultType="com.goujia.website.base.vo.topic.TopicVo"
+	  parameterType="com.goujia.website.base.vo.topic.TopicSearchParam">
+	           select
+		        G_BBS_TOPIC.ID as id,
+		        G_BBS_TOPIC.IMAGE_PATH as imagePath,
+		        G_BBS_TOPIC.NAME as  name,
+		        G_BBS_TOPIC.INTRODUCTION,
+		        G_BBS_TOPIC.PARTICIPANT_NUMBER as participantNumber,
+		        G_BBS_TOPIC.USER_ID,
+		        G_BBS_TOPIC.GMT_CREATE,
+		        G_BBS_TOPIC.GMT_MODIFIED,
+		        G_BBS_TOPIC.IS_DELETED
+		     from G_BBS_TOPIC
+		     where G_BBS_TOPIC.IS_DELETED = 'n' 
+	        <if test=" name != null and name != ''"> 
+	         and G_BBS_TOPIC.NAME like CONCAT('%',#{name},'%')
+	         </if> 
+	         <if test=" labelId != null and labelId != ''">
+             and  (FIND_IN_SET(#{labelId},LABEL_IDS)
+             or FIND_IN_SET(#{labelId},CRAFT_LABELS)
+             or FIND_IN_SET(#{labelId},MATERIAL_LABELS)
+             or FIND_IN_SET(#{labelId},STYLE_LABELS))
+             </if>
+		      <!-- and ID = #{id} -->
+	 </select>
+	
+	
+    <!--  -->
+	<select id="countByName" parameterType="map" resultType="long">
+	 	select count(1) from G_BBS_TOPIC
+	 	where IS_DELETED='n'
+	 	<if test="name!=null and name!=''">
+	 		and NAME like '%${name}%'
+	 	</if>
+	 </select>
+	 <select id="findAllWithCountByName" parameterType="map" resultMap="RM_TopicVo">
+	 	select gt.ID,NAME,IMAGE_PATH,IFNULL(gta.joinNum,0) as joinNum from (select * from G_BBS_TOPIC where IS_DELETED='n')  gt
+	 	left join 
+	 	(select TOPIC_ID,count(1) as joinNum from G_BBS_TOPIC_ARTICLE  group by TOPIC_ID) gta on gta.TOPIC_ID=gt.ID
+	 	<if test="name!=null and name!=''">
+	 		where NAME like '%${name}%'
+	 	</if>
+	 </select>
+	 
+	 <!--  -->
+	 <select id="topicRec" resultType="com.goujia.website.base.vo.topic.TopicVo">
+	   select
+       ID,
+       IMAGE_PATH,
+       NAME,
+       INTRODUCTION,
+       ASSOCIATED_ARTICLE_NUMBER as associatedArticleNumber,
+       PARTICIPANT_NUMBER as participantNumber,
+       USER_ID,
+       GMT_CREATE,
+       GMT_MODIFIED,
+       IS_DELETED
+       from G_BBS_TOPIC
+       where IS_DELETED = 'n' 
+       ORDER BY PARTICIPANT_NUMBER DESC
+       LIMIT 4
+	 </select>
+	 
+	 <select id="getTopicInfo" resultType="com.goujia.website.base.vo.topic.TopicVo" parameterType="java.lang.Integer" >
+	           select
+               s.ID as id,
+               s.IMAGE_PATH as imagePath,
+               s. NAME as name,
+               s. LABEL_IDS as labelIds,
+                s.INTRODUCTION as introduction,
+                s.ASSOCIATED_ARTICLE_NUMBER as associatedArticleNumber,
+                s.PARTICIPANT_NUMBER as participantNumber,
+                s.IS_TOP as isTop,
+                s.IS_ESSENCE as isEssence,
+                s.USER_ID as userId,
+                s.GMT_CREATE as gmtCreate,
+                s.GMT_MODIFIED as gmtModified,
+                s.IS_DELETED as isDeleted,
+                s.CRAFT_LABELS as craftLabels,
+                s.MATERIAL_LABELS as materialLabels,
+                s.STYLE_LABELS as styleLabels
+             from G_BBS_TOPIC s
+           
+             where s.IS_DELETED = 'n' 
+              and s.ID = #{id}
+	 </select>
+	 
+	 <select id="findTopicFor" resultType="com.goujia.website.base.vo.topic.TopicVo" parameterType="com.goujia.website.base.vo.topic.TopicVo">
+	        select 
+            g_bbs_topic.id,g_bbs_topic.IMAGE_PATH as imagePath,g_bbs_topic.`NAME`,g_bbs_topic.INTRODUCTION
+		    from g_bbs_topic,g_bbs_user_collection
+		    where
+			g_bbs_topic.ID=g_bbs_user_collection.COLLECTION_CONTENT_ID
+			and g_bbs_user_collection.PROPERTY_TYPE=#{name}
+			and g_bbs_topic.IS_DELETED = 'n'
+			and g_bbs_user_collection.USER_ID=#{id}
+			order by g_bbs_user_collection.GMT_CREATE DESC
+	 </select>
+	 
+     <select id="findTopicCountFor" resultType="java.lang.Integer" parameterType="com.goujia.website.base.vo.topic.TopicVo">
+            select 
+            count(g_bbs_topic.id)
+            from g_bbs_topic,g_bbs_user_collection
+            where
+            g_bbs_topic.ID=g_bbs_user_collection.COLLECTION_CONTENT_ID
+            and g_bbs_user_collection.PROPERTY_TYPE=#{name}
+            and g_bbs_topic.IS_DELETED = 'n'
+            and g_bbs_user_collection.USER_ID=#{id}
+            order by g_bbs_user_collection.GMT_CREATE
+     </select>
+</mapper>

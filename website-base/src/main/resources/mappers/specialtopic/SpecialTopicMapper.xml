@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.goujia.website.base.dao.specialtopic.SpecialTopicMapper">
+  <resultMap id="BaseResultMap" type="com.goujia.website.base.entity.specialtopic.SpecialTopic">
+    <id column="ID" jdbcType="INTEGER" property="id" />
+    <result column="IMAGE_PATH" jdbcType="VARCHAR" property="imagePath" />
+    <result column="TOPIC_NAME" jdbcType="VARCHAR" property="topicName" />
+    <result column="INTRODUCTION" jdbcType="VARCHAR" property="introduction" />
+    <result column="CATEGORY_LABELS" jdbcType="VARCHAR" property="categoryLabels" />
+    <result column="IS_TOP" jdbcType="VARCHAR" property="isTop" />
+    <result column="OWNER_ID" jdbcType="INTEGER" property="ownerId" />
+    <result column="CREATE_TIME" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="IS_DELETED" jdbcType="VARCHAR" property="isDeleted" />
+    <result column="CRAFT_LABELS" jdbcType="VARCHAR" property="craftLabels" />
+    <result column="MATERIAL_LABELS" jdbcType="VARCHAR" property="materialLabels" />
+    <result column="STYLE_LABELS" jdbcType="VARCHAR" property="styleLabels" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    ID, IMAGE_PATH, TOPIC_NAME, INTRODUCTION, CATEGORY_LABELS, IS_TOP, OWNER_ID, CREATE_TIME, 
+    IS_DELETED, CRAFT_LABELS, MATERIAL_LABELS, STYLE_LABELS
+  </sql>
+	<select id="get" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from G_BBS_SPECIAL_TOPIC
+		where ID = #{id,jdbcType=INTEGER}
+	</select>
+	<select id="list" parameterType="com.goujia.website.base.vo.specialtopic.SpecialTopicSearchParam" 
+	resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from G_BBS_SPECIAL_TOPIC
+		where IS_DELETED = #{isDeleted}
+		<if test="specialTopicName != null and specialTopicName != ''">
+		      and TOPIC_NAME like '%${specialTopicName}%' 
+		</if>
+	</select>
+	
+	<select id="pageList" parameterType="com.goujia.website.base.vo.specialtopic.SpecialTopicSearchParam" 
+    resultType="com.goujia.website.base.vo.specialtopic.SpecialTopicVO">
+        select
+        distinct a.ID as id,a.IMAGE_PATH as imagePath,a.INTRODUCTION as introduction,
+        a.TOPIC_NAME as topicName
+        <if test="userId != null and userId != ''">
+        ,b.ID as collectId
+        </if>
+        from G_BBS_SPECIAL_TOPIC a 
+        <if test="userId != null and userId != ''">
+        left join G_BBS_USER_COLLECTION b on a.ID = b.COLLECTION_CONTENT_ID
+         and  b.PROPERTY_TYPE ='SpecialTopic'
+              and b.USER_ID =#{userId,jdbcType=INTEGER} 
+        </if>
+        where a.IS_DELETED = 'n'
+        <if test="specialTopicName != null and specialTopicName != ''">
+              and a.TOPIC_NAME like '%${specialTopicName}%' 
+        </if>
+        <if test="null != labelId and '' != labelId">
+               and (FIND_IN_SET(#{labelId},a.CATEGORY_LABELS)
+                    or FIND_IN_SET(#{labelId},a.CRAFT_LABELS)
+                    or FIND_IN_SET(#{labelId},a.MATERIAL_LABELS)
+                    or FIND_IN_SET(#{labelId},a.STYLE_LABELS)
+               )
+        </if>
+    </select>
+	<select id="count" parameterType="com.goujia.website.base.vo.specialtopic.SpecialTopicSearchParam" resultType="int">
+		select count(*) from G_BBS_SPECIAL_TOPIC
+		where IS_DELETED = #{isDeleted}
+        <if test="specialTopicName != null and specialTopicName != ''">
+              and TOPIC_NAME = #{specialTopicName} 
+        </if>
+	</select>
+	<delete id="delete" parameterType="java.lang.Integer">
+		delete from G_BBS_SPECIAL_TOPIC
+		where ID = #{id,jdbcType=INTEGER}
+	</delete>
+	<insert id="insert" keyProperty="id" parameterType="com.goujia.website.base.entity.specialtopic.SpecialTopic" useGeneratedKeys="true">
+		insert into G_BBS_SPECIAL_TOPIC (ID, IMAGE_PATH, TOPIC_NAME,
+		INTRODUCTION, CATEGORY_LABELS, IS_TOP,
+		OWNER_ID, CREATE_TIME, IS_DELETED,CRAFT_LABELS,MATERIAL_LABELS,STYLE_LABELS
+		)
+		values (#{id,jdbcType=INTEGER}, #{imagePath,jdbcType=VARCHAR},
+		#{topicName,jdbcType=VARCHAR},
+		#{introduction,jdbcType=VARCHAR}, #{categoryLabels,jdbcType=VARCHAR}, #{isTop,jdbcType=VARCHAR},
+		#{ownerId,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP},
+		#{isDeleted,jdbcType=VARCHAR}, #{craftLabels,jdbcType=VARCHAR}, #{materialLabels,jdbcType=VARCHAR},
+		#{styleLabels,jdbcType=VARCHAR}
+		)
+	</insert>
+	<update id="update" parameterType="com.goujia.website.base.entity.specialtopic.SpecialTopic">
+		update G_BBS_SPECIAL_TOPIC
+		<set>
+			<if test="imagePath != null">
+				IMAGE_PATH = #{imagePath,jdbcType=VARCHAR},
+			</if>
+			<if test="topicName != null">
+				TOPIC_NAME = #{topicName,jdbcType=VARCHAR},
+			</if>
+			<if test="introduction != null">
+				INTRODUCTION = #{introduction,jdbcType=VARCHAR},
+			</if>
+			<if test="categoryLabels != null">
+				CATEGORY_LABELS = #{categoryLabels,jdbcType=VARCHAR},
+			</if>
+			<if test="isTop != null">
+				IS_TOP = #{isTop,jdbcType=VARCHAR},
+			</if>
+			<if test="ownerId != null">
+				OWNER_ID = #{ownerId,jdbcType=INTEGER},
+			</if>
+			<if test="createTime != null">
+				CREATE_TIME = #{createTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="isDeleted != null">
+				IS_DELETED = #{isDeleted,jdbcType=VARCHAR},
+			</if>
+			<if test="craftLabels != null">
+                CRAFT_LABELS = #{craftLabels,jdbcType=VARCHAR},
+            </if>
+            <if test="materialLabels != null">
+                MATERIAL_LABELS = #{materialLabels,jdbcType=VARCHAR},
+            </if>
+            <if test="styleLabels != null">
+                STYLE_LABELS = #{styleLabels,jdbcType=VARCHAR}
+            </if>
+		</set>
+		where ID = #{id,jdbcType=INTEGER}
+	</update>
+	
+	<!-- 批量作废 -->
+	<update id="batchInvalid" parameterType="java.util.List">
+	   update G_BBS_SPECIAL_TOPIC 
+	   set IS_DELETED = 'y'
+	   where ID in
+	   <foreach close=")" collection="list" index="index" item="item" open="(" separator=",">
+        #{item}
+       </foreach>
+	</update>
+	<!-- 个人专题收藏列表 -->
+	<select id="personSpecialTopic" resultType="com.goujia.website.base.vo.specialtopic.SpecialTopicVO" parameterType="java.lang.Integer">
+	    select 
+	    G_BBS_SPECIAL_TOPIC.ID as id,
+		G_BBS_SPECIAL_TOPIC.IMAGE_PATH as imagePath,
+		G_BBS_SPECIAL_TOPIC.INTRODUCTION as introduction,
+		G_BBS_USER_COLLECTION.ID as collectId
+		FROM 
+		G_BBS_USER_COLLECTION,
+		G_BBS_SPECIAL_TOPIC
+		WHERE 
+		G_BBS_SPECIAL_TOPIC.ID=G_BBS_USER_COLLECTION.COLLECTION_CONTENT_ID
+		AND G_BBS_USER_COLLECTION.PROPERTY_TYPE='100605'
+		AND G_BBS_SPECIAL_TOPIC.IS_DELETED='n'
+		AND G_BBS_USER_COLLECTION.USER_ID=#{userId,jdbcType=INTEGER}
+	</select>
+	
+    <!-- 个人专题收藏列表总数 -->
+    <select id="personSpecialTopicCount" resultType="int" parameterType="java.lang.Integer">
+        select 
+        COUNT(G_BBS_SPECIAL_TOPIC.ID)
+        FROM 
+        G_BBS_USER_COLLECTION,
+        G_BBS_SPECIAL_TOPIC
+        WHERE 
+        G_BBS_SPECIAL_TOPIC.ID=G_BBS_USER_COLLECTION.COLLECTION_CONTENT_ID
+        AND G_BBS_USER_COLLECTION.PROPERTY_TYPE='100605'
+        AND G_BBS_SPECIAL_TOPIC.IS_DELETED='n'
+        AND G_BBS_USER_COLLECTION.USER_ID=#{userId,jdbcType=INTEGER}
+    </select>
+    <!-- 个人取消收藏 -->
+    <delete id="deletePersonSpecialTopic" parameterType="java.lang.Integer">
+        delete from G_BBS_USER_COLLECTION
+        where ID = #{id,jdbcType=INTEGER}
+    </delete>
+</mapper>

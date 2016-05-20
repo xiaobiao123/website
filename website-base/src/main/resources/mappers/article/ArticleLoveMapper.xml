@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.goujia.website.base.dao.article.ArticleLoveMapper" >
+  <resultMap id="RM_ArticleLove" type="com.goujia.website.base.entity.article.ArticleLove" >
+    <id column="ID" property="id" jdbcType="INTEGER" />
+    <result column="LOVE_TIME" property="loveTime" jdbcType="TIMESTAMP" />
+    <association property="article" javaType="com.goujia.website.base.entity.article.Article">
+		<result column="ARTICLE" property="id"/>
+		<result column="article_name" property="articleName"/>
+	</association>
+	<association property="user" javaType="com.goujia.website.base.entity.system.User">
+		<result column="USER" property="id"/>
+		<result column="user_name" property="userName"/>
+	</association>
+  </resultMap>
+  <sql id="Base_Column_List" >
+    ID, ARTICLE, USER, LOVE_TIME
+  </sql>
+  
+  <insert id="insert" parameterType="com.goujia.website.base.entity.article.ArticleLove" >
+    insert into G_BBS_ARTICLE_LOVE (ARTICLE, USER, 
+      LOVE_TIME)
+    values (#{article.id,jdbcType=INTEGER}, #{user.id,jdbcType=INTEGER}, 
+      now())
+  </insert>
+  <select id="countByUserAndArticle" parameterType="map" resultType="int">
+  	select count(1) from G_BBS_ARTICLE_LOVE where ARTICLE=#{article} and USER=#{user}
+  </select>
+    
+</mapper>

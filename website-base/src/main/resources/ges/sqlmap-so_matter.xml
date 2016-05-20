@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+    
+<mapper namespace="com.goujia.website.base.ges.dao.SoMatterMapper">
+	<!--
+      - ===============================================
+      - 返回so_matter POJO
+      - @author xieshangzhen
+      - @date 2015-07-23
+      - ===============================================
+	-->
+	<resultMap  type="com.goujia.website.base.ges.entity.SoMatter" id="RM_SoMatter">
+		<id     property="id"          	column="ID"  	        jdbcType="INTEGER"   javaType="java.lang.Integer" />
+		<result property="soId"     column="SO_ID"      jdbcType="INTEGER"   javaType="java.lang.Integer"  />
+		<result property="matterId"     column="MATTER_ID"      jdbcType="INTEGER"   javaType="java.lang.Integer"  />
+		<result property="roomId"   column="ROOM_ID"    jdbcType="INTEGER"   javaType="java.lang.Integer" />
+		<result property="type"     column="TYPE"      jdbcType="VARCHAR"   javaType="java.lang.String"  />
+		<result property="relativeMatterId"     column="RELATIVE_MATTER_ID"      jdbcType="INTEGER"   javaType="java.lang.Integer" />
+		<result property="quantity"     column="QUANTITY"      jdbcType="DOUBLE"   javaType="double"  />
+		<result property="purQuantity"     column="PUR_QUANTITY"      jdbcType="DOUBLE"   javaType="double" />
+		<result property="stockInQuantity"     column="STOCK_IN_QUANTITY"      jdbcType="DOUBLE"   javaType="double"  />
+		<result property="deliveryQuantity"     column="DELIVERY_QUANTITY"      jdbcType="DOUBLE"   javaType="double" />
+		<result property="stockOutQuantity"     column="STOCK_OUT_QUANTITY"      jdbcType="DOUBLE"   javaType="double" />
+		<result property="marketPrice"   column="MARKET_PRICE"   jdbcType="DOUBLE" javaType="double"    />
+		<result property="salesPrice"   column="SALES_PRICE"   jdbcType="DOUBLE" javaType="double"    />
+		<result property="purchasePrice"   column="PURCHASE_PRICE"   jdbcType="DOUBLE" javaType="double"    />
+		<result property="costPrice"   column="COST_PRICE"   jdbcType="DOUBLE" javaType="double"    />
+	</resultMap>
+	
+	
+	<insert id="create" parameterType="com.goujia.website.base.ges.entity.SoMatter" 
+    useGeneratedKeys="true" keyProperty="id">
+        insert into G_SO_MATTER(
+            ID,
+            SO_ID,
+            MATTER_ID,
+            ROOM_ID,
+            TYPE,
+            RELATIVE_MATTER_ID,
+            QUANTITY,
+            PUR_QUANTITY,
+            STOCK_IN_QUANTITY,
+            DELIVERY_QUANTITY,
+            STOCK_OUT_QUANTITY,
+            MARKET_PRICE,
+            SALES_PRICE,
+            PURCHASE_PRICE,
+            COST_PRICE
+        )values(
+            #{id},
+            #{soId},
+            #{matterId},
+            #{roomId},
+            #{type},
+            #{relativeMatterId},
+            #{quantity},
+            0,
+            0,
+            0,
+            0,
+            #{marketPrice},
+            0,
+            #{purchasePrice},
+            #{costPrice}
+        )
+    </insert>
+	
+	
+	<resultMap type="com.goujia.website.base.ges.vo.SoMatterVO" id="RM_SoMatterVO" extends="RM_SoMatter">
+		<result property="code"        column="CODE"         jdbcType="VARCHAR"   javaType="java.lang.String"  />
+		<result property="name"        column="NAME"         jdbcType="VARCHAR"   javaType="java.lang.String"  />
+		<result property="model"       column="MODEL"        jdbcType="VARCHAR"   javaType="java.lang.String"  />
+		<result property="color"       column="COLOR"        jdbcType="VARCHAR"   javaType="java.lang.String"  />
+		<result property="materials"   column="MATERIALS"    jdbcType="VARCHAR"   javaType="java.lang.String"  />
+		<result property="status"      column="STATUS"       jdbcType="VARCHAR"   javaType="java.lang.String"  />
+		<result property="dimension"   column="DIMENSION"    jdbcType="VARCHAR"   javaType="java.lang.String"  />
+		<result property="unit"        column="UNIT"         jdbcType="VARCHAR"   javaType="java.lang.String"  />
+		<result property="brandName"        column="BRAND_NAME"         jdbcType="VARCHAR"   javaType="java.lang.String"  />
+		<result property="categoryName"        column="CATEGORY_NAME"         jdbcType="VARCHAR"   javaType="java.lang.String"  />
+		<result property="roomName"        column="ROOM_NAME"         jdbcType="VARCHAR"   javaType="java.lang.String"  />
+		<result property="stockNum"     column="INVENTORY_AMOUNT"      jdbcType="INTEGER"   javaType="double"  />
+	</resultMap>
+	
+	
+	 
+	
+	<!--
+      - ===============================================
+      - 分页查询销售订单关联的物料信息
+      - @author xieshangzhen
+      - @date 2015-08-06
+      - ===============================================
+	-->
+	<select id="pageSoMatter" resultMap="RM_SoMatterVO" >
+		select
+			m.ID,
+			sm.ID as smId,
+			m.CODE, 
+			m.NAME, 
+			m.MODEL, 
+			m.COLOR, 
+			m.MATERIALS, 
+			m.STATUS,    
+			m.DIMENSION, 
+			m.UNIT, 
+			sm.MARKET_PRICE, 
+			sm.SALES_PRICE,
+			sm.QUANTITY,
+			sm.PUR_QUANTITY,
+			sm.DELIVERY_QUANTITY, 
+			sm.STOCK_OUT_QUANTITY,
+			m.BRAND_ID,  
+			m.CATEGORY_ID, 
+			m.OWNER_ID,  
+			m.MEMO, 
+			m.IS_DELETED,  
+			m.GMT_CREATE,  
+			m.GMT_MODIFIED,
+			m.USE_NATURE,
+			m.PROCESS_PROP,
+			m.DISTRIBUTION_PHASE,
+			m.SHIPPING_METHODS,
+			m.PROCESSING_METHODS,
+			m.CONVERSION_UNIT,
+			m.CONVERSION_FORMULA,
+			m.INSTALLER,
+			b.NAME as BRAND_NAME,
+			m.PARENT_ID,
+			m.GOUJIA_PRICE,
+			m.BUY_PRICE,
+			gr.NAME as ROOM_NAME,
+			si.INVENTORY_AMOUNT
+			<!-- concat(cc.NAME,'-',tt.NAME,'-',c.NAME) as CATEGORY_NAME -->
+		from G_SO_MATTER sm 
+			left join G_MATTER m on sm.MATTER_ID = m.ID
+			left join G_BRAND b on m.BRAND_ID = b.ID
+			left join G_GOODS_ROOM gr on sm.ROOM_ID = gr.ID
+			left join 
+    			(select 
+					MATTER_ID,
+					SUM(INVENTORY_AMOUNT) INVENTORY_AMOUNT
+				FROM
+					g_store_inventory
+				WHERE 
+				<choose>
+					<when test=" storeId !=null and storeId >=0">
+						STORE_ID = #{storeId}
+					</when>
+					<otherwise>
+						STORE_ID IN (
+							select ID FROM g_store 
+								WHERE 1=1
+								<if test="shopId !=null and shopId >0"> and SHOP_ID = #{shopId}</if>
+								<if test="operatorId !=null and operatorId >0"> and CITY_OPERATOR_ID = #{operatorId}</if>
+							)
+					</otherwise>
+				</choose> 
+				GROUP BY MATTER_ID) si
+			on sm.MATTER_ID = si.MATTER_ID
+			<!-- G_MATERIALS_CATEGORY c
+		    left join G_MATERIALS_CATEGORY tt on c.PARENT_ID = tt.ID
+   			left join G_MATERIALS_CATEGORY cc on tt.PARENT_ID = cc.ID -->		    
+		WHERE sm.SO_ID = #{soId} and m.IS_DELETED='n' and m.STATUS = '1'
+		<if test="roomId !=null and roomId !=0"> and sm.ROOM_ID=#{roomId}</if>
+		<if test="code !=null and code !=''"> and m.CODE=#{code}</if>
+		<if test="name !=null and name !=''"> and m.NAME=#{name}</if>
+		<if test="model !=null and model !=''"> and m.MODEL=#{model}</if>
+		<if test="brandName !=null and brandName !=''"> and b.NAME=#{brandName}</if>
+		<!-- group by m.ID -->
+		order by m.GMT_CREATE desc
+	</select>
+	
+	
+	
+	<!--
+      - ===============================================
+      - 查询销售订单关联的物料记录数
+      - @author xieshangzhen
+      - @date 2015-08-06
+      - ===============================================
+	-->
+	<select id="countSoMatter" resultType="java.lang.Integer">
+		select count(sm.id) from G_SO_MATTER sm
+			left join G_MATTER m on sm.MATTER_ID = m.ID
+			left join G_BRAND b on m.BRAND_ID = b.ID
+		 where SO_ID=#{soId} 
+		<if test="roomId !=null"> and sm.ROOM_ID=#{roomId}</if>
+		<if test="code !=null and code !=''"> and m.CODE=#{code}</if>
+		<if test="name !=null and name !=''"> and m.NAME=#{name}</if>
+		<if test="model !=null and model !=''"> and m.MODEL=#{model}</if>
+		<if test="brandName !=null and brandName !=''"> and b.NAME=#{brandName}</if>
+	</select>
+	
+	
+	
+	<!--
+      - ===============================================
+      - 更新销售订单关联的物料表的采购数量
+      - @author xieshangzhen
+      - @date 2015-08-12
+      - ===============================================
+	-->
+	<update id="updateQuantity">
+		update g_so_matter set PUR_QUANTITY = PUR_QUANTITY + #{quantity} WHERE ID=#{soMatterId}
+	</update>
+	
+	
+	<!--
+      - ===============================================
+      - 更新销售订单关联的物料表的出库数量
+      - @author xieshangzhen
+      - @date 2015-08-14
+      - ===============================================
+	-->
+	<update id="updateQuantityByRdRecords">
+		update g_so_matter set STOCK_OUT_QUANTITY = STOCK_OUT_QUANTITY + #{quantity} WHERE ID=#{soMatterId}
+	</update>
+	
+</mapper>

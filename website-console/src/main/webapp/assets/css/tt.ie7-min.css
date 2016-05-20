@@ -1,0 +1,5 @@
+@charset "UTF-8";
+
+.login-form .form-group label {vertical-align: top; padding-top: 10px;}
+.login-form .form-group input {padding: 0; }
+.login-form-inner {height: 272px}

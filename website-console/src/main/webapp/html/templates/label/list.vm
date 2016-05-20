@@ -1,0 +1,358 @@
+#*#parse("header.vm")*# #Html("begin") #Head("begin") #Title("标签管理") #LoadBootstrap("default") #LoadSUI("default") #LoadSUI("editor") #Head("end")
+
+<body>
+    #parse("header.vm")
+    <div>
+        <button id="create_but" type="button" class="btn btn-success pull-right" style="margin-bottom:20px;">创建新标签</button>
+    </div>
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="table-responsive">
+                <form class="form-inline align-right" method="post">
+                    <ul class="nav nav-tabs" id="">
+                        <li class="active">
+                            <a href="javascript:void(0)" onclick="load_label_ready(1)">
+                              现有的标签
+                            </a>
+                        </li>
+                        <li class="active">
+                            <a href="javascript:void(0)" onclick="load_label_ready(2)">
+                             作废的标签
+                            </a>
+                        </li </ul>
+                        <div class="form-group">
+                            <label> 标签名称： </label>
+                            <input type="text" name="name" id="search_name" class="input-medium">
+                        </div>
+                        <div class="form-group">
+                            <label> 标签类型： </label>
+                            <select id="search_peroperty" name="peroperty" class="input-medium">
+                                <option value="">全部</option>
+                                <option value="100101">分类标签</option>
+                                <option value="100103">建材百科</option>
+                                <option value="100102">装修百科</option>
+                                <option value="100104">设计百科</option>
+                                <option value="100301">直播阶段</option>
+                            </select>
+                        </div>
+                        <div class="vspace-sm"></div>
+                        <div class="form-group">
+                            <button class="btn btn-sm btn-primary" type="button" id="search_btn" onclick="load_label(1)"/>
+                                <i class="icon-search align-top"></i>查询
+                            </button>
+                        </div>
+                        <div id="content_body">
+                            <table id="sample-table-2" class="table table-striped table-bordered table-hover">
+                                <thead>
+                                    <tr>
+                                        <th class="center">
+                                            <label>
+                                                <input id="ck_all" type="checkbox" class="ace"   onclick="checkall(this)"/>
+                                                <span class="lbl"></span>
+                                            </label>
+                                        </th>
+                                        <th class="center">标签名称</th>
+                                        <th class="center">标签类型</th>
+                                        <th class="center">标签等级</th>
+                                        <th class="center hidden-480">使用该标签的文章统计</th>
+                                        <th class="center">
+                                            <i class="icon-time bigger-110 hidden-480"></i> 操作
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    #foreach($label in $!list.result)
+                                    <tr data-id="$!label.id" align="center">
+                                        <td class="center">
+                                            <label>
+                                                <input type="checkbox" class="ace item_checkbox" name="ace" value="${label.id}"/>
+                                                <span class="lbl"></span>
+                                            </label>
+                                        </td>
+                                        <a type="hidden" name="id" id="id" value="$!label.id" />
+                                        <td>
+                                            <a href="#">$!label.name</a>
+                                        </td>
+                                        <td> $!label.peroperty.text </td>
+                                        <td>#if($!label.parentId==0)一级#else二级#end</td>
+                                        <td class="hidden-480">$!label.userdAmount</td>
+                                        <td class="center">
+                                            <button class="btn btn-xs btn-info J_Publish" type="button" onclick="edit(${label.id})">
+                                                <i class="icon-edit"> 编辑 </i>
+                                            </button>
+                                            <button class="btn btn-xs btn-info J_Publish" type="button" onclick="delete_d(${label.id})">
+                                                <i class="icon-delete">删除</i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    #end
+                                </tbody>
+                            </table>
+                            <div style="float:left">
+                                <button class="btn btn-success btn-sm" onclick="batch_delete()" type="button">
+                                    批量删除
+                                </button>
+                            </div>
+                            <div class="row">
+                                <ul class="pagination pull-right">
+                                    #if($!list.hasPre)
+                                    <li class="first"><a href="#first" onclick="load_label('1',$);">首页</a></li>
+                                    <li class="prev"><a href="#prePage" onclick="load_label('$list.prePage');"><i class="icon-double-angle-left"></i></a></li>
+                                    #else
+                                    <li class="first disabled"><a>首页</a></li>
+                                    <li class="prev disabled"><a><i class="icon-double-angle-left"></i></a></li>
+                                    #end 
+                                    #foreach($pNo in $list.closestPage)
+                                        <li #if($list.pageNo==$pNo)class="active" #end><a href="#$!pNo" onclick="load_label('$!pNo');">$!pNo</a></li>
+                                    #end 
+                                    #if($!list.hasNext)
+                                    <li class="next"><a href="#nextPage" onclick="load_label('$list.nextPage');"><i class="icon-double-angle-right"></i></a></li>
+                                    <li class="last"><a href="#totalPages" onclick="load_label('$list.totalPages');">尾页</a></li>
+                                    #else
+                                    <li class="next disabled"><a><i class="icon-double-angle-right"></i></a></li>
+                                    <li class="last disabled"><a>尾页</a></li>
+                                    #end
+                                    <li style="white-space:nowrap;display:inline-block">
+                                        &nbsp;共$!list.totalPages页， 去第
+                                        <input type="text" id="pageNo" name="pageNo" value="$!list.pageNo" style="width:40px" class="page-go" onkeypress="if(event.keyCode==13) { $(this).closest('ul').find('button').click(); }" />页
+                                        <button type="button" class="btn btn-xs btn-inverse" onclick="load_label();">确认</button>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="modal" id="detail_dialog" tabindex="-1" role="dialog" aria-labelledby="detail_dialog" aria-hidden="true">
+        <div class="modal-dialog" style="width:60%">
+            <div class="modal-content" style="padding:5px;width:100%">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    </h4>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label class="control-label col-xs-12 col-sm-2 no-padding-right" for="title"><span class="red">*</span>标签名称：</label>
+                        <div class="clearfix">
+                            <div class="col-xs-12 col-sm-9">
+                                <div class="clearfix">
+                                    <input type="text" name="name" id="name" class="col-xs-12 col-sm-6"/>
+                                    <input type="hidden" id="id"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="space-2"></div>
+                    <div class="form-group">
+                        <label class="control-label col-xs-12 col-sm-2 no-padding-right" for="title"><span class="red">*</span>标签属性：</label>
+                        <input type="radio" class="anniu" name="peroperty" value="100101">分类标签</input>
+                        <input type="radio" class="anniu" name="peroperty" value="100103">建材百科</input>
+                        <input type="radio" class="anniu" name="peroperty" value="100102">装修百科</input>
+                        <input type="radio" class="anniu" name="peroperty" value="100104">设计百科</input>
+                        <input type="radio" class="anniu" name="peroperty" value="100301">直播阶段</input>
+                    </div>
+                    <div class="space-2"></div>
+                    <div class="form-group">
+                        <label class="control-label col-xs-12 col-sm-2 no-padding-right" for=""><span class="red">*</span>标签分类：</label>
+                        <div class="clearfix">
+                            <div class="col-xs-12 col-sm-9">
+                                <div class="clearfix">
+                                    <select id="parentId" name="parentId">
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-dismiss="modal">取消</button>
+                    <button type="button" id="save_but" class="btn btn-info J_LoadingBtn">完成</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript" src="$!request.contextPath/assets/js/jquery.json-2.4.js"></script>
+
+    <script>
+    var load_type = 1;
+    var pageSize = 15;
+    $(document).ready(function() {
+        $("#create_but").click(function() {
+            $("#name").val("");
+            $("#id").val("");
+            $(".anniu").prop('checked',false);
+            $("#parentId").empty();
+            $("#detail_dialog").modal("show");
+        });
+    });
+    function edit(id){
+         var timestamp=(new Date()).valueOf();
+         $.get("$request.contextPath/label/update.htm?id="+id+"&timestamp="+timestamp,function(data,statusText){
+            var data_=eval("("+data+")");
+            if(data_.result){
+                $("#name").val(data_.obj.name);
+                $("#id").val(data_.obj.id);
+                $(".anniu[value="+data_.obj.peroperty.number+"]").prop("checked",true);
+                $("#parentId").empty();
+                $("#parentId").append("<option value='0'></option>");
+                $.each(data_.parentList, function(i, item) {
+                    if(item.id != id)
+                        $("#parentId").append("<option value=" + item.id + ">" + item.name + "</option>");
+                });
+                $("#parentId").val(data_.obj.parentId);
+                $("#detail_dialog").modal("show");
+            }
+            else{
+                alert(data_.msg);
+            }
+        });
+    }
+    $("#save_but").click(function(){
+        var id=$("#id").val();
+        var param={
+                name: $("#name").val(),
+                parentId: $("#parentId").val(),
+                "peroperty.number": $("input[name='peroperty']:checked").val(),
+                timestamp:(new Date()).valueOf()
+            };
+        var url='$!request.contextPath/label/create.htm';
+        if(id!=null && id!=undefined && id!=''){
+            url='$!request.contextPath/label/update.htm';
+            param["id"]=id;
+        }
+        $.ajax({
+            dataTpe: "json",
+            type: "POST",
+            url: url,
+            data: param,
+            success: function(data) {
+                data_=eval("("+data+")");
+                alert(data_.msg);
+                if(data_.result){
+                    $("#search_name").val("");
+                    $("#search_peroperty").val("");
+                    load_label(1);
+                    $("#detail_dialog").modal("hide");
+                }
+            }
+        });
+
+    });
+    function batch_delete(){
+        var all=$(".item_checkbox:checked");
+        var list=new Array;
+        $.each(all,function(i,item){
+            list.push(item.value);
+        });
+        var param={idList:$.toJSON(list)};
+        var timestamp=(new Date()).valueOf();
+        param["timestamp"] = timestamp;
+        $.post("$request.contextPath/label/delete.htm",param,function(data,statusText){
+            var data_=eval("("+data+")");
+            alert(data_.msg);
+            if(data_.result){
+                load_label_ready(load_type);
+            }
+        });
+    }
+    function delete_d(id){
+        var list=new Array;
+        list.push(id);
+        var timestamp=(new Date()).valueOf();
+        $.post("$request.contextPath/label/delete.htm?timestamp="+timestamp,{idList:$.toJSON(list)},function(data,statusText){
+            var data_=eval("("+data+")");
+            alert(data_.msg);
+            if(data_.result){
+                load_label_ready(load_type);
+            }
+        });
+    }
+    function batch_reuse(){
+        var all=$(".item_checkbox:checked");
+        var list=new Array;
+        $.each(all,function(i,item){
+            list.push(item.value);
+        });
+        var timestamp=(new Date()).valueOf();
+        $.post("$request.contextPath/label/reuse.htm?timestamp="+timestamp,{idList:$.toJSON(list)},function(data,statusText){
+            var data_=eval("("+data+")");
+            alert(data_.msg);
+            if(data_.result){
+                load_label_ready(load_type);
+            }
+        });
+    }
+    function reuse_r(id){
+        var list=new Array;
+        list.push(id);
+        var timestamp=(new Date()).valueOf();
+        $.post("$request.contextPath/label/reuse.htm?timestamp="+timestamp,{idList:$.toJSON(list)},function(data,statusText){
+            var data_=eval("("+data+")");
+            alert(data_.msg);
+            if(data_.result){
+                load_label_ready(load_type);
+            }
+        });
+    }
+    function checkall(obj){
+        if ($(obj).is(":checked")) {
+            $(".ace").prop('checked',true);
+        }
+        else{
+            $(".ace").prop('checked',false);
+        }
+    }
+    function load_label_ready(type) {
+        load_type = type;
+        $("#search_name").val("");
+        $("#search_peroperty").val("");
+        load_label(1);
+    }
+
+    function load_label(pageNo) {
+        var param = {};
+        param["type"] = load_type;
+        param["pageSize"] = pageSize;
+        param["name"] = $("#search_name").val();
+        var timestamp=(new Date()).valueOf();
+        param["timestamp"] = timestamp;
+        param["peroperty.number"] = $("#search_peroperty").val();
+        if (!!pageNo && !isNaN(pageNo)) {
+            $("#pageNo").val(pageNo);
+            param["pageNo"] = pageNo;
+        } else {
+            param["pageNo"] = $("#pageNo").val();
+        }
+        $.post("$request.contextPath/label/labels.htm", param, function(html, statusText) {
+            var content = $("#content_body");
+            content.empty();
+            content.append(html);
+            $("#ck_all").prop('checked', false);
+        });
+
+    }
+
+        $(".anniu").bind("click", function() {
+            $("#parentId").empty();
+            $("#parentId").append("<option value='0'></option>");
+            var param = {
+                parentId: 0,
+                "peroperty.number": $(this).val()
+            };
+            var timestamp=(new Date()).valueOf();
+            param["timestamp"] = timestamp;
+            $.post('$!{request.contextPath}/label/parentLabel.htm', param, function(data, statusText) {
+                var data_ = eval("(" + data + ")");
+                var id=$("#id").val();
+                $.each(data_.obj, function(i, item) {
+                    if(item.id != id)
+                        $("#parentId").append("<option value=" + item.id + ">" + item.name + "</option>");
+                });
+
+            });
+        });
+    </script>
+    #*#Footer()*# #parse("footer.vm")
+</body>
+#Html("end")

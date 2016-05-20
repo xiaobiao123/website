@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+    
+<mapper namespace="com.goujia.website.base.ges.dao.OrderPaymentMapper">
+	<!--
+      - ===============================================
+      - 返回Payment POJO
+      - @author caoqi
+      - @date 2014-06-13
+      - ===============================================
+	-->
+	<resultMap  type="com.goujia.website.base.ges.entity.OrderPayment"                   id="RM_Payment">
+		<id     property="id"          column="ID"  	     jdbcType="INTEGER"   javaType="java.lang.Integer"    />
+		<result property="indexNumber" column="INDEX_NUMBER" jdbcType="INTEGER"   javaType="java.lang.Integer"    />
+		<result property="orderId" 	   column="ORDER_ID" 	 jdbcType="INTEGER"   javaType="java.lang.Integer"    />
+		<result property="name" 	   column="NAME"  		 jdbcType="VARCHAR"   javaType="java.lang.String"     />
+		<result property="gmtCreate"   column="GMT_CREATE"   jdbcType="TIMESTAMP" javaType="java.util.Date"       />
+		<result property="gmtModified" column="GMT_MODIFIED" jdbcType="TIMESTAMP" javaType="java.util.Date"       />
+		<result property="amount"	   column="AMOUNT"		 jdbcType="DECIMAL"   javaType="java.math.BigDecimal" />
+		<result property="status" 	   column="STATUS"  	 jdbcType="VARCHAR"   javaType="java.lang.String"     />
+		<result property="memo" 	   column="MEMO"  		 jdbcType="VARCHAR"   javaType="java.lang.String"     />
+		<result property="interest"	   column="INTEREST"	 jdbcType="DECIMAL"   javaType="java.math.BigDecimal" />
+	</resultMap>
+	<!--
+      - ===============================================
+      - 返回CountVO
+      - @author fengchun
+      - @date 2014-06-13
+      - ===============================================
+	-->
+	<resultMap  type="com.goujia.website.base.ges.vo.CountPayedVO"      id="RM_CountPayedVO">
+		<id     property="payedNumber"   column="PAYED_NUMBER"   jdbcType="INTEGER" javaType="java.lang.Integer"    />
+		<result property="payedAmounts"  column="PAYED_AMOUNTS"  jdbcType="DECIMAL" javaType="java.math.BigDecimal" />
+		<result property="payedInterest" column="PAYED_INTEREST" jdbcType="DECIMAL" javaType="java.math.BigDecimal" />
+	</resultMap>
+	
+	<!--
+      - ===============================================
+      - 新增Payment
+      - @author caoqi
+      - @date 2014-06-13
+      - ===============================================
+	-->
+	<insert id="create" parameterType="com.goujia.website.base.ges.entity.OrderPayment" useGeneratedKeys="true" keyProperty="id">
+		insert into G_ORDER_PAYMENT (
+			ID, 
+			INDEX_NUMBER,
+			ORDER_ID,
+			NAME,
+			GMT_CREATE,
+			GMT_MODIFIED,
+			AMOUNT,
+			STATUS,
+			INTEREST
+		) values (
+			#{id}, 
+			#{indexNumber}, 
+			#{orderId},
+			#{name},
+			now(),
+			now(),
+			#{amount},
+			'paying',
+			0.0
+		)
+	</insert>
+	
+	<!--
+      - ===============================================
+      - 修改Order
+      - @author fengchun
+      - @date 2014-06-30
+      - ===============================================
+	-->
+	<update id="updateByNotice" parameterType="com.goujia.website.base.ges.entity.OrderPayment">
+		update G_ORDER_PAYMENT 
+		set 
+		GMT_MODIFIED=now()
+		, STATUS='payed'
+		, AMOUNT=#{amount}
+		, INTEREST=#{interest}
+		
+		where 
+		ID=#{id} and STATUS='paying'
+	</update>
+	
+	<!--
+      - ===============================================
+      - 查询已支付Payment总数
+      - @author fengchun
+      - @date 2014-07-08
+      - ===============================================
+	-->
+	<select id="countByPayed" resultMap="RM_CountPayedVO" parameterType="java.lang.Integer">
+		select count(ID) as PAYED_NUMBER, sum(AMOUNT) as PAYED_AMOUNTS, sum(INTEREST) as PAYED_INTEREST 
+		from G_ORDER_PAYMENT
+		where 
+		ORDER_ID=#{orderId} and STATUS='payed'
+	</select>
+	
+	<!--
+      - ===============================================
+      - 统计未支付的当前序号的Payment数，正确应返回0
+      - @author fengchun
+      - @date 2014-07-08
+      - ===============================================
+	-->
+	<select id="countForInsert" resultType="java.lang.Integer" parameterType="com.goujia.website.base.ges.vo.CountForInsertVO">
+		select count(ID) 
+		from G_ORDER_PAYMENT
+		where 
+		ORDER_ID=#{orderId} and STATUS='paying' and INDEX_NUMBER=#{indexNumber}
+	</select>
+	
+	<!--
+      - ===============================================
+      - 查询
+      - @author fengchun
+      - @date 2014-06-28
+      - ===============================================
+	-->
+	<select id="query" resultMap="RM_Payment" parameterType="java.lang.Integer">
+		select
+			ID, 
+			INDEX_NUMBER,
+			ORDER_ID,
+			NAME,
+			GMT_CREATE,
+			GMT_MODIFIED,
+			AMOUNT,
+			STATUS,
+			INTEREST
+		from
+			G_ORDER_PAYMENT 
+		where ID=#{id}
+	</select>
+	
+	<!--
+      - ===============================================
+      - 查询
+      - @author fengchun
+      - @date 2014-06-28
+      - ===============================================
+	-->
+	<select id="queryPayingByOrderId" resultMap="RM_Payment" parameterType="java.lang.Integer">
+		select
+			ID, 
+			INDEX_NUMBER,
+			ORDER_ID,
+			NAME,
+			GMT_CREATE,
+			GMT_MODIFIED,
+			AMOUNT,
+			STATUS,
+			INTEREST
+		from
+			G_ORDER_PAYMENT 
+		where ORDER_ID=#{orderId} and STATUS='paying'
+	</select>
+	
+</mapper>

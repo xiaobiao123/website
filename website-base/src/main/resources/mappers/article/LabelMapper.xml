@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.goujia.website.base.dao.article.LabelMapper" >
+  <resultMap id="RM_Label" type="com.goujia.website.base.entity.article.Label" >
+    <id column="ID" property="id" jdbcType="INTEGER" />
+    <result column="NAME" property="name" jdbcType="VARCHAR" />
+    <result column="PARENT_ID" property="parentId" jdbcType="INTEGER" />
+    <result column="USERD_AMOUNT" property="userdAmount" jdbcType="INTEGER" />
+    <result column="GMT_CREATE" property="gmtCreate" jdbcType="TIMESTAMP" />
+    <result column="IS_DELETED" property="isDeleted" jdbcType="VARCHAR" />
+    <association property="peroperty" javaType="com.goujia.website.base.entity.dict.Dictionary">
+    	<result property="number" column="PEROPERTY"/>
+    	<result property="text" column="dict_text"/>
+    </association>
+  </resultMap>
+  
+  <resultMap id="RM_LabelVO" type="com.goujia.website.base.vo.article.LabelVO" extends="RM_Label">
+  	<result column="PARENT_NAME" property="parentName" jdbcType="VARCHAR" />
+  	</resultMap>
+  <sql id="Base_Column_List" >
+    ID, NAME, PEROPERTY, PARENT_ID, USERD_AMOUNT, GMT_CREATE, IS_DELETED
+  </sql>
+  <sql id="Base_Query_Condition">
+  		<where>
+			<if test="name != null and name !=''">
+				NAME like CONCAT('%','${name}','%' ) 
+			</if>
+			<if test="peroperty != null and peroperty.number !=null and peroperty.number!=''">
+				and PEROPERTY = #{peroperty.number,jdbcType=VARCHAR}
+			</if>
+			<if test="userdAmount > 0">
+				and USERD_AMOUNT = #{userdAmount,jdbcType=INTEGER}
+			</if>
+			<if test="isDeleted != null">
+				and IS_DELETED = #{isDeleted,jdbcType=VARCHAR}
+			</if>
+		</where>
+  </sql>
+  <select id="get" resultMap="RM_Label" parameterType="java.lang.Integer" >
+    select
+    <include refid="Base_Column_List" />
+    from G_BBS_LABEL
+    where ID = #{id,jdbcType=INTEGER}
+  </select>
+   <select id="getParentLabel" resultMap="RM_Label" parameterType="com.goujia.website.base.entity.article.Label" >
+    select
+    <include refid="Base_Column_List" />
+    from G_BBS_LABEL
+    where PARENT_ID = 0 and PEROPERTY = #{peroperty.number}
+  </select>
+  
+  <select id="list" resultMap="RM_LabelVO" parameterType="com.goujia.website.base.vo.article.LabelVO" >
+    select 
+    label.*,
+    dict.TEXT as dict_text
+    from G_BBS_LABEL label
+    left join G_DICTIONARY dict on label.PEROPERTY=dict.NUMBER
+   <include refid="Base_Query_Condition" />
+  </select>
+   <select id="searchLabel" resultMap="RM_LabelVO" parameterType="com.goujia.website.base.entity.article.Label" >
+    select 
+    l.ID, 
+    l.NAME, 
+    l.PEROPERTY, 
+    l.PARENT_ID, 
+    l.USERD_AMOUNT,
+    pl.NAME as PARENT_NAME
+    from G_BBS_LABEL as l
+    left join G_BBS_LABEL AS pl on pl.ID=l.PARENT_ID
+    where 
+    l.PEROPERTY = #{peroperty.number,jdbcType=VARCHAR} 
+    and l.PARENT_ID >0 
+    and l.IS_DELETED = "n"
+    order by l.PARENT_ID  DESC,l.USERD_AMOUNT DESC
+  </select>
+  <select id="count" resultType="int" parameterType="com.goujia.website.base.vo.article.LabelVO">
+		select count(*) from G_BBS_LABEL
+		<include refid="Base_Query_Condition" />
+  </select>
+  
+  <update id="delete" parameterType="com.goujia.website.base.entity.article.Label" >
+    update  G_BBS_LABEL set IS_DELETED="y"
+    where ID = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="reuse" parameterType="map" >
+    update  G_BBS_LABEL set IS_DELETED="n"
+    where ID = #{id}
+  </update>
+ 
+  <insert id="insert" parameterType="com.goujia.website.base.entity.article.Label" >
+    insert into G_BBS_LABEL (ID, NAME, PEROPERTY, 
+      PARENT_ID, USERD_AMOUNT, GMT_CREATE, 
+      IS_DELETED)
+    values (#{id,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, #{peroperty.number,jdbcType=VARCHAR}, 
+      #{parentId,jdbcType=INTEGER}, #{userdAmount,jdbcType=INTEGER}, now(), 
+      #{isDeleted,jdbcType=VARCHAR})
+  </insert>
+  
+  <update id="update" parameterType="com.goujia.website.base.entity.article.Label" >
+    update G_BBS_LABEL
+    <set >
+      <if test="name != null" >
+        NAME = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="peroperty != null and peroperty.number!=null" >
+        PEROPERTY = #{peroperty.number,jdbcType=VARCHAR},
+      </if>
+      <if test="parentId != null" >
+        PARENT_ID = #{parentId,jdbcType=INTEGER},
+      </if>
+      <if test="userdAmount != null" >
+        USERD_AMOUNT = #{userdAmount,jdbcType=INTEGER},
+      </if>
+      <if test="gmtCreate != null" >
+        GMT_CREATE = #{gmtCreate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="isDeleted != null" >
+        IS_DELETED = #{isDeleted,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=INTEGER}
+  </update>
+  <select id="findAllParentByPeroperty" parameterType="com.goujia.website.base.entity.dict.Dictionary" resultMap="RM_LabelVO">
+ 		select * from G_BBS_LABEL where  PARENT_ID=0 and IS_DELETED='n'
+ 		<if test="number!=null and number!='' and number!=1001">
+ 			and PEROPERTY=#{number}
+ 		</if>
+ 		<if test="number!=null and number!='' and number==1001">
+ 			and PEROPERTY in (100103,100102,100104)
+ 		</if>
+  </select>
+  <select id="findAllChildByParent" parameterType="int" resultMap="RM_LabelVO">
+ 		select * from G_BBS_LABEL where  PARENT_ID=#{parentId} and IS_DELETED='n' order by GMT_CREATE asc
+  </select>
+  <update id="batchUpdateByParentId" parameterType="map">
+  	update G_BBS_LABEL set PEROPERTY=#{peroperty} where PARENT_ID=#{parent}
+  </update>
+  <!-- 根据标签名查找标签对象 -->
+  <select id="getForLableName" resultMap="RM_Label" parameterType="java.lang.String">
+        select 
+        <include refid="Base_Column_List" /> 
+        from G_BBS_LABEL
+        where NAME = #{lableName,jdbcType=VARCHAR}
+        AND IS_DELETED="n"
+  </select>
+  
+  <select id="getForLableId" resultMap="RM_Label" parameterType="java.lang.Integer">
+        select 
+        <include refid="Base_Column_List" /> 
+        from G_BBS_LABEL
+        where PEROPERTY = #{id,jdbcType=VARCHAR}
+        AND IS_DELETED="n"
+        AND PARENT_ID=0
+        ORDER BY GMT_CREATE DESC LIMIT 5
+  </select>
+  
+  <select id="getForLableParentId" resultMap="RM_Label" parameterType="java.lang.Integer">
+        select 
+        <include refid="Base_Column_List" /> 
+        from G_BBS_LABEL
+        where PEROPERTY = #{parentId,jdbcType=VARCHAR}
+        AND IS_DELETED="n"
+        AND PARENT_ID>0
+        ORDER BY GMT_CREATE DESC
+  </select>
+  <!-- 获得话题列表的热门标签 -->
+  <select id="getLableForTopic" resultMap="RM_Label">
+        select 
+        <include refid="Base_Column_List" /> 
+        from G_BBS_LABEL
+        where IS_DELETED="n"
+        AND PARENT_ID>0
+        ORDER BY GMT_CREATE DESC LIMIT 30
+  </select>
+  <!-- 添加查询首页父标签 -->
+  <select id="findAllParentByPeropertyHome" parameterType="int" resultMap="RM_LabelVO">
+        select * from G_BBS_LABEL where  PARENT_ID=0 and IS_DELETED='n'
+        and PEROPERTY=#{number} order by GMT_CREATE asc
+  </select>
+  <select id="findAllChildByParentHome" parameterType="int" resultMap="RM_LabelVO">
+        select * from G_BBS_LABEL where  PEROPERTY=#{number} and PARENT_ID>0 and IS_DELETED='n' order by GMT_CREATE desc
+  </select>
+</mapper>

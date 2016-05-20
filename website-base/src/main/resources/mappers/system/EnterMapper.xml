@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.goujia.website.base.dao.system.EnterMapper" >
+  <resultMap id="BaseResultMap" type="com.goujia.website.base.entity.system.Enter" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="company" property="company" jdbcType="VARCHAR" />
+    <result column="province" property="province" jdbcType="VARCHAR" />
+    <result column="gmt_create" property="gmtCreate" jdbcType="TIMESTAMP" />
+    <result column="is_deleted" property="isDeleted" jdbcType="VARCHAR" />
+    <result column="gmt_modify" property="gmtModify" jdbcType="TIMESTAMP" />
+    <result column="enter_type" property="enterType" jdbcType="INTEGER" />
+    <result column="city" property="city" jdbcType="VARCHAR" />
+    <result column="linkman" property="linkman" jdbcType="VARCHAR" />
+    <result column="address" property="address" jdbcType="VARCHAR" />
+    <result column="phone" property="phone" jdbcType="VARCHAR" />
+    <result column="memo" property="memo" jdbcType="VARCHAR" />
+    <result column="brand" property="brand" jdbcType="VARCHAR" />
+  </resultMap>
+  <resultMap  type="com.goujia.website.base.vo.system.EnterVO" id="RM_Image_Review_VO" extends="BaseResultMap">
+       <result property="entertypestr" column="text" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, company, province, gmt_create, is_deleted, gmt_modify, enter_type, city, linkman, 
+    address, phone, memo, brand
+  </sql>
+   <sql id="Base_Column_List1" >
+    enter.id, company, province, gmt_create, is_deleted, gmt_modify, enter_type, city, linkman, 
+    address, phone, memo, brand,text 
+  </sql>
+   <sql id="Base_Query_Condition">
+        <if test="company != null and company != ''">
+            AND enter.company like  CONCAT('%', #{company,jdbcType=VARCHAR},'%')
+        </if>
+        <if test="city != null and city != ''">
+            AND enter.city like  CONCAT('%', #{city,jdbcType=VARCHAR},'%')
+        </if>
+        <if test="entertype != null" >
+            AND enter.enter_type = #{entertype,jdbcType=INTEGER}
+        </if>
+    </sql>
+  <select id="getById" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from g_bbs_enter
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="delete" parameterType="java.lang.Integer" >
+    delete from g_bbs_enter
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.goujia.website.base.entity.system.Enter" >
+    insert into g_bbs_enter (id, company, province, 
+      gmt_create, is_deleted, gmt_modify, 
+      enter_type, city, linkman, 
+      address, phone, memo, 
+      brand)
+    values (#{id,jdbcType=INTEGER}, #{company,jdbcType=VARCHAR}, #{province,jdbcType=VARCHAR}, 
+      now(),'n', now(), 
+      #{enterType,jdbcType=INTEGER}, #{city,jdbcType=VARCHAR}, #{linkman,jdbcType=VARCHAR}, 
+      #{address,jdbcType=VARCHAR}, #{phone,jdbcType=VARCHAR}, #{memo,jdbcType=VARCHAR}, 
+      #{brand,jdbcType=VARCHAR})
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.goujia.website.base.entity.system.Enter" >
+    update g_bbs_enter
+    <set >
+      <if test="company != null" >
+        company = #{company,jdbcType=VARCHAR},
+      </if>
+      <if test="province != null" >
+        province = #{province,jdbcType=VARCHAR},
+      </if>
+      <if test="gmtCreate != null" >
+        gmt_create = #{gmtCreate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="isDeleted != null" >
+        is_deleted = #{isDeleted,jdbcType=VARCHAR},
+      </if>
+      <if test="gmtModify != null" >
+        gmt_modify = now(),
+      </if>
+      <if test="enterType != null" >
+        enter_type = #{enterType,jdbcType=INTEGER},
+      </if>
+      <if test="city != null" >
+        city = #{city,jdbcType=VARCHAR},
+      </if>
+      <if test="linkman != null" >
+        linkman = #{linkman,jdbcType=VARCHAR},
+      </if>
+      <if test="address != null" >
+        address = #{address,jdbcType=VARCHAR},
+      </if>
+      <if test="phone != null" >
+        phone = #{phone,jdbcType=VARCHAR},
+      </if>
+      <if test="memo != null" >
+        memo = #{memo,jdbcType=VARCHAR},
+      </if>
+      <if test="brand != null" >
+        brand = #{brand,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+    <select id="listPage" resultMap="RM_Image_Review_VO" parameterType="com.goujia.website.base.vo.system.EnterSearchParam">
+        select
+        <include refid="Base_Column_List1" />
+        from g_bbs_enter enter inner join g_dictionary dic on dic.number =  enter.enter_type
+        where  1=1
+        <include refid="Base_Query_Condition" />
+  </select>
+    <select id="count" resultType="int" parameterType="com.goujia.website.base.vo.system.EnterSearchParam">
+        select count(*) from g_bbs_enter enter inner join g_dictionary dic on dic.number =  enter.enter_type 
+          where  1=1
+        <include refid="Base_Query_Condition" />
+    </select>
+</mapper>

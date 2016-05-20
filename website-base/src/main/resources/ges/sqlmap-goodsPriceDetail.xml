@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+    
+<mapper namespace="com.goujia.website.base.ges.dao.GoodsPriceDetailMapper">
+	<!--
+      - ===============================================
+      - 产品包价格 POJO
+      - @author jipengfei
+      - @date 2014-06-16
+      - ===============================================
+	-->
+	<resultMap type="com.goujia.website.base.ges.entity.GoodsPriceDetail"            id="RM_Goods_Price">
+		<result property="goodsId" 	  column="GOODS_ID"    jdbcType="INTEGER" javaType="java.lang.Integer"    />
+		<result property="typeId"     column="TYPE_ID" 	   jdbcType="INTEGER" javaType="java.lang.Integer"    />
+		<result property="typeName"   column="TYPE_NAME"   jdbcType="VARCHAR" javaType="java.lang.String"     />
+		<result property="price"      column="PRICE" 	   jdbcType="DECIMAL" javaType="java.math.BigDecimal" />
+		<result property="orderIndex" column="ORDER_INDEX" jdbcType="INTEGER" javaType="java.lang.Integer"    />
+	</resultMap>
+	
+	
+	<!--
+      - ===============================================
+      - 返回产品包价格带有 预算图标
+      - @author Caorz
+      - @date 2014-08-07
+      - ===============================================
+	-->
+	<resultMap  type="com.goujia.website.base.ges.vo.GoodsPriceDetailVO"   id="RM_Goods_PriceVO" extends="RM_Goods_Price">
+		<result property="imgPath"  column="IMG_PATH" jdbcType="VARCHAR" javaType="java.lang.String"  />
+		<result property="parentId"    column="PARENT_ID"    jdbcType="INTEGER" javaType="java.lang.Integer" />
+		<result property="name"   column="NAME"   jdbcType="VARCHAR" javaType="java.lang.String"     />
+	</resultMap>
+	<!--
+      - ===============================================
+      - 新增GoodsPriceDetail
+      - @author caoqi
+      - @date 2014-06-16
+      - ===============================================
+	-->
+	<insert id="create" parameterType="com.goujia.website.base.ges.entity.GoodsPriceDetail" useGeneratedKeys="true" keyProperty="id">
+		insert into G_GOODS_PRICE_DETAIL(
+			GOODS_ID,
+			TYPE_ID,
+			TYPE_NAME,
+			PRICE,
+			ORDER_INDEX
+		)values(
+			#{goodsId},
+			#{typeId},
+			#{typeName},
+			#{price},
+			#{orderIndex}
+		)
+	</insert>
+	
+	<!--
+      - ===============================================
+      - 修改GoodsPriceDetail
+      - @author caoqi
+      - @date 2014-06-13
+      - ===============================================
+	-->
+	<update id="update" parameterType="com.goujia.website.base.ges.entity.GoodsPriceDetail">
+		update G_GOODS_PRICE_DETAIL
+		<set>
+			<if test="typeName != null and typeName !=''">TYPE_NAME=#{typeName},</if>
+			<if test="price != null and price !=''">PRICE=#{price},</if>
+			<if test="orderIndex != null and orderIndex >0">ORDER_INDEX=#{orderIndex},</if>
+		</set>
+		where GOODS_ID=#{goodsId} and TYPE_ID=#{typeId}
+	</update>
+	
+	<!--
+      - ===============================================
+      - 查询
+      - @author Caorz
+      - @date 2014-06-19
+      - ===============================================
+	-->
+	<select id="list" resultMap="RM_Goods_PriceVO" parameterType="com.goujia.website.base.ges.entity.GoodsPriceDetail">
+		select
+			g.GOODS_ID,
+			g.TYPE_ID,
+			g.TYPE_NAME,
+			g.PRICE,
+			g.ORDER_INDEX,
+			c.IMG_PATH,
+			c.PARENT_ID,
+			c.NAME
+		from G_GOODS_PRICE_DETAIL g left join G_BUDGET_CATEGORY c 
+		on g.TYPE_ID = c.ID
+		where GOODS_ID = #{goodsId} and PARENT_ID != 0
+		order by c.ID asc
+	</select>
+	
+	<!--
+      - ===============================================
+      - 查询
+      - @author jipengfei
+      - @date 2014-06-19
+      - ===============================================
+	-->
+	<select id="query" resultMap="RM_Goods_Price" parameterType="com.goujia.website.base.ges.entity.GoodsPriceDetail">
+		select
+			GOODS_ID,
+			TYPE_ID,
+			TYPE_NAME,
+			PRICE,
+			ORDER_INDEX
+		from G_GOODS_PRICE_DETAIL
+		<where>
+			<if test="goodsId !=null and goodsId >0"> and GOODS_ID = #{goodsId}</if>
+			<if test="typeId !=null and typeId >0"> and TYPE_ID = #{typeId}</if>
+		</where>
+		order by ORDER_INDEX asc
+	</select>
+</mapper>

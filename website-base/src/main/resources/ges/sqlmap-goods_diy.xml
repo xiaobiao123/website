@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.goujia.website.base.ges.dao.GoodsDiyMapper" >
+	<!--
+      - ===============================================
+      - 返回goods_diy POJO
+      - @author guojianbin
+      - @date 2015-09-18
+      - ===============================================
+	-->
+  <resultMap id="RM_Goods_Diy" 			type="com.goujia.website.base.ges.entity.GoodsDiy" >
+    <id 	column="ID" 				property="id" 				jdbcType="INTEGER" 		javaType="java.lang.Integer"/>
+    <result column="DIY_ID" 			property="diyId" 			jdbcType="INTEGER" 		javaType="java.lang.Integer"/>
+    <result column="RELATION_GOODS_ID" 	property="relationGoodsId" 	jdbcType="INTEGER" 		javaType="java.lang.Integer"/>
+    <result column="RELATION_DIY_ID" 	property="relationDiyId" 	jdbcType="INTEGER" 		javaType="java.lang.Integer"/>
+    <result column="CREATOR_ID" 		property="creatorId" 		jdbcType="INTEGER" 		javaType="java.lang.Integer"/>
+    <result column="CREATOR_TYPE" 		property="creatorType" 		jdbcType="INTEGER" 		javaType="java.lang.Integer"/>
+    <result column="GMT_CREATE" 		property="gmtCreate" 		jdbcType="TIMESTAMP" 	javaType="java.util.Date"/>
+    <result column="GMT_MODIFIED" 		property="gmtModified" 		jdbcType="TIMESTAMP" 	javaType="java.util.Date"/>
+  </resultMap>
+  
+  <resultMap  type="com.goujia.website.base.ges.vo.GoodsDiyVO"          id="RM_GoodsDiyVO" >
+        <result property="id"          column="ID"            jdbcType="INTEGER"   javaType="java.lang.Integer"     />
+        <result property="name"          column="NAME"            jdbcType="VARCHAR"   javaType="java.lang.String"     />
+        <result property="styleId"       column="STYLE_ID"        jdbcType="INTEGER"   javaType="java.lang.Integer"    />
+        <result property="styleName"     column="STYLE_NAME"      jdbcType="VARCHAR"   javaType="java.lang.String"     />
+        <result property="photoPath"     column="PHOTO_PATH"      jdbcType="VARCHAR"   javaType="java.lang.String"     />
+        <result property="discountPrice" column="DISCOUNT_PRICE"  jdbcType="DECIMAL"   javaType="java.math.BigDecimal" />
+        <result column="RELATION_GOODS_ID"  property="relationGoodsId"  jdbcType="INTEGER"      javaType="java.lang.Integer"/>
+        <result column="RELATION_DIY_ID"    property="relationDiyId"    jdbcType="INTEGER"      javaType="java.lang.Integer"/>
+        <result property="gmtCreate"     column="GMT_CREATE"      jdbcType="TIMESTAMP" javaType="java.util.Date"       />
+    </resultMap>
+  
+  <sql id="Base_Column_List" >
+    ID, DIY_ID, RELATION_GOODS_ID, RELATION_DIY_ID, CREATOR_ID, CREATOR_TYPE, GMT_CREATE, 
+    GMT_MODIFIED
+  </sql>
+  
+  <select id="selectByPrimaryKey" resultMap="RM_Goods_Diy" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from g_goods_diy
+    where ID = #{id,jdbcType=INTEGER}
+  </select>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from g_goods_diy
+    where ID = #{id,jdbcType=INTEGER}
+  </delete>
+  
+  <insert id="insert" parameterType="com.goujia.website.base.ges.entity.GoodsDiy" useGeneratedKeys="true" keyProperty="id" >
+    insert into g_goods_diy (
+    	ID, 
+    	DIY_ID, 
+    	RELATION_GOODS_ID, 
+      	RELATION_DIY_ID, 
+      	CREATOR_ID, 
+      	CREATOR_TYPE, 
+      	GMT_CREATE, 
+      	GMT_MODIFIED
+    ) values (
+    	#{id,jdbcType=INTEGER}, 
+    	#{diyId,jdbcType=INTEGER}, 
+    	#{relationGoodsId,jdbcType=INTEGER}, 
+      	#{relationDiyId,jdbcType=INTEGER}, 
+      	#{creatorId,jdbcType=INTEGER}, 
+      	#{creatorType,jdbcType=INTEGER}, 
+      	now(), 
+      	now()
+    )
+  </insert>
+  
+  <insert id="insertSelective" parameterType="com.goujia.website.base.ges.entity.GoodsDiy" >
+    insert into g_goods_diy
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        ID,
+      </if>
+      <if test="diyId != null" >
+        DIY_ID,
+      </if>
+      <if test="relationGoodsId != null" >
+        RELATION_GOODS_ID,
+      </if>
+      <if test="relationDiyId != null" >
+        RELATION_DIY_ID,
+      </if>
+      <if test="creatorId != null" >
+        CREATOR_ID,
+      </if>
+      <if test="creatorType != null" >
+        CREATOR_TYPE,
+      </if>
+      <if test="gmtCreate != null" >
+        GMT_CREATE,
+      </if>
+      <if test="gmtModified != null" >
+        GMT_MODIFIED,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="diyId != null" >
+        #{diyId,jdbcType=INTEGER},
+      </if>
+      <if test="relationGoodsId != null" >
+        #{relationGoodsId,jdbcType=INTEGER},
+      </if>
+      <if test="relationDiyId != null" >
+        #{relationDiyId,jdbcType=INTEGER},
+      </if>
+      <if test="creatorId != null" >
+        #{creatorId,jdbcType=INTEGER},
+      </if>
+      <if test="creatorType != null" >
+        #{creatorType,jdbcType=INTEGER},
+      </if>
+      <if test="gmtCreate != null" >
+        #{gmtCreate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="gmtModified != null" >
+        #{gmtModified,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  
+  <update id="updateByPrimaryKeySelective" parameterType="com.goujia.website.base.ges.entity.GoodsDiy" >
+    update g_goods_diy
+    <set >
+      <if test="diyId != null" >
+        DIY_ID = #{diyId,jdbcType=INTEGER},
+      </if>
+      <if test="relationGoodsId != null" >
+        RELATION_GOODS_ID = #{relationGoodsId,jdbcType=INTEGER},
+      </if>
+      <if test="relationDiyId != null" >
+        RELATION_DIY_ID = #{relationDiyId,jdbcType=INTEGER},
+      </if>
+      <if test="creatorId != null" >
+        CREATOR_ID = #{creatorId,jdbcType=INTEGER},
+      </if>
+      <if test="creatorType != null" >
+        CREATOR_TYPE = #{creatorType,jdbcType=INTEGER},
+      </if>
+      <if test="gmtCreate != null" >
+        GMT_CREATE = #{gmtCreate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="gmtModified != null" >
+        GMT_MODIFIED = #{gmtModified,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=INTEGER}
+  </update>
+  
+  <update id="updateByPrimaryKey" parameterType="com.goujia.website.base.ges.entity.GoodsDiy" >
+    update g_goods_diy
+    set DIY_ID = #{diyId,jdbcType=INTEGER},
+      RELATION_GOODS_ID = #{relationGoodsId,jdbcType=INTEGER},
+      RELATION_DIY_ID = #{relationDiyId,jdbcType=INTEGER},
+      CREATOR_ID = #{creatorId,jdbcType=INTEGER},
+      CREATOR_TYPE = #{creatorType,jdbcType=INTEGER},
+      GMT_CREATE = #{gmtCreate,jdbcType=TIMESTAMP},
+      GMT_MODIFIED = #{gmtModified,jdbcType=TIMESTAMP}
+    where ID = #{id,jdbcType=INTEGER}
+  </update>
+  
+  <select id="countByStandardDiyId" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+    SELECT COUNT( ID) FROM g_goods_diy 
+      WHERE RELATION_DIY_ID=#{diyId}
+  </select>
+  <!-- 我的diy列表 -->
+    <select id="listDiy" resultMap="RM_GoodsDiyVO" parameterType="java.lang.Integer" >
+        select 
+            g.ID, 
+            g.NAME,
+            g.STYLE_ID,
+            g.STYLE_NAME, 
+            g.PHOTO_PATH,
+            g.DISCOUNT_PRICE,
+            gd.RELATION_GOODS_ID,
+            gd.GMT_CREATE
+        from g_goods_diy gd inner join G_GOODS g on gd.DIY_ID = g.ID
+            left join g_bbs_member c on gd.CREATOR_ID = c.ID
+        where g.STATUS != 'deleted'
+              and gd.CREATOR_ID=#{userId}
+    </select>
+    
+    <select id="listDiyCount" resultType="java.lang.Integer" parameterType="java.lang.Integer" >
+        select 
+            count(g.ID) 
+        from g_goods_diy gd inner join G_GOODS g on gd.DIY_ID = g.ID
+            left join g_bbs_member c on gd.CREATOR_ID = c.ID
+        where g.STATUS != 'deleted'
+              and gd.CREATOR_ID=#{userId}
+    </select>
+    
+    <!-- 获取上级diy产品包 -->
+    <select id="getRelationDiyId" resultType="java.lang.Integer" parameterType="java.lang.Integer" >
+        SELECT RELATION_DIY_ID FROM g_goods_diy
+         WHERE DIY_ID=#{diyId}
+    </select>
+    <!-- 获得标准可diy产品包 -->
+    <select id="getStandardDiyId" resultType="java.lang.Integer" parameterType="java.lang.Integer" >
+        SELECT DIY_ID  FROM g_goods_diy 
+        WHERE RELATION_DIY_ID=0 AND RELATION_GOODS_ID=#{goodsId}
+    </select>
+    <!-- 获取标准产品包id -->
+    <select id="getRelationGoodsId" resultType="java.lang.Integer" parameterType="java.lang.Integer" >
+        SELECT
+            RELATION_GOODS_ID 
+        FROM 
+            g_goods_diy
+        WHERE 
+            DIY_ID=#{diyId}
+    </select>
+</mapper>

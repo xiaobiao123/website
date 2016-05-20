@@ -1,0 +1,57 @@
+                <div class="row">
+                    <table class="table table-hover table-striped">
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th>缩略图</th>
+                                <th>话题名称</th>
+                                <th>参与文章数量</th>
+                            </tr>
+                        </thead>
+                        <tbody id="topic_table_body">
+                            #foreach($item in $list.result)
+                                <tr>
+                                    <td>
+                                        <input type="checkbox" id="topic_check_${item.id}" value="${item.id}"/>
+                                        <input type="hidden" id="topic_hidden_name_${item.id}" value="${item.name}"/>
+                                    </td>
+                                    <td>
+                                    #if($!{item.imagePath})
+                                        <img width="50px" height="50px" src="$!{reviewImagePath}$!{item.imagePath}"/>
+                                    #else
+                                        <img width="50px" height="50px" src="$!{request.contextPath}/assets/images/no_img.jpg"/>
+                                    #end
+                                    </td>
+                                    <td>$!{item.name}</td>
+                                    <td>$!{item.joinNum}</td>
+                                </tr>
+                            #end
+                        </tbody>
+                    </table>
+                </div>
+            	
+                <div class="row">
+                    <ul class="pagination pull-right">
+                        #if($!list.hasPre)
+                            <li class="first"><a href="#first" onclick="loadList_topic('1');">首页</a></li>
+                            <li class="prev"><a href="#prePage" onclick="loadList_topic('$list.prePage');"><i class="icon-double-angle-left"></i></a></li>
+                        #else
+                            <li class="first disabled"><a>首页</a></li>
+                            <li class="prev disabled"><a><i class="icon-double-angle-left"></i></a></li>
+                        #end
+                        #foreach($pNo in $list.closestPage)
+                            <li #if($list.pageNo == $pNo)class="active"#end><a href="#$!pNo" onclick="loadList_topic('$!pNo');">$!pNo</a></li>
+                        #end
+                        #if($!list.hasNext)
+                            <li class="next"><a href="#nextPage" onclick="loadList_topic('$list.nextPage');"><i class="icon-double-angle-right"></i></a></li>
+                            <li class="last"><a href="#totalPages" onclick="loadList_topic('$list.totalPages');">尾页</a></li>
+                        #else
+                            <li class="next disabled"><a><i class="icon-double-angle-right"></i></a></li>
+                            <li class="last disabled"><a>尾页</a></li>
+                        #end
+                            <li style="white-space:nowrap;display:inline-block">
+                            &nbsp;共$!list.totalPages页， 去第<input type="text" id="topic_pageNo" name="pageNo" value="$!list.pageNo" style="width:40px" class="page-go" onkeypress="if(event.keyCode==13) { $(this).closest('ul').find('button').click(); }"/>页
+                            <button type="button" class="btn btn-xs btn-inverse" onclick="loadList_topic();">确认</button>
+                            </li>
+                    </ul>
+                </div>

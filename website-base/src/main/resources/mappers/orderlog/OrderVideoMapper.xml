@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.goujia.website.base.dao.orderlog.OrderVideoMapper" >
+  <resultMap id="BaseResultMap" type="com.goujia.website.base.entity.orderlog.OrderVideo" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="order_id" property="orderId" jdbcType="INTEGER" />
+    <result column="video_path" property="videoPath" jdbcType="VARCHAR" />
+  </resultMap>
+  <insert id="add" parameterType="com.goujia.website.base.entity.orderlog.OrderVideo" >
+    insert into g_bbs_order_video (id, order_id, video_path
+      )
+    values (#{id,jdbcType=INTEGER}, #{orderId,jdbcType=INTEGER}, #{videoPath,jdbcType=VARCHAR}
+      )
+  </insert>
+  <update id="update" parameterType="com.goujia.website.base.entity.orderlog.OrderVideo" >
+    update g_bbs_order_video
+    set order_id = #{orderId,jdbcType=INTEGER},
+      video_path = #{videoPath,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <select id="getByOrder" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+    select * from g_bbs_order_video
+    where order_id = #{orderId}
+  </select>
+  <delete id="deleteByOrder" parameterType="java.lang.Integer" >
+    delete from g_bbs_order_video
+    where order_id = #{orderId,jdbcType=INTEGER}
+  </delete>
+</mapper>

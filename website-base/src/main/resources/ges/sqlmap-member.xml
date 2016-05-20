@@ -1,0 +1,423 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+    
+<mapper namespace="com.goujia.website.base.ges.dao.MemberMapper">
+
+	<!--
+      - ===============================================
+      - 返回 会员信息
+      - @author Flouny.Caesar
+      - @date 2014-06-13
+      - ===============================================
+	-->
+	<resultMap  type="com.goujia.website.base.ges.entity.Member"    id="RM_Member_View">
+		<id     property="id"          column="ID"  	     jdbcType="INTEGER"   javaType="java.lang.Integer" />
+		<result property="email"       column="EMAIL"        jdbcType="VARCHAR"   javaType="java.lang.String"  />
+		<result property="loginName"   column="LOGIN_NAME"   jdbcType="VARCHAR"   javaType="java.lang.String"  />
+		<result property="passwordKey" column="PASSWORD_KEY" jdbcType="VARCHAR"   javaType="java.lang.String"  />
+		<result property="payPassword" column="PAY_PASSWORD" jdbcType="VARCHAR"   javaType="java.lang.String"  />
+		<result property="phone"       column="PHONE"        jdbcType="VARCHAR"   javaType="java.lang.String"  />
+		<result property="realName"    column="REAL_NAME"    jdbcType="VARCHAR"   javaType="java.lang.String"  />
+		<result property="gender"      column="GENDER"       jdbcType="VARCHAR"   javaType="java.lang.String"  />
+		<result property="headPath"    column="HEAD_PATH"    jdbcType="VARCHAR"   javaType="java.lang.String"  />
+		<result property="address"     column="ADDRESS"      jdbcType="VARCHAR"   javaType="java.lang.String"  />
+		<result property="isDeleted"   column="IS_DELETED"   jdbcType="VARCHAR"   javaType="java.lang.String"  />
+		<result property="gmtCreate"   column="GMT_CREATE"   jdbcType="TIMESTAMP" javaType="java.util.Date"    />
+		<result property="gmtModified" column="GMT_MODIFIED" jdbcType="TIMESTAMP" javaType="java.util.Date"    />
+		<result property="birthday"    column="BIRTHDAY"     jdbcType="TIMESTAMP" javaType="java.util.Date"    />
+		<result property="province"    column="PROVINCE"     jdbcType="INTEGER"   javaType="java.lang.Integer" />
+		<result property="city"        column="CITY"         jdbcType="INTEGER"   javaType="java.lang.Integer" />
+		<result property="county"      column="COUNTY"       jdbcType="INTEGER"   javaType="java.lang.Integer" />
+		<result property="idCard"      column="ID_CARD"      jdbcType="VARCHAR"   javaType="java.lang.String"  />
+        <result property="nickName"    column="NICK_NAME"    jdbcType="VARCHAR"   javaType="java.lang.String"  />
+        <result property="qq"          column="QQ"           jdbcType="VARCHAR"   javaType="java.lang.String"  />
+        <result property="wechat"      column="WECHAT"       jdbcType="VARCHAR"   javaType="java.lang.String"  />
+        <result property="weibo"       column="WEIBO"        jdbcType="VARCHAR"   javaType="java.lang.String"  />
+        <result property="isDisabled"  column="IS_DISABLED"  jdbcType="VARCHAR"   javaType="java.lang.String"  />
+
+
+	</resultMap>
+	
+	<!--
+      - ===============================================
+      - 新增会员
+      - @author Flouny.Caesar
+      - @date 2014-06-13
+      - ===============================================
+	-->
+	<insert id="create" parameterType="com.goujia.website.base.ges.entity.Member" useGeneratedKeys="true" keyProperty="id">
+		insert into G_BBS_MEMBER (
+			ID, 
+			EMAIL, 
+			LOGIN_NAME, 
+			PASSWORD_KEY, 
+			PAY_PASSWORD, 
+			PHONE, 
+			REAL_NAME, 
+			GENDER, 
+			HEAD_PATH, 
+			ADDRESS, 
+			IS_DELETED, 
+			GMT_CREATE, 
+			GMT_MODIFIED,
+			BIRTHDAY,
+			PROVINCE,
+			CITY,
+			COUNTY,
+			ID_CARD,
+			NICK_NAME,
+			QQ,
+			WECHAT,
+			WEIBO,
+			IS_DISABLED
+		) values (
+			#{id}, 
+			#{email}, 
+			#{loginName}, 
+			#{passwordKey}, 
+			#{payPassword}, 
+			#{phone}, 
+			#{realName}, 
+			#{gender}, 
+			#{headPath}, 
+			#{address}, 
+			'n', 
+			now(), 
+			now(),
+			#{birthday},
+			#{province},
+			#{city},
+			#{county},
+			#{idCard},
+			#{nickName},
+			#{qq},
+			#{wechat},
+			#{weibo},
+			#{isDisabled}
+		)
+	</insert>
+	
+	<!--
+      - ===============================================
+      - 修改会员
+      - @author Flouny.Caesar
+      - @date 2014-06-13
+      - ===============================================
+	-->
+	<update id="update" parameterType="com.goujia.website.base.ges.entity.Member">
+		update G_BBS_MEMBER set GMT_MODIFIED=now()
+		<if test="email != null and email !=''">, EMAIL=#{email}</if>
+		<if test="passwordKey != null and passwordKey !=''">, PASSWORD_KEY=#{passwordKey}</if>
+		<if test="payPassword != null and payPassword !=''">, PAY_PASSWORD=#{payPassword}</if>
+		<if test="phone != null and phone !=''">, PHONE=#{phone}</if>
+		<if test="realName != null and realName !=''">, REAL_NAME=#{realName}</if>
+		<if test="gender != null and gender !=''">, GENDER=#{gender}</if>
+		<if test="headPath != null and headPath !=''">, HEAD_PATH=#{headPath}</if>
+		<if test="address != null and address !=''">, ADDRESS=#{address}</if>
+		<if test="isDeleted != null and isDeleted !=''">, IS_DELETED=#{isDeleted}</if>
+		<if test="birthday != null and birthday !=''">, BIRTHDAY=#{birthday}</if>
+		<if test="province != null and province !=''">, PROVINCE=#{province}</if>
+		<if test="city != null and city !=''">, CITY=#{city}</if>
+		<if test="county != null and county !=''">, COUNTY=#{county}</if>
+		<if test="idCard != null and idCard !=''">, ID_CARD=#{idCard}</if>
+		where ID=#{id}
+	</update>
+	
+	<!--
+      - ===============================================
+      - 查询会员总数
+      - @author Flouny.Caesar
+      - @date 2014-06-13
+      - ===============================================
+	-->
+	<select id="count" resultType="java.lang.Integer" parameterType="com.goujia.website.base.ges.vo.MemberVO">
+		select count(ID) 
+		from G_BBS_MEMBER
+		where IS_DELETED='n'
+		<if test="id !=null and name > 0">and ID=#{id}</if>
+		<if test="email !=null and email !=''">and EMAIL=#{email}</if>
+		<if test="loginName !=null and loginName !=''">and LOGIN_NAME=#{loginName}</if>
+		<if test="passwordKey !=null and passwordKey !=''">and PASSWORD_KEY=#{passwordKey}</if>
+		<if test="payPassword !=null and payPassword !=''">and PAY_PASSWORD=#{payPassword}</if>
+		<if test="phone !=null and phone !=''">and PHONE=#{phone}</if>
+		<if test="account !=null and account !=''">and (EMAIL=#{account} or LOGIN_NAME=#{account} or PHONE=#{account})</if>
+	</select>
+	
+	<!--
+      - ===============================================
+      - 查询会员信息
+      - @author Flouny.Caesar
+      - @date 2014-06-13
+      - ===============================================
+	-->
+	<select id="selectForMember" resultMap="RM_Member_View" parameterType="com.goujia.website.base.ges.vo.MemberVO">
+		select 
+	        ID,
+	        EMAIL,
+	        LOGIN_NAME,
+	        PASSWORD_KEY,
+	        PAY_PASSWORD,
+	        PHONE,
+	        REAL_NAME,
+	        GENDER,
+	        HEAD_PATH,
+	        ADDRESS,
+	        IS_DELETED,
+	        GMT_CREATE,
+	        GMT_MODIFIED,
+	        BIRTHDAY,
+	        PROVINCE,
+	        CITY,
+	        COUNTY,
+	        ID_CARD,
+	        NICK_NAME,
+	        QQ,
+	        WECHAT,
+	        WEIBO,
+	        IS_DISABLED
+		from G_BBS_MEMBER
+		where IS_DELETED='n'
+		<if test="id !=null and name > 0">and ID=#{id}</if>
+		<if test="email !=null and email !=''">and EMAIL=#{email}</if>
+		<if test="loginName !=null and loginName !=''">and LOGIN_NAME=#{loginName}</if>
+		<if test="passwordKey !=null and passwordKey !=''">and PASSWORD_KEY=#{passwordKey}</if>
+		<if test="payPassword !=null and payPassword !=''">and PAY_PASSWORD=#{payPassword}</if>
+		<if test="phone !=null and phone !=''">and PHONE=#{phone}</if>
+		<if test="account !=null and account !=''">and (EMAIL=#{account} or LOGIN_NAME=#{account} or PHONE=#{account})</if>
+		order by ID desc
+	</select>
+	
+	<!--
+      - ===============================================
+      - 根据邮箱和登录名获取会员信息
+      - @author Flouny.Caesar
+      - @date 2014-06-13
+      - ===============================================
+	-->
+	<select id="selectForMemberByAccount" resultMap="RM_Member_View" parameterType="java.lang.String">
+		select 
+        ID,
+        EMAIL,
+        LOGIN_NAME,
+        PASSWORD_KEY,
+        PAY_PASSWORD,
+        PHONE,
+        REAL_NAME,
+        GENDER,
+        HEAD_PATH,
+        ADDRESS,
+        IS_DELETED,
+        GMT_CREATE,
+        GMT_MODIFIED,
+        BIRTHDAY,
+        PROVINCE,
+        CITY,
+        COUNTY,
+        ID_CARD,
+        NICK_NAME,
+        QQ,
+        WECHAT,
+        WEIBO,
+        IS_DISABLED
+		from G_BBS_MEMBER
+		where IS_DELETED='n' and (EMAIL=#{account} or LOGIN_NAME=#{account})
+	</select>
+	
+	
+	<!--
+      - ===============================================
+      - 查询用户信息
+      - @author Caorz
+      - @date 2014-07-09
+      - ===============================================
+	-->
+	<select id="queryById" resultMap="RM_Member_View" parameterType="java.lang.Integer">
+		select
+        ID,
+        EMAIL,
+        LOGIN_NAME,
+        PASSWORD_KEY,
+        PAY_PASSWORD,
+        PHONE,
+        REAL_NAME,
+        GENDER,
+        HEAD_PATH,
+        ADDRESS,
+        IS_DELETED,
+        GMT_CREATE,
+        GMT_MODIFIED,
+        BIRTHDAY,
+        PROVINCE,
+        CITY,
+        COUNTY,
+        ID_CARD,
+        NICK_NAME,
+        QQ,
+        WECHAT,
+        WEIBO,
+        IS_DISABLED
+		from
+			G_BBS_MEMBER
+		where ID=#{id}
+	</select>
+	
+	<!--
+      - ===============================================
+      - 修改个人信息
+      - @author Caorz
+      - @date 2014-06-13
+      - ===============================================
+	-->
+	<update id="updateInfo" parameterType="com.goujia.website.base.ges.entity.Member">
+		update G_BBS_MEMBER set GMT_MODIFIED=now()
+							<if test="passwordKey !=null and passwordKey !=''">, PASSWORD_KEY=#{passwordKey}</if>
+							<if test="realName != null and realName != ''">, REAL_NAME=#{realName}</if>
+							<if test="gender != null and gender != ''">, GENDER=#{gender}</if>
+							<if test="birthday != null and birthday != ''">, BIRTHDAY=#{birthday}</if>
+							<if test="province != null and province != ''">, PROVINCE=#{province}</if>
+							<if test="phone != null and phone != ''">, PHONE=#{phone}</if>
+							<if test="email != null and email != ''">, EMAIL=#{email}</if>
+							<if test="city != null and city != ''">, CITY=#{city}</if>
+							<if test="county != null and county != ''">, COUNTY=#{county}</if>
+							<if test="address != null and address != ''">, ADDRESS=#{address}</if>
+				where ID=#{id}
+	</update>
+	
+	<!--
+      - ===============================================
+      - 查询会员表总数
+      - @author zjl
+      - @date 2014-08-18
+      - ===============================================
+	-->
+	<select id="countall" resultType="java.lang.Integer" >
+		select count(ID)
+		from G_BBS_MEMBER
+	</select>
+	
+	<!--
+      - ===============================================
+      - 查询会员表Grid
+      - @author zjl
+      - @date 2014-08-18
+      - ===============================================
+	-->
+	<select id="grid" resultMap="RM_Member_View" parameterType="com.goujia.website.base.ges.vo.MemberVO">
+		select 
+        ID,
+        EMAIL,
+        LOGIN_NAME,
+        PASSWORD_KEY,
+        PAY_PASSWORD,
+        PHONE,
+        REAL_NAME,
+        GENDER,
+        HEAD_PATH,
+        ADDRESS,
+        IS_DELETED,
+        GMT_CREATE,
+        GMT_MODIFIED,
+        BIRTHDAY,
+        PROVINCE,
+        CITY,
+        COUNTY,
+        ID_CARD,
+        NICK_NAME,
+        QQ,
+        WECHAT,
+        WEIBO,
+        IS_DISABLED
+		from G_BBS_MEMBER
+		where IS_DELETED='n'
+		<if test="loginName !=null and loginName !=''">and LOGIN_NAME like CONCAT('%','${loginName}','%' )</if>
+		order by GMT_MODIFIED DESC
+	</select>
+	
+	<!--
+      - ===============================================
+      - 修改个人信息
+      - @author jipengfei
+      - @date 2015-01-22
+      - ===============================================
+	-->
+	<update id="updateByOpenId" parameterType="com.goujia.website.base.ges.entity.Member">
+		update G_BBS_MEMBER set GMT_MODIFIED = now()
+		<if test="email != null and email !=''">, EMAIL=#{email}</if>
+		<if test="passwordKey != null and passwordKey !=''">, PASSWORD_KEY=#{passwordKey}</if>
+		<if test="payPassword != null and payPassword !=''">, PAY_PASSWORD=#{payPassword}</if>
+		<if test="phone != null and phone !=''">, PHONE=#{phone}</if>
+		<if test="realName != null and realName !=''">, REAL_NAME=#{realName}</if>
+		<if test="gender != null and gender !=''">, GENDER=#{gender}</if>
+		<if test="headPath != null and headPath !=''">, HEAD_PATH=#{headPath}</if>
+		<if test="address != null and address !=''">, ADDRESS=#{address}</if>
+		<if test="isDeleted != null and isDeleted !=''">, IS_DELETED=#{isDeleted}</if>
+		<if test="birthday != null">, BIRTHDAY=#{birthday}</if>
+		<if test="province != null and province !=''">, PROVINCE=#{province}</if>
+		<if test="city != null and city !=''">, CITY=#{city}</if>
+		<if test="county != null and county !=''">, COUNTY=#{county}</if>
+		<if test="idCard != null and idCard !=''">, ID_CARD=#{idCard}</if>
+		where OPEN_ID = #{openID}
+	</update>
+	
+	<!--
+      - ===============================================
+      - 查询个人信息
+      - @author jipengfei
+      - @date 2015-01-22
+      - ===============================================
+	-->
+	<select id="selectByOpenId" parameterType="com.goujia.website.base.ges.entity.Member" resultMap="RM_Member_View">
+		select
+        ID,
+        EMAIL,
+        LOGIN_NAME,
+        PASSWORD_KEY,
+        PAY_PASSWORD,
+        PHONE,
+        REAL_NAME,
+        GENDER,
+        HEAD_PATH,
+        ADDRESS,
+        IS_DELETED,
+        GMT_CREATE,
+        GMT_MODIFIED,
+        BIRTHDAY,
+        PROVINCE,
+        CITY,
+        COUNTY,
+        ID_CARD,
+        NICK_NAME,
+        QQ,
+        WECHAT,
+        WEIBO,
+        IS_DISABLED
+		from
+			G_BBS_MEMBER
+		where OPEN_ID = #{openID}
+	</select>
+	<resultMap id="userMap" type="com.goujia.website.base.entity.system.User">
+		<id column="ID" property="id"/>
+		<result column="USER_NAME" property="userName"/>
+		<result column="EMAIL" property="email"/>
+		<result column="PASSWORD_KEY" property="passwordKey"/>
+		<result column="REAL_NAME" property="realName"/>
+		<result column="PHONE" property="phone"/>
+		<result column="HEAD_PORTRAIT" property="headPortrait" jdbcType="VARCHAR" />
+		<result column="QQ" property="qq" jdbcType="VARCHAR" />
+		<result column="ORG_TYPE" property="orgType" jdbcType="VARCHAR" />
+	</resultMap>
+	<select id="findAll" resultMap="userMap">
+		select 
+			ID,
+			LOGIN_NAME as USER_NAME,
+			EMAIL,
+			PASSWORD_KEY,
+			PHONE,
+			REAL_NAME,
+			HEAD_PATH as HEAD_PORTRAIT,
+			QQ as QQ
+		from g_bbs_member where IS_DELETED='n'
+	</select>
+</mapper>

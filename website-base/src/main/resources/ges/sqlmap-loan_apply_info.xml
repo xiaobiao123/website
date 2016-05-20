@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+    
+<mapper namespace="com.goujia.website.base.ges.dao.OwnerLoanDao">
+	
+	<resultMap type="com.goujia.website.base.ges.entity.LoanApplyInfo" id="rm_LoanApplyInfo">
+		<id 	property="id" 					column="ID" 					jdbcType="INTEGER" 	javaType="java.lang.Integer"/>
+		<result property="shopCode" 			column="SHOP_CODE" 				jdbcType="VARCHAR"	javaType="java.lang.String" />
+		<result property="orderId"				column="ORDER_ID"				jdbcType="INTEGER"	javaType="java.lang.Integer"/>
+		<result property="goodsId"				column="GOODS_ID"				jdbcType="INTEGER"	javaType="java.lang.Integer"/>
+		<result property="houseAcreage" 		column="HOUSE_ACREAGE" 			jdbcType="DOUBLE"	javaType="java.lang.Double" />
+		<result property="shopId"				column="SHOP_ID"				jdbcType="INTEGER"	javaType="java.lang.Integer"/>
+		<result property="totalAmount" 			column="TOTAL_AMOUNT" 			jdbcType="DECIMAL"	javaType="java.math.BigDecimal" />
+		<result property="houseAddress" 		column="HOUSE_ADDRESS" 			jdbcType="VARCHAR"	javaType="java.lang.String" />
+		<result property="shopName"				column="SHOP_NAME"				jdbcType="VARCHAR" 	javaType="java.lang.String"/>
+	</resultMap>
+	
+	<resultMap type="com.goujia.website.base.ges.vo.LoanApplyInfoExt" id="rm_loanApplyInfoExt" extends="rm_LoanApplyInfo">
+		<result property="orderCode"			column="ORDER_CODE"				jdbcType="VARCHAR" 	javaType="java.lang.String"/>
+		<result property="goodsName"			column="GOODS_NAME"				jdbcType="VARCHAR" 	javaType="java.lang.String"/>
+		<result property="goodsSize"			column="GOODS_SIZE"				jdbcType="DOUBLE"	javaType="java.lang.Double"/>
+		<result property="isPromotion"			column="IS_PROMOTION"			jdbcType="VARCHAR" 	javaType="java.lang.String"/>
+		<result property="orderStatus"			column="ORDER_STATUS"			jdbcType="VARCHAR" 	javaType="java.lang.String"/>
+		<result property="buyerId"              column="BUYER_ID"               jdbcType="INTEGER"    javaType="java.lang.Integer"/>
+	</resultMap>
+	
+	<insert id="addOwnerLoanInfo" useGeneratedKeys="true" keyProperty="id" parameterType="com.goujia.website.base.ges.entity.LoanApplyInfo">
+		INSERT INTO g_loan_apply_info (
+			ORDER_ID,
+			CMPTXSNO,
+			SHOP_ID,
+			SHOP_CODE,
+			GOODS_ID,
+			HOUSE_ADDRESS,
+			HOUSE_ACREAGE,
+			TOTAL_AMOUNT,
+			PROVINCE,
+			CITY_CODE,
+			CUSTOMER_NAME,
+			IDENTITY_TYPE,
+			IDENTITY_NUMBER,
+			WORK_DEPT,
+			PHONE,
+			YEAR_INCOME,
+			HOUSE_TYPE,
+			HOUSE_OWN_TYPE,
+			MARITAL_STATUS,
+			AMOUNT,
+			TERM,
+			RATE,
+			FIRST_MONTH_REPAY,
+			EVERY_MONTH_REPAY,
+			LOAN_APPLY_STATUS,
+			GMT_CREATE,
+			GMT_MODIFY
+		) VALUES (
+			#{orderId},
+			#{cmptxsno},
+			#{shopId},
+			#{shopCode},
+			#{goodsId},
+			#{houseAddress},
+			#{houseAcreage},
+			#{totalAmount},
+			(SELECT VALUE FROM g_dict WHERE id=#{province}),
+			#{cityCode},
+			#{customerName},
+			#{identityType},
+			#{identityNumber},
+			#{workDept},
+			#{phone},
+			#{yearIncome},
+			#{houseType},
+			#{houseOwnType},
+			#{maritalStatus},
+			#{amount},
+			#{term},
+			#{rate},
+			#{firstMonthRepay},
+			#{everyMonthRepay},
+			#{loanApplyStatus},
+			now(),
+			now()
+		)
+	</insert>
+	
+	<select id="queryLoanOrderInfo" parameterType="java.lang.Integer" resultMap="rm_loanApplyInfoExt">
+		SELECT
+  			o.ID ORDER_ID,
+  			o.CODE ORDER_CODE,
+  			o.GOODS_ID ,
+  			o.STATUS ORDER_STATUS,
+  			o.BUYER_ID,
+  			g.NAME GOODS_NAME,
+  			o.AREA HOUSE_ACREAGE,
+  			s.CODE SHOP_CODE,
+  			s.NAME SHOP_NAME,
+  			s.ID SHOP_ID,
+  			o.TOTAL_AMOUNT TOTAL_AMOUNT,
+  			o.TAKE_ADDRESS HOUSE_ADDRESS,
+  			h.FLOOR_AREA GOODS_SIZE,
+  			g.IS_PROMOTION
+		FROM g_shop s,
+  			g_house h,
+  			g_goods g,
+  			g_order o
+		WHERE 
+				o.IS_DELETED='n' 
+			AND o.SHOP_ID = s.ID
+    		AND g.HOUSE_ID = h.ID
+    		AND o.GOODS_ID = g.ID
+    		AND O.ID=#{orderId}
+	</select>
+	
+	<update id="updateOwnerLoanInfoStatus" parameterType="com.goujia.website.base.ges.entity.LoanApplyInfo">
+		UPDATE 
+			g_loan_apply_info 
+		SET 
+			LOAN_APPLY_STATUS=#{loanApplyStatus},
+			GMT_MODIFY=now() 
+		where 
+			id=#{id}
+	</update>
+	
+	<select id="countOwnerLoanTimes" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+	   SELECT 
+	       COUNT(1) 
+	   FROM 
+	       g_loan_apply_info 
+	   WHERE 
+	       LOAN_APPLY_STATUS=1 AND order_id=#{orderId} 
+	</select>
+	
+	<select id="countApplyTimes" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+	   SELECT 
+	       COUNT(1) 
+	   FROM 
+	       g_loan_apply_info 
+	   WHERE 
+	       GMT_CREATE>CURDATE() AND order_id=#{orderId}
+	</select>
+	
+</mapper>

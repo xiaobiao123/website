@@ -1,0 +1,319 @@
+#Html("begin")
+#Head("begin")
+#Title("系统管理-推荐位管理")
+#LoadBootstrap("default")
+#LoadSUI("default")
+#LoadSUI("upload")
+#Head("end")
+<body>
+	#parse("header.vm")
+	
+	<!--nav-table start-->
+	<ul class="nav nav-tabs" id="">
+		<li class="active">
+			<a href="javascript:;">
+				 基本信息
+			</a>
+		</li>
+	</ul>
+	<!--nav-table end-->
+	
+	<p>&nbsp;</p>
+	
+	<div id="user-profile-1" class="user-profile row">
+		<form id="J_Form" name="J_Form" class="form-horizontal" role="form" method="post" >
+    		<div class="col-xs-12 col-sm-3 center">
+    			<div id="profile-picture">
+    				<span class="profile-picture">
+                		<img src="#if($!recommendInfo.infoImage) $!reviewImagePath/$!recommendInfo.infoImage #else $!request.contextPath/assets/images/no_img.jpg #end" alt="Avatar" class="editable img-responsive editable-click editable-empty" id="infoImage_preview" style="width:334px; height:288px"/>
+    					#Uploader_pic({
+                            "width":334,
+                            "height":288,
+                            "rates":"m,s",
+                            "maxSize":40000000,
+                            "fieldName": "infoImage", 
+    						"fileFieldName": "infoImageFile", 
+        					"src": "$!recommendInfo.infoImage",
+        					"required":"false"
+        				})
+    				</span>
+    				<div class="space-4"></div>
+    			</div>
+    		</div>
+    	
+        	<!-- PAGE CONTENT BEGINS -->
+        	<div class="col-xs-12 col-sm-9">
+        		#Hidden("recId", "$!recommendInfo.recId")
+        		<div class="form-group">
+        			<label class="control-label col-xs-12 col-sm-2 no-padding-right" for="title"><span class="red">*</span>推荐标题：</label>
+        				<div class="clearfix">
+        					<div class="col-xs-12 col-sm-9">
+        						<div class="clearfix">
+        							<input type="text" name="infoTitle" id="title" class="col-xs-12 col-sm-6" value="$!recommendInfo.infoTitle">
+        						</div>
+        					</div>
+        				</div>
+        		</div>
+    			
+        		<div class="space-2"></div>
+        		
+        		<div class="form-group">
+        			<label class="control-label col-xs-12 col-sm-2 no-padding-right" for="title"><span class="red">*</span>推荐位：</label>
+        			<div class="col-xs-12 col-sm-9 " id="J_ProductCate">
+        				<div class="clearfix">
+        					<select name="posId" id="posId" data-id="$!recommendInfo.posId">
+                                <option value="">请选择</option>
+                            </select>
+        				</div>
+        			</div>
+        		</div>
+    			
+    			<div class="space-2"></div>
+        		
+        		<div class="form-group">
+        			<label class="control-label col-xs-12 col-sm-2 no-padding-right" for=""><span class="red">*</span>推荐URL：</label>
+        
+        			<div class="clearfix">
+        				<div class="col-xs-12 col-sm-9">
+        					<div class="clearfix">
+        						<input type="text" name="infoUrl" id="infoUrl" class="col-xs-12 col-sm-6" value="$!recommendInfo.infoUrl">
+        					</div>
+        				</div>
+        			</div>
+        		</div>
+                
+                    <div class="space-2"></div>
+                
+                <div class="form-group">
+                    <label class="control-label col-xs-12 col-sm-2 no-padding-right" for=""><span class="red">*</span>推荐信息id：</label>
+        
+                    <div class="clearfix">
+                        <div class="col-xs-12 col-sm-9">
+                            <div class="clearfix">
+                                <input type="text" name="infoId" id="infoId" class="col-xs-12 col-sm-6" value="$!recommendInfo.infoId">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+    			
+        		<div class="space-2"></div>
+        
+        		<div class="form-group">
+        			<label class="control-label col-xs-12 col-sm-2 no-padding-right" for=""><span class="red">*</span>推荐内容：</label>
+        
+        			<div class="clearfix">
+        				<div class="col-xs-12 col-sm-9">
+        					<div class="clearfix">
+        						<input type="text" name="infoContent" class="col-xs-12 col-sm-6" value="$!recommendInfo.infoContent">
+        					</div>
+        				</div>
+        			</div>
+        		</div>
+        
+        		<div class="space-2"></div>
+        		
+        		<div class="form-group">
+        			<label class="control-label col-xs-12 col-sm-2 no-padding-right" for=""><span class="red">*</span>发布状态：</label>
+        
+        			<div class="clearfix">
+        				<div class="col-xs-12 col-sm-9">
+        					<div class="clearfix">
+            					<input type="radio" name="infoStatus" value="$!SysConstants.REC_INFO_INFO_STATUS_ACTIVE" #if($!SysConstants.REC_INFO_INFO_STATUS_ACTIVE == $!recommendInfo.infoStatus) checked #end>有效</input>
+            					<input type="radio" name="infoStatus" value="$!SysConstants.REC_INFO_INFO_STATUS_INACTIVE" #if(!$!recommendInfo.infoStatus || $!SysConstants.REC_INFO_INFO_STATUS_INACTIVE == $!recommendInfo.infoStatus) checked #end>作废</input>
+        					</div>
+        				</div>
+        			</div>
+        		</div>
+    			
+    			<div class="space-2"></div>
+        		
+        		<div class="form-group">
+        			<label class="control-label col-xs-12 col-sm-2 no-padding-right" for=""><span class="red">*</span>生效时间：</label>
+        
+        			<div class="clearfix">
+        				<div class="col-xs-12 col-sm-9">
+        					<div class="clearfix">
+            					<input type="text" id="availableTime" name="availableTime" onclick="WdatePicker({dateFmt:'yyyy-MM-dd'})" value="$date.formatDateTime($!recommendInfo.availableTime,'yyyy-MM-dd')" class="Wdate" />
+        					</div>
+        				</div>
+        			</div>
+        		</div>
+    			
+        		<div class="space-2"></div>
+        		
+        		<div class="form-group">
+        			<label class="control-label col-xs-12 col-sm-2 no-padding-right" for=""><span class="red">*</span>失效时间：</label>
+        
+        			<div class="clearfix">
+        				<div class="col-xs-12 col-sm-9">
+        					<div class="clearfix">
+            					<input type="text" id="expireTime" name="expireTime" onclick="WdatePicker({dateFmt:'yyyy-MM-dd'})" value="$date.formatDateTime($!recommendInfo.expireTime,'yyyy-MM-dd')" class="Wdate" />
+        					</div>
+        				</div>
+        			</div>
+        		</div>
+        
+        		<div class="space-2"></div>
+        		
+        		<div class="form-group">
+        			<label class="control-label col-xs-12 col-sm-2 no-padding-right" for="">排序值：</label>
+        
+        			<div class="clearfix">
+        				<div class="col-xs-12 col-sm-9">
+        					<div class="clearfix">
+    							<input type="text" name="sortOrder" class="" value="$!recommendInfo.sortOrder"/>
+        					</div>
+        				</div>
+        			</div>
+        		</div>
+        
+        		<div class="space-2"></div>
+        		
+        		<div>
+        			<div class="col-md-offset-3 col-md-7">
+        				<button type="button" id="J_SAVE" class="btn btn-info J_LoadingBtn" data-loading-text="保存中...">
+        					<i class="icon-ok bigger-110"></i>
+        					保存
+        				</button>
+        			</div>
+        		</div>
+            </div>
+		</form>
+    </div>
+	
+	<script>
+    	$(function(){
+			
+			REC_INFO.initRecPos();
+			
+    		$("#J_Form").validate({
+			rules : {
+				infoImage :{
+					required : true
+				},
+				infoTitle : {
+					required : true
+				},
+				posId : {
+					required : true
+				},
+				infoUrl : {
+					required : true
+				},
+				infoContent : {
+					required : true
+				},
+				infoStatus : {
+					required : true
+				},
+				availableTime : {
+					required : true
+				},
+				expireTime : {
+					required : true
+				}
+			},
+			messages: {
+				infoImage : {
+					required : "推荐主图不能为空！"
+				},
+				infoTitle: {
+					required: "推荐标题不能为空！"
+				},
+				posId: {
+					required: "推荐位信息不能为空！"
+				},
+				infoUrl: {
+					required: "推荐URL不能为空！"
+				},
+				infoContent: {
+					required: "推荐内容不能为空！"
+				},
+				infoStatus: {
+					required: "发布状态不能为空！"
+				},
+				availableTime: {
+					required: "生效时间不能为空！"
+				},
+				expireTime: {
+					required: "失效时间不能为空！"
+				}
+			},
+			/* 错误信息的显示位置 */
+			errorPlacement: function(error, element) {
+				if(element.is(':checkbox') || element.is(':radio')) {
+    				var controls = element.closest('div[class*="col-"]');
+    				if(controls.find(':checkbox,:radio').length > 1) controls.append(error);
+    				else error.insertAfter(element.nextAll('.lbl:eq(0)').eq(0));
+    			}else if(element.is(':file')){
+					error.insertAfter($("#profile-picture"));
+				}else if(element.is('.select2')) {
+    				error.insertAfter(element.siblings('[class*="select2-container"]:eq(0)'));
+    			}else if(element.is('.chosen-select')) {
+    				error.insertAfter(element.siblings('[class*="chosen-container"]:eq(0)'));
+    			}else error.insertAfter(element.parent());
+			}
+		});
+    	});
+		
+		
+		$("#J_SAVE").click(function(){
+			if(true){
+				$.ajax({
+				   dataTpe: "json",
+				   type: "POST",
+				   url: '$!request.contextPath/rec/info/save.htm',
+	 			   data: $("#J_Form").serialize(),
+				   success: function(res){
+				     if(res[0]){
+					 	alert("保存成功");
+						window.location.href="$!request.contextPath/rec/info/index.htm";
+				     } else {
+					 	alert("保存失败，请稍后再试");
+				     }
+				   },
+				   error: function(XMLHttpRequest, textStatus, errorThrown) {
+					alert(DS.msg.error, DS.msg.tip);
+				   }
+				});
+			}
+		});
+		
+		var REC_INFO = function(){
+			return {
+				initRecPos: function(){
+					var currentPosId = $("#posId").attr("data-id");
+					
+					$.ajax({
+    				   dataTpe: "json",
+    				   type: "POST",
+    				   url: '$!request.contextPath/rec/pos/findRecPos.htm',
+    				   data: {},
+    				   success: function(res){
+					   	 res = eval('(' + res + ')');
+    				     if(res[0]){
+    					 	var recPos = res[2];
+							var posIdElem = $("#posId");
+							for(var i in recPos){
+								if(currentPosId == recPos[i].posId){
+									posIdElem.append("<option value='" + recPos[i].posId + "' selected>" + recPos[i].posName + "</option>"); 
+								}else{
+    								posIdElem.append("<option value='" + recPos[i].posId + "'>" + recPos[i].posName + "</option>"); 
+								}
+							}
+    				     } else {
+    					 	alert("保存失败，请稍后再试");
+    				     }
+    				   },
+    				   error: function(XMLHttpRequest, textStatus, errorThrown) {
+    					alert(DS.msg.error, DS.msg.tip);
+    				   }
+    				});
+				}
+			}
+		}();
+    </script>
+	<!-- PAGE CONTENT ENDS -->
+	#parse("footer.vm")
+</body>
+#Html("end")

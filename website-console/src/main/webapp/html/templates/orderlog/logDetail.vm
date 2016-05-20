@@ -1,0 +1,199 @@
+#Html("begin")
+#Head("begin")
+#Title("系统管理-日志管理")
+#LoadBootstrap("default")
+#LoadSUI("default")
+#LoadSUI("editor")
+#LoadSUI("upload")
+#Head("end")
+<script type="text/javascript" src="$!request.contextPath/assets/js/labelPanel.js"></script>
+<body>
+	#parse("header.vm")
+	
+	<!--nav-table start-->
+	<ul class="nav nav-tabs" id="">
+		<li class="active">
+			<a href="javascript:;">
+				 基本信息
+			</a>
+		</li>
+	</ul>
+	<!--nav-table end-->
+	
+	<!-- PAGE CONTENT BEGINS -->
+	<p></p>
+	<form id="J_Form" name="J_Form" class="form-horizontal" role="form" method="post" >
+		#Hidden("logId", "$!log.id")
+        #Hidden("orderId", "$!orderId")
+		<div class="form-group">
+			<label class="control-label col-xs-12 col-sm-2 no-padding-right" for="title"><span class="red">*</span>直播阶段：</label>
+				<div class="clearfix">
+					<div class="col-xs-12 col-sm-9">
+						<div class="clearfix">
+                             <input  type="hidden" id="labelId" name="labelId" value="$!log.labelId"/>
+                        <input disabled="true" type="text" name="labelName" id="labelName" value="$!log.labelName" class="col-xs-12 col-sm-6" >
+                            &nbsp;&nbsp;
+                            <button type="button" id="labelAdd" onclick="this.isclick=1">选择阶段</button>
+						</div>
+					</div>
+				</div>
+		</div>
+        
+         <div class="space-2"></div>
+        
+        <div class="form-group">
+            <label class="control-label col-xs-12 col-sm-2 no-padding-right" for="">施工人员：</label>
+
+            <div class="clearfix">
+                <div class="col-xs-12 col-sm-9">
+                        <input value="$!log.relationBuilder" id="builder" name="builder" type="text" class="col-xs-12 col-sm-6"/>
+                </div>
+            </div>
+        </div>
+
+		<div class="space-2"></div>
+		
+		<div class="form-group">
+			<label class="control-label col-xs-12 col-sm-2 no-padding-right" for=""><span class="red">*</span>日志描述：</label>
+
+			<div class="clearfix">
+				<div class="col-xs-12 col-sm-9">
+						<textarea   rows="10" cols="100" id="content" name="content">$!log.content</textarea>
+				</div>
+			</div>
+		</div>
+        
+		<div class="space-2"></div>
+    <!--用来存放文件信息-->
+    <!--<div style="margin-left:300px">
+    <div id="fileQueue"></div>
+        <input type="file" name="uploadify" id="uploadify" multiple="true" />
+        <p style="margin-left: 120px;font-size: 16px;">
+            <a href="javascript:$('#uploadify').uploadify('upload')">上传</a>| 
+            <a href="javascript:$('#uploadify').uploadify('cancel')">取消上传</a>
+        </p>
+    </div>
+        </div>-->
+    #if($!log.imageList)
+     <p>&nbsp;</p>
+     <div class="col-xs-12 col-sm-3 center" style="width:100%">
+                <div id="profile-image" style="width:100%;overflow:hidden;">
+                    <div class="profile-picture" id="savePic" style="float:left;">
+                    #set($count = 0)
+                    #foreach($info in $!log.imageList)
+                        #set($count = $count+1)
+                        <div class="addImg" style="float: left;margin-right: 10px">
+                           <img src="$!reviewImagePath/$!info" class="editable img-responsive editable-click editable-empty" 
+                            alt="Avatar" id="image$!{count}_preview" style="width:150px; height:150px"/>
+                            <div class="tools">
+                                <a href="#">
+                                    <i class="icon-remove red"></i>
+                                </a>
+                            </div>
+                        </div>
+                    #end
+                    </div>
+                   <div class="space-2"></div>  
+                </div>
+            </div>
+    #end
+      <p>&nbsp;</p>
+     <div class="col-xs-12 col-sm-3 center" style="width:100%">
+                <div id="profile-picture" style="width:100%;overflow:hidden;display:none;">
+                    <span class="profile-picture" id="addPic" style="float:left;display: inline-block;">
+                    </span>
+                       
+                   <div class="space-2"></div>  
+                </div>
+                <p style="display:block;padding-top:20px;">
+                <a onclick="addPic()" class="btn btn-info J_LoadingBtn" style="display:inline-block;">添加图片</a></p>
+            </div>
+<div class="space-2"></div>
+		<div class="clearfix form-actions" style="float:left;width:100%;text-align:center;">
+			<div class="col-md-offset-3 col-md-7">
+				<input type="hidden" value="" name="pid">
+				<button type="button" id="J_SAVE" class="btn btn-info J_LoadingBtn" data-loading-text="保存中...">
+					<i class="icon-ok bigger-110"></i>
+					保存
+				</button>
+			</div>
+		</div>
+
+	</form>
+	#LabelPanel( "labelAdd" "labelName" "label_dialog" "100301")
+	<script type="text/javascript">
+    $(function(){
+        $(".profile-picture").on("click",".tools",function(){
+            $(this).parents(".addImg").remove();
+        });
+    })
+	$("#J_SAVE").click(function(){
+        //循环得到图片地址
+        //image的地址
+        var imageArr=[];
+        $("#savePic img").each(function(){
+            var src=$(this).attr('src');
+            var sub = src.indexOf("uploaded");
+            src = src.substring(sub);
+            imageArr.push(src);
+        });
+        //infoImage的地址
+        $("#addPic img").each(function(){
+            var src=$(this).attr('src');
+            var sub = src.indexOf("uploaded");
+            src = src.substring(sub);
+            imageArr.push(src);
+        });
+        
+        if($("#labelName").val() == ""){
+            alert("直播阶段不能为空！");
+            return ;
+        }else if(document.getElementById("labelAdd").isclick == 1){
+            var labelId = "";
+            labelId = dialog_map['label_dialog'][0].id
+            $("#labelId").val(labelId);
+        }
+        if($("#content").val() == ""){
+            alert("日志内容不能为空");
+            return ;
+        }
+			$.ajax({
+			   dataTpe: "json",
+			   type: "POST",
+			   url: '$!request.contextPath/order/log/save.htm?id='+$("#logId").val()
+                    +'&content='+$("#content").val()+'&labelId='+$("#labelId").val()
+                    +'&imageList='+imageArr+'&orderId='+$!orderId+'&relationBuilder='+$("#builder").val(),
+			   success: function(res){
+			     if(res[0]){
+				 	alert("保存成功");
+					window.location.href="$!request.contextPath/order/log/logListPage.htm?orderId="+$!orderId;
+			     } else {
+				 	jAlert("保存失败，请稍后再试");
+			     }
+			   },
+			   error: function() {
+				alert(DS.msg.error, DS.msg.tip);
+			   }
+			});
+	});
+          var imageCount=0;
+    function addPic(){
+    $("#addPic").parent().show();
+        imageCount++;
+         var param={};
+         param["i"]=imageCount;
+         if(imageCount > 10){
+         alert("最多只能添加十张图片哟！");
+         return ;
+         }
+        $.post("$request.contextPath/order/log/addImageUpload.htm",param,function(html,statusText){
+                var addPic=$("#addPic");
+                addPic.append(html);
+            });
+    
+    }
+    </script>
+	<!-- PAGE CONTENT ENDS -->
+	#parse("footer.vm")
+</body>
+#Html("end")

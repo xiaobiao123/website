@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.goujia.website.base.dao.rec.RecommendPositionMapper">
+	<resultMap id="RM_RecommendPosition" type="com.goujia.website.base.entity.rec.RecommendPosition">
+		<id column="POS_ID" property="posId" jdbcType="INTEGER" />
+		<result column="POS_NAME" property="posName" jdbcType="VARCHAR" />
+		<result column="INFO_TYPE" property="infoType" jdbcType="VARCHAR" />
+		<result column="POS_NUM" property="posNum" jdbcType="INTEGER" />
+		<result column="IMAGE_NEEDED" property="imageNeeded" jdbcType="VARCHAR" />
+		<result column="IMAGE_WIDTH" property="imageWidth" jdbcType="INTEGER" />
+		<result column="IMAGE_HEIGHT" property="imageHeight" jdbcType="INTEGER" />
+		<result column="DELETE_STATUS" property="deleteStatus" jdbcType="VARCHAR" />
+		<result column="POS_CODE" property="posCode" jdbcType="VARCHAR" />
+	</resultMap>
+	<resultMap id="RM_RecommendPositionVO" type="com.goujia.website.base.vo.rec.RecommendPositionVO" extends="RM_RecommendPosition">
+		
+	</resultMap>
+	<sql id="Base_Column_List">
+		POS_ID, POS_NAME, INFO_TYPE, POS_NUM, IMAGE_NEEDED, IMAGE_WIDTH,
+		IMAGE_HEIGHT, DELETE_STATUS,
+		POS_CODE
+	</sql>
+	<sql id="Base_Query_Condition">
+		<where>
+			<if test="posName != null and posName != ''">
+				POS_NAME like '%${posName}%'
+			</if>
+			<if test="posCode != null and posCode != ''">
+				AND POS_CODE = #{posCode,jdbcType=VARCHAR}
+			</if>
+			<!-- <if test="infoType != null">
+				AND INFO_TYPE = #{infoType,jdbcType=VARCHAR}
+			</if>
+			<if test="posNum != null">
+				AND POS_NUM = #{posNum,jdbcType=INTEGER}
+			</if>
+			<if test="imageNeeded != null">
+				AND IMAGE_NEEDED = #{imageNeeded,jdbcType=VARCHAR}
+			</if>
+			<if test="imageWidth != null">
+				AND IMAGE_WIDTH = #{imageWidth,jdbcType=INTEGER}
+			</if>
+			<if test="imageHeight != null">
+				AND IMAGE_HEIGHT = #{imageHeight,jdbcType=INTEGER}
+			</if>
+			<if test="deleteStatus != null">
+				AND DELETE_STATUS = #{deleteStatus,jdbcType=VARCHAR}
+			</if>
+			<if test="posCode != null">
+				AND POS_CODE = #{posCode,jdbcType=VARCHAR}
+			</if> -->
+		</where>
+	</sql>
+	<select id="get" resultMap="RM_RecommendPositionVO" parameterType="java.lang.Integer">
+		select
+		<include refid="Base_Column_List" />
+		from G_REC_RECOMMEND_POSITION
+		where POS_ID = #{posId,jdbcType=INTEGER}
+	</select>
+	<select id="list" resultMap="RM_RecommendPositionVO" parameterType="com.goujia.website.base.vo.rec.RecommendPositionSearchParam">
+		select
+		<include refid="Base_Column_List" />
+		from G_REC_RECOMMEND_POSITION
+		<include refid="Base_Query_Condition" />
+	</select>
+	<select id="count" resultType="int" parameterType="com.goujia.website.base.vo.rec.RecommendPositionSearchParam">
+		select count(*) from G_REC_RECOMMEND_POSITION
+		<include refid="Base_Query_Condition" />
+	</select>
+	<delete id="delete" parameterType="java.lang.Integer">
+		delete from G_REC_RECOMMEND_POSITION
+		where POS_ID = #{posId,jdbcType=INTEGER}
+	</delete>
+	<insert id="insert" parameterType="com.goujia.website.base.entity.rec.RecommendPosition" useGeneratedKeys="true" keyProperty="posId">
+		insert into G_REC_RECOMMEND_POSITION (POS_ID, POS_NAME, INFO_TYPE,
+		POS_NUM, IMAGE_NEEDED, IMAGE_WIDTH,
+		IMAGE_HEIGHT, DELETE_STATUS, POS_CODE
+		)
+		values (#{posId,jdbcType=INTEGER}, #{posName,jdbcType=VARCHAR},
+		#{infoType,jdbcType=VARCHAR},
+		#{posNum,jdbcType=INTEGER}, #{imageNeeded,jdbcType=VARCHAR}, #{imageWidth,jdbcType=INTEGER},
+		#{imageHeight,jdbcType=INTEGER}, #{deleteStatus,jdbcType=VARCHAR},
+		#{posCode,jdbcType=VARCHAR}
+		)
+	</insert>
+	<update id="update" parameterType="com.goujia.website.base.entity.rec.RecommendPosition">
+		update G_REC_RECOMMEND_POSITION
+		<set>
+			<if test="posName != null">
+				POS_NAME = #{posName,jdbcType=VARCHAR},
+			</if>
+			<if test="infoType != null">
+				INFO_TYPE = #{infoType,jdbcType=VARCHAR},
+			</if>
+			<if test="posNum != null">
+				POS_NUM = #{posNum,jdbcType=INTEGER},
+			</if>
+			<if test="imageNeeded != null">
+				IMAGE_NEEDED = #{imageNeeded,jdbcType=VARCHAR},
+			</if>
+			<if test="imageWidth != null">
+				IMAGE_WIDTH = #{imageWidth,jdbcType=INTEGER},
+			</if>
+			<if test="imageHeight != null">
+				IMAGE_HEIGHT = #{imageHeight,jdbcType=INTEGER},
+			</if>
+			<if test="deleteStatus != null">
+				DELETE_STATUS = #{deleteStatus,jdbcType=VARCHAR},
+			</if>
+			<if test="posCode != null">
+				POS_CODE = #{posCode,jdbcType=VARCHAR},
+			</if>
+		</set>
+		where POS_ID = #{posId,jdbcType=INTEGER}
+	</update>
+	<!-- 根据POSCODE得到RecommendPosition对象 -->
+	<select id="getForPosCode" resultMap="RM_RecommendPosition" parameterType="java.lang.String">
+	    select
+        <include refid="Base_Column_List" />
+        from G_REC_RECOMMEND_POSITION
+        where POS_CODE = #{posCode,jdbcType=VARCHAR}
+	</select>
+</mapper>

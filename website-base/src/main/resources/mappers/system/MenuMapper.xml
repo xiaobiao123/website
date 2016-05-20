@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.goujia.website.base.dao.system.MenuMapper">
+	<resultMap id="RM_menu" type="com.goujia.website.base.entity.system.Menu">
+		<id column="ID" property="id" jdbcType="INTEGER" />
+		<result column="NAME" property="name" jdbcType="VARCHAR" />
+		<result column="CODE" property="code" jdbcType="VARCHAR" />
+		<result column="ICON_CLASS" property="iconClass" jdbcType="VARCHAR" />
+		<result column="TARGET" property="target" jdbcType="VARCHAR" />
+		<result column="PARENT_ID" property="parentId" jdbcType="INTEGER" />
+		<result column="TYPE" property="type" jdbcType="VARCHAR" />
+		<result column="IS_DELETED" property="isDeleted" jdbcType="VARCHAR" />
+		<result column="ORDER_INDEX" property="orderIndex" jdbcType="INTEGER" />
+		<result column="GMT_CREATE" property="gmtCreate" jdbcType="TIMESTAMP" />
+		<result column="GMT_MODIFIED" property="gmtModified" jdbcType="TIMESTAMP" />
+		<collection property="children" column="{parentId=ID}"  ofType="com.goujia.website.base.entity.system.Menu" javaType="java.util.ArrayList" select="findSubMenu">
+		</collection>
+	</resultMap>
+	<sql id="Base_Column_List">
+		ID, NAME, CODE, ICON_CLASS, TARGET, PARENT_ID, TYPE, IS_DELETED, ORDER_INDEX,
+		GMT_CREATE, GMT_MODIFIED
+	</sql>
+	<select id="get" resultMap="RM_menu" parameterType="java.lang.Integer">
+		select
+		<include refid="Base_Column_List" />
+		from G_MENU
+		where ID = #{id,jdbcType=INTEGER}
+	</select>
+	<!--
+      - ===============================================
+      - 创建Menu
+      - ===============================================
+	-->
+	<select id="list" resultMap="RM_menu">
+		select
+		<include refid="Base_Column_List" />
+		<![CDATA[
+			from G_MENU where IS_DELETED = 'n' and TYPE = 'web' and PARENT_ID = 0 ORDER BY ORDER_INDEX asc
+		]]>
+	</select>
+	<!--
+      - ===============================================
+      - 查询子Menu
+      - ===============================================
+	-->
+	<select id="findSubMenu" resultMap="RM_menu">
+		select
+		<include refid="Base_Column_List" />
+		<![CDATA[
+			from G_MENU where IS_DELETED = 'n' and TYPE = 'web' and PARENT_ID = #{parentId} ORDER BY ORDER_INDEX asc
+		]]>
+	</select>
+</mapper>

@@ -1,0 +1,494 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+    
+<mapper namespace="com.goujia.website.base.ges.dao.AreaResourceMapper">
+	<!--
+      - ===============================================
+      - 返回matter POJO
+      - @author jipengfei
+      - @date 2014-06-26
+      - ===============================================
+	-->
+	<resultMap  type="com.goujia.website.base.ges.entity.AreaResource" id="RM_Area_Resource">
+		<id     property="id"          	column="ID"  	        jdbcType="INTEGER"   	javaType="java.lang.Integer" />
+		<result property="name"    		column="NAME"      		jdbcType="VARCHAR"   	javaType="java.lang.String"  />
+		<result property="parentId"     column="PARENT_ID"      jdbcType="INTEGER"   	javaType="java.lang.Integer" />
+		<result property="orderIndex"   column="ORDER_INDEX"    jdbcType="INTEGER"   	javaType="java.lang.Integer" />
+		<result property="isCity"    	column="IS_CITY"     	jdbcType="VARCHAR"   	javaType="java.lang.String"  />
+		<result property="isAdd"    	column="IS_ADD"     	jdbcType="VARCHAR"   	javaType="java.lang.String"  />
+		<result property="gmtAdd"    	column="GMT_ADD"     	jdbcType="TIMESTAMP"    javaType="java.util.Date"  />
+		<result property="gmtCreate"    column="GMT_CREATE"     jdbcType="TIMESTAMP"    javaType="java.util.Date"  />
+		<result property="gmtModified"  column="GMT_MODIFIED"   jdbcType="TIMESTAMP"    javaType="java.util.Date"  />
+		<result property="spell"  column="SPELL"   jdbcType="VARCHAR"    javaType="java.lang.String"  />
+	</resultMap>
+
+    <!--
+      - ===============================================
+      - 返回matter vo
+      - @author caoqi
+      - @date 2015-04-21
+      - ===============================================
+	-->
+    <resultMap  type="com.goujia.website.base.ges.vo.AreaResourceVO" id="RM_Area_Resource_VO" extends="RM_Area_Resource">
+        <collection property="buildings" ofType="java.lang.String" column="id">
+            <result property="name" column="BUILDING_NAME" jdbcType="VARCHAR"   javaType="java.lang.String"  />
+        </collection>
+    </resultMap>
+    <resultMap  type="com.goujia.website.base.ges.vo.AreaResourceVO" id="VOMap" extends="RM_Area_Resource">
+    </resultMap>
+	<resultMap  type="com.goujia.website.base.ges.vo.CityVO"  id="CITY_VO" extends="RM_Area_Resource">
+     <result property="parentname" column="PARENTNAME" jdbcType="VARCHAR" />
+  </resultMap>
+	<!--
+      - ===============================================
+      - 新增AreaResource
+      - @author jipengfei
+      - @date 2014-06-13
+      - ===============================================
+	-->
+	<insert id="create" parameterType="com.goujia.website.base.ges.entity.AreaResource" 
+	useGeneratedKeys="true" keyProperty="id">
+		insert into G_AREA(
+			ID,
+			NAME,
+			PARENT_ID,
+			ORDER_INDEX,
+			IS_ADD,
+			GMT_ADD,
+			GMT_CREATE,
+			GMT_MODIFIED
+		)values(
+			#{id},
+			#{name},
+			#{parentId},
+			#{orderIndex},
+			#{isAdd},
+			#{gmtAdd}
+			now(),
+			now()
+		)
+	</insert>
+	
+	<!--
+      - ===============================================
+      - 修改AreaResource
+      - @author jipengfei
+      - @date 2014-06-13
+      - ===============================================
+	-->
+	<update id="update" parameterType="com.goujia.website.base.ges.entity.AreaResource">
+		update G_AREA set GMT_MODIFIED = now()
+			<if test="name !=null and name !=''">, NAME=#{name},</if>
+			<if test="orderIndex !=null and orderIndex !=''">, ORDER_INDEX=#{orderIndex},</if>
+			<if test="parentId !=null and parentId !=''">, PARENT_ID=#{parentId},</if>
+			<if test="isAdd !=null and isAdd !=''">, IS_ADD=#{isAdd},</if>
+			<if test="isCity !=null and isCity !=''">, IS_CITY=#{isCity},</if>
+			<if test="gmtAdd !=null and gmtAdd !=''">, GMT_ADD=#{gmtAdd},</if>
+		where ID = #{id}
+	</update>
+
+	<!--
+      - ===============================================
+      - 查询AreaResource
+      - @author caoqi
+      - @date 2014-07-01
+      - ===============================================
+	-->
+	<select id="queryArea" parameterType="java.lang.Integer" resultMap="RM_Area_Resource">
+		select
+			ID,
+			NAME,
+			PARENT_ID,
+			ORDER_INDEX,
+			IS_ADD,
+			IS_CITY,
+			GMT_ADD,
+			GMT_CREATE,
+			GMT_MODIFIED,
+			SPELL
+		from G_AREA
+		where ID=#{id}
+	</select>
+	<select id="get" parameterType="map" resultMap="VOMap">
+		select
+			*
+		from G_AREA
+		where ID=#{id}
+	</select>
+	
+	<select id="getByName" parameterType="map" resultMap="VOMap">
+		select
+			*
+		from G_AREA
+		where NAME=#{name}
+	</select>
+	
+	<!--
+      - ===============================================
+      - 查询AreaResource
+      - @author caoqi 
+      - @date 2014-07-01
+      - ===============================================
+	-->
+	<select id="listArea" parameterType="java.lang.Integer" resultMap="RM_Area_Resource">
+	  <!-- 带条件 -->
+	    select
+            DISTINCT b.ID,
+            b.NAME,
+            b.PARENT_ID,
+            b.ORDER_INDEX,
+            b.IS_ADD,
+            b.IS_CITY,
+            b.GMT_ADD,
+            b.GMT_CREATE,
+            b.GMT_MODIFIED,
+            b.SPELL
+        from G_BUILDING a LEFT JOIN G_AREA b on a.COUNTY_ID = b.ID
+        where b.PARENT_ID =#{parentId} AND a.IS_DELETED = 'n'
+        order by b.ORDER_INDEX asc
+	</select>
+
+
+    <!--
+      - ===============================================
+      - 查询Area分页信息
+      - @author caoqi
+      - @date 2015-1-4
+      - ===============================================
+    -->
+    <select id="list" resultMap="RM_Area_Resource" parameterType="com.goujia.website.base.ges.entity.AreaResource">
+        select
+        ID,
+        NAME,
+        PARENT_ID,
+        ORDER_INDEX,
+        IS_CITY,
+        IS_ADD,
+        GMT_CREATE,
+        GMT_MODIFIED,
+        SPELL
+        from
+        G_AREA
+        WHERE 
+        IS_ADD='y'
+        AND IS_CITY='y'
+    </select>
+
+    <!--
+  - ===============================================
+  - 查询
+  - @author caoqi
+  - @date 2015-3-19
+  - ===============================================
+-->
+    <select id="query" resultMap="RM_Area_Resource" parameterType="com.goujia.website.base.ges.entity.AreaResource">
+        select
+        ID,
+        NAME,
+        PARENT_ID,
+        ORDER_INDEX,
+        IS_CITY,
+        IS_ADD,
+        GMT_CREATE,
+        GMT_MODIFIED,
+        SPELL
+        from
+        G_AREA as a
+        <where>
+            <if test="id != null and id > 0">and ID=#{id}</if>
+            <if test="isAdd != null and isAdd != ''">and IS_ADD=#{isAdd}</if>
+            <if test="name != null and name !=''">and NAME like CONCAT('%','${name}','%')</if>
+        </where>
+    </select>
+
+    <!--
+      - ===============================================
+      - 根据城市名查询信息
+      - @author caoqi
+      - @date 2015-3-19
+      - ===============================================
+	-->
+    <select id="queryByName" resultMap="RM_Area_Resource" parameterType="com.goujia.website.base.ges.vo.AreaResourceVO">
+        select
+        a.ID,
+        a.NAME,
+        a.PARENT_ID,
+        a.ORDER_INDEX,
+        a.IS_CITY,
+        a.IS_ADD,
+        a.GMT_CREATE,
+        a.GMT_MODIFIED,
+        a.SPELL
+        from
+        G_AREA as a
+        left join G_AREA as pa on a.PARENT_ID=pa.ID
+        where
+        a.IS_ADD='y' and
+        a.NAME like CONCAT('${cityName}','%') and
+        pa.NAME like CONCAT('${provinceName}','%')
+    </select>
+
+    <!--
+      - ===============================================
+      - 根据城市名查询信息
+      - @author caoqi
+      - @date 2015-3-19
+      - ===============================================
+	-->
+    <select id="listWithBuilding" resultMap="RM_Area_Resource_VO" parameterType="com.goujia.website.base.ges.entity.AreaResource">
+        select
+        a.ID,
+        a.NAME,
+        a.PARENT_ID,
+        a.ORDER_INDEX,
+        a.IS_CITY,
+        a.IS_ADD,
+        a.GMT_CREATE,
+        a.GMT_MODIFIED,
+        a.SPELL
+        b.NAME as BUILDING_NAME
+        from
+        G_AREA as a
+        right join G_BUILDING as b on b.COUNTY_ID = a.ID
+        RIGHT JOIN G_HOUSE ON G_HOUSE.BUILDING = b.ID
+        RIGHT JOIN G_GOODS as g ON g.HOUSE_ID = G_HOUSE.ID
+        where
+        b.IS_DELETED='n'
+        and a.PARENT_ID=#{parentId}
+        and g.STATUS='published'
+    </select>
+    <select id="listcountry" resultMap="CITY_VO" parameterType="com.goujia.website.base.ges.entity.AreaResource">
+         select
+        a.ID,
+        a.NAME,
+        a.PARENT_ID,
+        a.ORDER_INDEX,
+        a.IS_CITY,
+        a.IS_ADD,
+        a.GMT_CREATE,
+        a.GMT_MODIFIED,
+        a.SPELL,
+        b.NAME as PARENTNAME
+        from
+        G_AREA a inner join G_AREA b  on a.PARENT_ID = b.ID
+        WHERE  a.IS_ADD='y'
+        AND a.IS_CITY='n'
+    </select>
+    <select id="listabcde" resultMap="RM_Area_Resource" parameterType="com.goujia.website.base.ges.entity.AreaResource">
+        select
+        ID,
+        NAME,
+        PARENT_ID,
+        ORDER_INDEX,
+        IS_CITY,
+        IS_ADD,
+        GMT_CREATE,
+        GMT_MODIFIED,
+        SPELL
+        from
+        G_AREA
+        WHERE 
+        (SPELL like 'a%' or SPELL like 'b%'or SPELL like 'c%'or SPELL like 'd%' or SPELL like 'e%')
+        and IS_ADD='y'
+        AND IS_CITY='y'
+        order by SPELL asc
+    </select>
+    <select id="listfghij" resultMap="RM_Area_Resource" parameterType="com.goujia.website.base.ges.entity.AreaResource">
+        select
+        ID,
+        NAME,
+        PARENT_ID,
+        ORDER_INDEX,
+        IS_CITY,
+        IS_ADD,
+        GMT_CREATE,
+        GMT_MODIFIED,
+        SPELL
+        from
+        G_AREA
+        WHERE 
+        (SPELL like 'f%' or SPELL like 'g%'or SPELL like 'h%'or SPELL like 'i%' or SPELL like 'j%')
+        and IS_ADD='y'
+        AND IS_CITY='y'
+        order by SPELL asc
+    </select>
+    <select id="listklmnp" resultMap="RM_Area_Resource" parameterType="com.goujia.website.base.ges.entity.AreaResource">
+        select
+        ID,
+        NAME,
+        PARENT_ID,
+        ORDER_INDEX,
+        IS_CITY,
+        IS_ADD,
+        GMT_CREATE,
+        GMT_MODIFIED,
+        SPELL
+        from
+        G_AREA
+        WHERE 
+        (SPELL like 'k%' or SPELL like 'l%'or SPELL like 'm%'or SPELL like 'n%' or SPELL like 'p%')
+        and IS_ADD='y'
+         AND IS_CITY='y'
+        order by SPELL asc
+    </select>
+    <select id="listqrstw" resultMap="RM_Area_Resource" parameterType="com.goujia.website.base.ges.entity.AreaResource">
+        select
+        ID,
+        NAME,
+        PARENT_ID,
+        ORDER_INDEX,
+        IS_CITY,
+        IS_ADD,
+        GMT_CREATE,
+        GMT_MODIFIED,
+        SPELL
+        from
+        G_AREA
+        WHERE 
+        (SPELL like 'q%' or SPELL like 'r%'or SPELL like 's%'or SPELL like 't%' or SPELL like 'w%')
+        and IS_ADD='y'
+        AND IS_CITY='y'
+        order by SPELL asc
+    </select>
+    <select id="listxyz" resultMap="RM_Area_Resource" parameterType="com.goujia.website.base.ges.entity.AreaResource">
+        select
+        ID,
+        NAME,
+        PARENT_ID,
+        ORDER_INDEX,
+        IS_CITY,
+        IS_ADD,
+        GMT_CREATE,
+        GMT_MODIFIED,
+        SPELL
+        from
+        G_AREA
+        WHERE 
+        (SPELL like 'x%' or SPELL like 'y%' or SPELL like 'z%') 
+        and IS_ADD='y'
+         AND IS_CITY='y'
+        order by SPELL asc
+    </select>
+        <select id="listabcde1" resultMap="CITY_VO" parameterType="com.goujia.website.base.ges.entity.AreaResource">
+        select
+        a.ID,
+        a.NAME,
+        a.PARENT_ID,
+        a.ORDER_INDEX,
+        a.IS_CITY,
+        a.IS_ADD,
+        a.GMT_CREATE,
+        a.GMT_MODIFIED,
+        a.SPELL,
+        b.NAME as PARENTNAME
+        from
+        G_AREA a inner join G_AREA b  on a.PARENT_ID = b.ID
+        WHERE 
+        (a.SPELL like 'a%' or a.SPELL like 'b%'or a.SPELL like 'c%'or a.SPELL like 'd%' or a.SPELL like 'e%')
+        and a.IS_ADD='y'
+        AND a.IS_CITY='n'
+        order by a.SPELL asc
+    </select>
+    <select id="listfghij1" resultMap="CITY_VO" parameterType="com.goujia.website.base.ges.entity.AreaResource">
+        select
+        a.ID,
+        a.NAME,
+        a.PARENT_ID,
+        a.ORDER_INDEX,
+        a.IS_CITY,
+        a.IS_ADD,
+        a.GMT_CREATE,
+        a.GMT_MODIFIED,
+        a.SPELL,
+        b.NAME as PARENTNAME
+        from
+        G_AREA a inner join G_AREA b  on a.PARENT_ID = b.ID
+        WHERE 
+         (a.SPELL like 'f%' or a.SPELL like 'g%'or a.SPELL like 'h%'or a.SPELL like 'i%' or a.SPELL like 'j%')
+        and a.IS_ADD='y'
+        AND a.IS_CITY='n'
+        order by a.SPELL asc
+    </select>
+    <select id="listklmnp1" resultMap="CITY_VO" parameterType="com.goujia.website.base.ges.entity.AreaResource">
+        select
+        a.ID,
+        a.NAME,
+        a.PARENT_ID,
+        a.ORDER_INDEX,
+        a.IS_CITY,
+        a.IS_ADD,
+        a.GMT_CREATE,
+        a.GMT_MODIFIED,
+        a.SPELL,
+        b.NAME as PARENTNAME
+        from
+        G_AREA a inner join G_AREA b  on a.PARENT_ID = b.ID
+        WHERE 
+        (a.SPELL like 'k%' or a.SPELL like 'l%'or a.SPELL like 'm%'or a.SPELL like 'n%' or a.SPELL like 'p%')
+        and a.IS_ADD='y'
+        AND a.IS_CITY='n'
+        order by a.SPELL asc
+    </select>
+    <select id="listqrstw1" resultMap="CITY_VO" parameterType="com.goujia.website.base.ges.entity.AreaResource">
+        select
+        a.ID,
+        a.NAME,
+        a.PARENT_ID,
+        a.ORDER_INDEX,
+        a.IS_CITY,
+        a.IS_ADD,
+        a.GMT_CREATE,
+        a.GMT_MODIFIED,
+        a.SPELL,
+        b.NAME as PARENTNAME
+        from
+        G_AREA a inner join G_AREA b  on a.PARENT_ID = b.ID
+        WHERE 
+        (a.SPELL like 'q%' or a.SPELL like 'r%'or a.SPELL like 's%'or a.SPELL like 't%' or a.SPELL like 'w%')
+        and a.IS_ADD='y'
+        AND a.IS_CITY='n'
+        order by a.SPELL asc
+    </select>
+    <select id="listxyz1" resultMap="CITY_VO" parameterType="com.goujia.website.base.ges.entity.AreaResource">
+        select
+        a.ID,
+        a.NAME,
+        a.PARENT_ID,
+        a.ORDER_INDEX,
+        a.IS_CITY,
+        a.IS_ADD,
+        a.GMT_CREATE,
+        a.GMT_MODIFIED,
+        a.SPELL,
+        b.NAME as PARENTNAME
+        from
+        G_AREA a inner join G_AREA b  on a.PARENT_ID = b.ID
+        WHERE 
+        (a.SPELL like 'x%' or a.SPELL like 'y%' or a.SPELL like 'z%') 
+        and a.IS_ADD='y'
+        AND a.IS_CITY='n'
+        order by a.SPELL asc
+    </select>
+    
+    <select id="listAll" resultType="com.goujia.website.base.ges.vo.AreaResourceVO" parameterType="java.lang.Integer">
+        select id,name from g_area where PARENT_ID =#{parentId}
+    </select>
+    <select id="listIsAddAndCityAll" resultMap="VOMap" parameterType="java.lang.Integer">
+        select * from g_area where  IS_ADD='y' and IS_CITY='y'
+    </select>
+    <select id="getAll" resultMap="RM_Area_Resource" parameterType="map">
+        select * from g_area where 1=1
+        <if test="isAdd!=null">
+        	and IS_ADD=#{isAdd}
+      	</if>
+      	<if test="isCity!=null">
+      		and IS_CITY=#{isCity}
+      	</if>
+    </select>
+    <select id="getAllByParent" resultMap="RM_Area_Resource" parameterType="map">
+        select * from g_area where PARENT_ID=#{parent} 
+    </select>
+    
+</mapper>

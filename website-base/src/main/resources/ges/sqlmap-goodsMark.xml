@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+    
+<mapper namespace="com.goujia.website.base.ges.dao.GoodsMarkMapper">
+	<!--
+      - ===============================================
+      - 返回GoodsMark VO
+      - @author jipengfei
+      - @date 2014-06-16
+      - ===============================================
+	-->
+	<resultMap  type="com.goujia.website.base.ges.entity.GoodsMark"  id="RM_Goods_Mark">
+		<id     property="id"          column="ID"  	      jdbcType="INTEGER"   javaType="java.lang.Integer" />
+		<result property="goodsRoomId" column="GOODS_ROOM_ID" jdbcType="INTEGER"   javaType="java.lang.Integer" />
+		<result property="relativeX"   column="RELATIVE_X"    jdbcType="DOUBLE"    javaType="java.lang.Double"  />
+		<result property="relativeY"   column="RELATIVE_Y"    jdbcType="DOUBLE"    javaType="java.lang.Double"  />
+		<result property="type"    	   column="TYPE"     	  jdbcType="VARCHAR"   javaType="java.lang.String"  />
+		<result property="isDeleted"   column="IS_DELETED"    jdbcType="VARCHAR"   javaType="java.lang.String"  />
+		<result property="gmtCreate"   column="GMT_CREATE"    jdbcType="TIMESTAMP" javaType="java.util.Date"    />
+		<result property="gmtModified" column="GMT_MODIFIED"  jdbcType="TIMESTAMP" javaType="java.util.Date"    />
+		<result property="creatorId"   column="CREATOR_ID"    jdbcType="INTEGER"   javaType="java.lang.Integer" />
+		<result property="modifierId"  column="MODIFIER_ID"   jdbcType="INTEGER"   javaType="java.lang.Integer" />
+		<result property="effectX"   column="EFFECT_X"    jdbcType="DOUBLE"    javaType="java.lang.Double"  />
+        <result property="effectY"   column="EFFECT_Y"    jdbcType="DOUBLE"    javaType="java.lang.Double"  />
+        <result property="effectPath"  column="EFFECT_PATH"   jdbcType="VARCHAR"   javaType="java.lang.String"  />
+        <result property="effectStyle"  column="EFFECT_STYLE"   jdbcType="VARCHAR"   javaType="java.lang.String"  />
+        <result property="matterId"     column="MATTER_ID"        jdbcType="INTEGER"   javaType="java.lang.Integer" />
+	</resultMap>
+	
+	<!--
+      - ===============================================
+      - 新增GoodsMark
+      - @author jipengfei
+      - @date 2014-06-16
+      - ===============================================
+	-->
+	<insert id="create" parameterType="com.goujia.website.base.ges.entity.GoodsMark"
+	 useGeneratedKeys="true" keyProperty="id">
+		insert into G_GOODS_MARK (
+			ID, 
+			GOODS_ROOM_ID,
+			RELATIVE_X,
+			RELATIVE_Y, 
+			TYPE,
+			IS_DELETED,
+			GMT_CREATE,
+			GMT_MODIFIED,
+			CREATOR_ID,
+			MODIFIER_ID
+		) values (
+			#{id}, 
+			#{goodsRoomId}, 
+			#{relativeX}, 
+			#{relativeY},
+			#{type},
+			'n',
+			now(),
+			now(),
+			#{creatorId},
+			#{creatorId}
+		)
+	</insert>
+	
+	<!--
+      - ===============================================
+      - 修改GoodsMark
+      - @author jipengfei
+      - @date 2014-06-16
+      - ===============================================
+	-->
+	<update id="update" parameterType="com.goujia.website.base.ges.vo.GoodsMarkVO">
+		update G_GOODS_MARK set GMT_MODIFIED = now(),MODIFIER_ID = #{modifierId}
+		<if test="relativeX !=null and relativeX >0">,RELATIVE_X =#{relativeX}</if>
+		<if test="relativeY !=null and relativeY >0">,RELATIVE_Y =#{relativeY}</if>
+		<if test="type !=null and type !=''">,TYPE =#{type}</if>
+		<if test="isDeleted !=null and isDeleted !=''">,IS_DELETED =#{isDeleted}</if>
+		where ID = #{id}
+	</update>
+	
+	<!--
+      - ===============================================
+      - 查询GoodsMark
+      - @author jipengfei
+      - @date 2014-06-13
+      - ===============================================
+	-->
+	<select id="list" parameterType="com.goujia.website.base.ges.vo.GoodsMarkVO" resultMap="RM_Goods_Mark">
+		select
+			ID, 
+			GOODS_ROOM_ID,
+			RELATIVE_X,
+			RELATIVE_Y, 
+			TYPE,
+			IS_DELETED,
+			GMT_CREATE,
+			GMT_MODIFIED,
+			CREATOR_ID,
+			MODIFIER_ID
+		from G_GOODS_MARK
+		<where>
+			<if test="goodsRoomId !=null and goodsRoomId >0">and GOODS_ROOM_ID = #{goodsRoomId}</if>
+			<if test="id !=null and id >0">and ID = #{id}</if>
+			<if test="type !=null and type !=''">and TYPE = #{type}</if>
+			<if test="isDeleted !=null and isDeleted !=''">and IS_DELETED = #{isDeleted}</if>
+		</where>
+	</select>
+	
+	<!--
+      - ===============================================
+      - 通过matter goods查询GoodsMark
+      - @author caoqi
+      - @date 2014-08-06
+      - ===============================================
+	-->
+	<select id="queryByMatter" parameterType="com.goujia.website.base.ges.entity.GoodsMatter" resultMap="RM_Goods_Mark">
+		select
+			m.ID,
+			m.GOODS_ROOM_ID,
+			m.RELATIVE_X,
+			m.RELATIVE_Y,
+			m.TYPE,
+			m.IS_DELETED,
+			m.GMT_CREATE,
+			m.CREATOR_ID,
+			m.MODIFIER_ID,
+			m.GMT_MODIFIED
+		from
+			G_GOODS_MARK AS m
+		inner join G_GOODS_MATTER as gm on gm.MARK_ID = m.ID
+		where
+			gm.GOODS_ID = #{goodsId}
+		and gm.MATTER_ID = #{matterId}
+	</select>
+	
+	<!--
+      - ===============================================
+      - 通过matter goods查询GoodsMark
+      - @author caoqi
+      - @date 2014-08-06
+      - ===============================================
+	-->
+	<select id="queryById" parameterType="com.goujia.website.base.ges.entity.GoodsMatter" resultMap="RM_Goods_Mark">
+		select
+			m.ID,
+			m.GOODS_ROOM_ID,
+			m.RELATIVE_X,
+			m.RELATIVE_Y,
+			m.TYPE,
+			m.IS_DELETED,
+			m.GMT_CREATE,
+			m.CREATOR_ID,
+			m.MODIFIER_ID,
+			m.GMT_MODIFIED
+		from
+			G_GOODS_MARK AS m
+		where m.ID = #{id}
+	</select>
+</mapper>

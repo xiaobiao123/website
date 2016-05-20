@@ -1,0 +1,1032 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+    
+<mapper namespace="com.goujia.website.base.ges.dao.GoodsMapper">
+	<!--
+      - ===============================================
+      - 返回goods POJO
+      - @author jipengfei
+      - @date 2014-06-16
+      - ===============================================
+	-->
+	<resultMap  type="com.goujia.website.base.ges.entity.Goods" id="RM_Goods">
+        <id     property="id"            column="ID"              jdbcType="INTEGER"   javaType="java.lang.Integer"    />
+        <result property="name"          column="NAME"            jdbcType="VARCHAR"   javaType="java.lang.String"     />
+        <result property="styleId"       column="STYLE_ID"        jdbcType="INTEGER"   javaType="java.lang.Integer"    />
+        <result property="styleName"     column="STYLE_NAME"      jdbcType="VARCHAR"   javaType="java.lang.String"     />
+        <result property="houseId"       column="HOUSE_ID"        jdbcType="INTEGER"   javaType="java.lang.Integer"    />
+        <result property="houseTypeId"   column="HOUSE_TYPE_ID"   jdbcType="INTEGER"   javaType="java.lang.Integer"    />
+        <result property="houseTypeName" column="HOUSE_TYPE_NAME" jdbcType="VARCHAR"   javaType="java.lang.String"     />
+        <result property="isRecommend"   column="IS_RECOMMEND"    jdbcType="VARCHAR"   javaType="java.lang.String"     />
+        <result property="photoPath"     column="PHOTO_PATH"      jdbcType="VARCHAR"   javaType="java.lang.String"     />
+        <result property="floorPlanPath" column="FLOOR_PLAN_PATH" jdbcType="VARCHAR"   javaType="java.lang.String"     />
+        <result property="originalPrice" column="ORIGINAL_PRICE"  jdbcType="DECIMAL"   javaType="java.math.BigDecimal" />
+        <result property="discountPrice" column="DISCOUNT_PRICE"  jdbcType="DECIMAL"   javaType="java.math.BigDecimal" />
+        <result property="summary"       column="SUMMARY"         jdbcType="VARCHAR"   javaType="java.lang.String"     />
+        <result property="status"        column="STATUS"          jdbcType="VARCHAR"   javaType="java.lang.String"     />
+        <result property="gmtCreate"     column="GMT_CREATE"      jdbcType="TIMESTAMP" javaType="java.util.Date"       />
+        <result property="gmtModified"   column="GMT_MODIFIED"    jdbcType="TIMESTAMP" javaType="java.util.Date"       />
+        <result property="ownerId"       column="OWNER_ID"        jdbcType="INTEGER"   javaType="java.lang.Integer"    />
+        <result property="salesFilePath" column="SALES_FILE_PATH" jdbcType="VARCHAR"   javaType="java.lang.String"    />
+        <result property="effectPath"    column="EFFECT_PATH"     jdbcType="VARCHAR"   javaType="java.lang.String"     />
+        <result property="effectFilePath"    column="EFFECT_FILE_PATH"     jdbcType="VARCHAR"   javaType="java.lang.String"     />
+        <result property="isPromotion"  column="IS_PROMOTION"     jdbcType="VARCHAR"   javaType="java.lang.String"      />
+        <result property="averagePrice" column="AVERAGE_PRICE"    jdbcType="DOUBLE"    javaType="java.lang.Double"      />
+        <result property="goodsType"    column="GOODS_TYPE"       jdbcType="VARCHAR"   javaType="java.lang.String"      />
+        <result property="canDiy"        column="CAN_DIY"          jdbcType="VARCHAR"   javaType="java.lang.String"     />
+        <result property="isDiy"         column="IS_DIY"           jdbcType="INTEGER"   javaType="java.lang.Integer"     />
+   </resultMap>
+	
+	<!--
+      - ===============================================
+      - 返回GoodsBuildingVO 产品包带有楼盘信息VO
+      - @author jipengfei
+      - @date 2014-06-16
+      - ===============================================
+    -->
+    <resultMap  type="com.goujia.website.base.ges.vo.GoodsShopVO"   id="RM_Goods_Shop" extends="RM_Goods">
+        <result property="buildingName" column="BUILDING_NAME"  jdbcType="VARCHAR" javaType="java.lang.String"  />
+        <result property="shopIds"       column="SHOP_IDS"      jdbcType="VARCHAR" javaType="java.lang.String"  />
+        <result property="houseCode"     column="HOUSE_CODE"      jdbcType="VARCHAR" javaType="java.lang.String"  />
+        <result property="floorArea"     column="FLOOR_AREA"     jdbcType="VARCHAR" javaType="java.lang.Double"  />
+        <result property="shopGoodsStatus"     column="SHOP_GOODS_STATUS"      jdbcType="VARCHAR" javaType="java.lang.String"  />
+    </resultMap>
+
+
+    <!--
+      - ===============================================
+      - 返回GoodsBuildingVO 产品包带有楼盘信息VO
+      - @author jipengfei
+      - @date 2014-06-16
+      - ===============================================
+    -->
+    <resultMap  type="com.goujia.website.base.ges.vo.GoodsBuildingVO"   id="RM_Goods_Building" extends="RM_Goods">
+        <result property="oriPhotoPath"  column="ORI_PHOTO_PATH" jdbcType="VARCHAR" javaType="java.lang.String"  />
+        <result property="buildingId"    column="BUILDING_ID"    jdbcType="INTEGER" javaType="java.lang.Integer" />
+        <result property="buildingName"  column="BUILDING_NAME"  jdbcType="VARCHAR" javaType="java.lang.String"  />
+        <result property="floorArea"     column="FLOOR_AREA"     jdbcType="VARCHAR" javaType="java.lang.String"  />
+        <result property="saleNum"       column="SALE_NUM"       jdbcType="INTEGER" javaType="java.lang.Integer" />
+    </resultMap>
+    
+    
+    <resultMap  type="com.goujia.website.base.ges.vo.GoodsDiyVO"          id="RM_GoodsDiyVO" extends="RM_Goods">
+        <result column="RELATION_GOODS_ID"  property="relationGoodsId"  jdbcType="INTEGER"      javaType="java.lang.Integer"/>
+        <result column="RELATION_DIY_ID"    property="relationDiyId"    jdbcType="INTEGER"      javaType="java.lang.Integer"/>
+        <result column="CREATOR_ID"         property="creatorId"        jdbcType="INTEGER"      javaType="java.lang.Integer"/>
+        <result column="CREATOR_TYPE"       property="creatorType"      jdbcType="INTEGER"      javaType="java.lang.Integer"/>
+        <result column="CREATOR_NAME"       property="creatorName"      jdbcType="VARCHAR"      javaType="java.lang.String"/>
+        <result column="HEAD_PATH"       property="headPath"            jdbcType="VARCHAR"      javaType="java.lang.String"/>
+    </resultMap>
+    <!--
+      - ===============================================
+      - 新增Goods
+      - @author jipengfei
+      - @date 2014-06-16
+      - ===============================================
+    -->
+    <insert id="create" parameterType="com.goujia.website.base.ges.entity.Goods" 
+    useGeneratedKeys="true" keyProperty="id">
+        insert into G_GOODS (
+            ID, 
+            NAME,
+            STYLE_ID,
+            STYLE_NAME, 
+            HOUSE_ID,
+            HOUSE_TYPE_ID,
+            HOUSE_TYPE_NAME,
+            IS_RECOMMEND,
+            PHOTO_PATH,
+            FLOOR_PLAN_PATH,
+            ORIGINAL_PRICE,
+            DISCOUNT_PRICE,
+            SUMMARY,
+            STATUS,
+            GMT_CREATE,
+            GMT_MODIFIED,
+            OWNER_ID,
+            SALES_FILE_PATH,
+            EFFECT_FILE_PATH,
+            EFFECT_PATH
+        ) values (
+            #{id}, 
+            #{name}, 
+            #{styleId}, 
+            #{styleName},
+            #{houseId},
+            #{houseTypeId},
+            #{houseTypeName},
+            'n',
+            #{photoPath},
+            #{floorPlanPath},
+            #{originalPrice},
+            #{discountPrice},
+            #{summary},
+            'designing',
+            now(),
+            now(),
+            #{ownerId},
+            #{salesFilePath},
+            #{effectFilePath},
+            #{effectPath}
+        )
+    </insert>
+    
+    <!--
+      - ===============================================
+      - 修改Goods
+      - @author jipengfei
+      - @date 2014-06-16
+      - ===============================================
+    -->
+    <update id="update" parameterType="com.goujia.website.base.ges.vo.GoodsVO">
+        update G_GOODS set GMT_MODIFIED = now()
+        <if test="styleId != null and styleId >0">, STYLE_ID=#{styleId}</if>
+        <if test="styleName != null and styleName != null">, STYLE_NAME=#{styleName}</if>
+        <if test="houseTypeId != null and houseTypeId >0">, HOUSE_TYPE_ID=#{houseTypeId}</if>
+        <if test="houseTypeName != null and houseTypeName != null">, HOUSE_TYPE_NAME=#{houseTypeName}</if>
+        <if test="isRecommend != null and isRecommend != null">, IS_RECOMMEND=#{isRecommend}</if>
+        <if test="name != null and name !=''">, NAME=#{name}</if>
+        <if test="houseId != null and houseId >0">, HOUSE_ID=#{houseId}</if>
+        <if test="photoPath != null and photoPath !=''">, PHOTO_PATH=#{photoPath}</if>
+        <if test="floorPlanPath != null and floorPlanPath !=''">, FLOOR_PLAN_PATH=#{floorPlanPath}</if>
+        <if test="originalPrice != null and originalPrice !=''">, ORIGINAL_PRICE=#{originalPrice}</if>
+        <if test="discountPrice != null and discountPrice !=''">, DISCOUNT_PRICE=#{discountPrice}</if>
+        <if test="summary != null and summary !=''">, SUMMARY=#{summary}</if>
+        <if test="status != null and status !=''">, STATUS=#{status}</if>
+        where ID=#{id}
+    </update>
+    
+    <!--
+      - ===============================================
+      - 查询Goods
+      - @author jipengfei
+      - @date 2014-06-16
+      - ===============================================
+    -->
+    <select id="queryGoodsWithBuilding" resultMap="RM_Goods_Building" parameterType="java.lang.Integer">
+        select 
+            gg.ID,
+            gg.NAME,
+            gg.STYLE_NAME,
+            gg.STYLE_ID,
+            gg.HOUSE_ID,
+            gg.HOUSE_TYPE_ID,
+            gg.HOUSE_TYPE_NAME,
+            gg.IS_RECOMMEND,
+            gg.PHOTO_PATH,
+            gg.FLOOR_PLAN_PATH,
+            gg.ORIGINAL_PRICE,
+            gg.DISCOUNT_PRICE,
+            gg.SUMMARY,
+            gg.STATUS,
+            gg.GMT_CREATE,
+            gg.GMT_MODIFIED,
+            gg.OWNER_ID,
+            gg.EFFECT_FILE_PATH,
+            gg.EFFECT_PATH,
+            gg.SALES_FILE_PATH,
+            gg.ORI_PHOTO_PATH,
+            gg.BUILDING_ID,
+            gg.BUILDING_NAME,
+            gg.FLOOR_AREA,
+            gg.AVERAGE_PRICE,
+            gg.IS_PROMOTION,
+            gg.CAN_DIY,
+            gg.GOODS_TYPE,
+            gg.IS_DIY,
+            sum(sg.SALE_NUM) as SALE_NUM
+        from(
+            select 
+                g.ID,
+                g.NAME,
+                g.STYLE_NAME,
+                g.STYLE_ID,
+                g.HOUSE_ID,
+                g.HOUSE_TYPE_ID,
+                g.HOUSE_TYPE_NAME,
+                g.IS_RECOMMEND,
+                g.PHOTO_PATH,
+                g.FLOOR_PLAN_PATH,
+                g.ORIGINAL_PRICE,
+                g.DISCOUNT_PRICE,
+                g.SUMMARY,
+                g.STATUS,
+                g.GMT_CREATE,
+                g.GMT_MODIFIED,
+                g.OWNER_ID,
+                g.SALES_FILE_PATH,
+                g.EFFECT_FILE_PATH,
+                g.EFFECT_PATH,
+                g.IS_PROMOTION,
+                g.AVERAGE_PRICE,
+                h.PHOTO_PATH as ORI_PHOTO_PATH,
+                h.BUILDING_ID,
+                h.BUILDING_NAME,
+                h.FLOOR_AREA,
+                g.CAN_DIY,
+                g.GOODS_TYPE,
+                g.IS_DIY
+            from G_GOODS g left join (
+                select
+                    h.ID,
+                    h.BUILDING,
+                    h.TYPE,
+                    h.PHOTO_PATH,
+                    h.FLOOR_AREA,
+                    h.MEMO,
+                    h.GMT_CREATE,
+                    h.OWNER_ID,
+                    h.GMT_MODIFIED,
+                    b.NAME as BUILDING_NAME,
+                    b.ID as BUILDING_ID
+                from
+                    G_HOUSE as h left join G_BUILDING b on h.BUILDING = b.ID ) h 
+            on g.HOUSE_ID = h.ID where g.ID = #{id}) gg
+            left join G_SHOP_GOODS sg on gg.ID = sg.GOODS_ID
+            group by gg.ID
+    </select>
+    
+    <!--
+      - ===============================================
+      - 查询4S店的产品包信息
+      - @author jipengfei
+      - @date 2014-06-17
+      - ===============================================
+    -->
+    <select id="pageGoodsByShop" resultMap="RM_Goods" parameterType="com.goujia.website.base.ges.vo.GoodsVO">
+        select 
+            g.ID,
+            g.NAME,
+            g.STYLE_NAME,
+            g.STYLE_ID,
+            g.HOUSE_ID,
+            g.HOUSE_TYPE_ID,
+            g.HOUSE_TYPE_NAME,
+            g.PHOTO_PATH,
+            g.FLOOR_PLAN_PATH,
+            g.ORIGINAL_PRICE,
+            g.DISCOUNT_PRICE,
+            g.SUMMARY,
+            g.STATUS,
+            g.GMT_CREATE,
+            g.GMT_MODIFIED,
+            g.OWNER_ID,
+            g.SALES_FILE_PATH,
+            g.EFFECT_FILE_PATH,
+            g.EFFECT_PATH
+        from G_SHOP_GOODS sg left join G_GOODS g
+        on sg.GOODS_ID = g.ID
+        where sg.SHOP_ID = #{shopId}
+        <if test="status !='' and status !=null">and sg.STATUS = #{status}</if>
+        
+        
+    </select>
+    
+    <!--
+      - ===============================================
+      - 查询已上线的商品
+      - @author jipengfei
+      - @date 2014-06-17
+      - ===============================================
+    -->
+    <select id="pageForSaleGoods" resultMap="RM_Goods_Building" parameterType="com.goujia.website.base.ges.vo.GoodsVO">
+        select 
+            distinct sg.GOODS_ID,
+            g.ID, 
+            g.NAME,
+            g.STYLE_ID,
+            g.STYLE_NAME, 
+            g.HOUSE_ID,
+            g.HOUSE_ID,
+            g.HOUSE_TYPE_ID,
+            g.HOUSE_TYPE_NAME,
+            g.PHOTO_PATH,
+            g.FLOOR_PLAN_PATH,
+            g.ORIGINAL_PRICE,
+            g.DISCOUNT_PRICE,
+            g.SUMMARY,
+            g.STATUS,
+            g.GMT_CREATE,
+            g.GMT_MODIFIED,
+            g.OWNER_ID,
+            g.SALES_FILE_PATH,
+            g.EFFECT_FILE_PATH,
+            g.EFFECT_PATH,
+            g.STYLE_ID,
+            g.GOODS_TYPE,
+            g.IS_RECOMMEND,
+            g.IS_PROMOTION as isPromotion,
+            g.AVERAGE_PRICE,
+            h.FLOOR_AREA,
+            b.ID as BUILDING_ID,
+            b.NAME as BUILDING_NAME,
+            h.PHOTO_PATH as ORI_PHOTO_PATH
+        from G_SHOP_GOODS sg left join G_GOODS g on sg.GOODS_ID = g.ID 
+        left join G_HOUSE h on g.HOUSE_ID = h.ID
+        left join G_BUILDING b on h.BUILDING = b.ID
+        left join G_AREA ar on b.COUNTY_ID = ar.ID
+        where  sg.STATUS = 'enable' and g.STATUS = 'published' and ( g.AVERAGE_PRICE IS NOT NULL or ( 1=1 
+        <if test="goodsVO.shopId != null and goodsVO.shopId >0"> and sg.SHOP_ID = #{goodsVO.shopId}</if>
+        <if test="goodsVO.buildingId != null and goodsVO.buildingId >0"> and b.ID = #{goodsVO.buildingId}</if>
+        <if test="goodsVO.provinceId != null and goodsVO.provinceId >0"> and b.PROVINCE_ID = #{goodsVO.provinceId}</if>
+        <if test="0 == type and goodsVO.cityId != null and goodsVO.cityId >0"> and b.CITY_ID = #{goodsVO.cityId}</if>
+        <if test="1 == type and goodsVO.cityId != null and goodsVO.cityId >0"> and b.COUNTY_ID = #{goodsVO.cityId}</if>
+        <if test="goodsVO.countyId != null and goodsVO.countyId > 0"> and b.COUNTY_ID = #{goodsVO.countyId}</if>
+        <if test="goodsVO.styleId != null and goodsVO.styleId >0"> and g.STYLE_ID = #{goodsVO.styleId}</if>
+        <if test="null != goodsVO.isPromotion and '' != goodsVO.isPromotion">and g.IS_PROMOTION=#{goodsVO.isPromotion}</if>
+        <if test="goodsVO.houseTypeId != null and goodsVO.houseTypeId >0"> and g.HOUSE_TYPE_ID = #{goodsVO.houseTypeId}</if>
+        <if test="goodsVO.goodsType != null and goodsVO.goodsType != ''"> and g.GOODS_TYPE=#{goodsVO.goodsType}</if>
+        <if test="goodsVO.minPrice !=null and goodsVO.minPrice >0"><![CDATA[ and g.DISCOUNT_PRICE >= #{goodsVO.minPrice}]]></if>
+        <if test="goodsVO.maxPrice !=null and goodsVO.maxPrice >0"><![CDATA[ and g.DISCOUNT_PRICE <= #{goodsVO.maxPrice}]]></if>
+        <if test="goodsVO.minArea !=null and goodsVO.minArea >0"><![CDATA[ and h.FLOOR_AREA >= #{goodsVO.minArea}]]></if>
+        <if test="goodsVO.maxArea !=null and goodsVO.maxArea >0"><![CDATA[ and h.FLOOR_AREA <= #{goodsVO.maxArea}]]></if>
+        <if test="goodsVO.q !=null and goodsVO.q !=''">
+            <![CDATA[ and (g.NAME like CONCAT('%','${goodsVO.q}','%' ) or g.HOUSE_TYPE_NAME like CONCAT('%','${goodsVO.q}','%' ) 
+                    or g.STYLE_NAME like CONCAT('%','${goodsVO.q}','%' ) or b.NAME like CONCAT('%','${goodsVO.q}','%' ) 
+                    or ar.NAME like CONCAT('%','${goodsVO.q}','%' ))]]>
+        </if>
+        ) )
+        group by g.ID
+        <if test="goodsVO.orderName == 'default'.toString()">order by g.IS_PROMOTION desc ,g.GMT_CREATE desc</if>
+        <if test="goodsVO.orderName == 'price'.toString()">order by g.IS_PROMOTION desc , g.DISCOUNT_PRICE asc</if>
+        <if test="goodsVO.orderName == 'last'.toString()">order by g.IS_PROMOTION desc , g.GMT_MODIFIED desc</if>
+        <if test="goodsVO.orderName == 'sales'.toString()">order by g.IS_PROMOTION desc , sg.SALE_NUM desc</if>
+    </select>
+    
+    <!--
+      - ===============================================
+      - 查询已上线的商品总数
+      - @author jipengfei
+      - @date 2014-06-17
+      - ===============================================
+    -->
+    <select id="countOnSaleGoods" resultType="java.lang.Integer" parameterType="com.goujia.website.base.ges.vo.GoodsVO">
+        select 
+            count(distinct sg.GOODS_ID)
+        from G_SHOP_GOODS sg 
+        left join G_GOODS g on sg.GOODS_ID = g.ID  
+        left join G_HOUSE h on g.HOUSE_ID = h.ID
+        left join G_BUILDING b on h.BUILDING = b.ID
+        left join G_AREA ar on b.COUNTY_ID = ar.ID
+        where sg.STATUS = 'enable' and g.STATUS = 'published' and ( g.AVERAGE_PRICE IS NOT NULL or ( 1=1 
+        <if test="goodsVO.shopId != null and goodsVO.shopId >0"> and sg.SHOP_ID = #{goodsVO.shopId}</if>
+        <if test="goodsVO.buildingId != null and goodsVO.buildingId >0"> and b.ID = #{goodsVO.buildingId}</if>
+        <if test="goodsVO.provinceId != null and goodsVO.provinceId >0"> and b.PROVINCE_ID = #{goodsVO.provinceId}</if>
+        <if test="0 == type and goodsVO.cityId != null and goodsVO.cityId >0"> and b.CITY_ID = #{goodsVO.cityId}</if>
+        <if test="1 == type and goodsVO.cityId != null and goodsVO.cityId >0"> and b.COUNTY_ID = #{goodsVO.cityId}</if>
+        <if test="goodsVO.countyId != null and goodsVO.countyId > 0"> and b.COUNTY_ID = #{goodsVO.countyId}</if>
+        <if test="goodsVO.houseTypeId != null and goodsVO.houseTypeId >0"> and g.HOUSE_TYPE_ID = #{goodsVO.houseTypeId}</if>
+        <if test="goodsVO.styleId != null and goodsVO.styleId >0"> and g.STYLE_ID = #{goodsVO.styleId}</if>
+        <if test="null != goodsVO.isPromotion and '' != goodsVO.isPromotion">and g.IS_PROMOTION=#{goodsVO.isPromotion}</if>
+        <if test="goodsVO.goodsType != null and goodsVO.goodsType != ''"> and g.GOODS_TYPE=#{goodsVO.goodsType}</if>
+        <if test="goodsVO.minPrice !=null and goodsVO.minPrice >0"><![CDATA[ and g.DISCOUNT_PRICE >= #{goodsVO.minPrice}]]></if>
+        <if test="goodsVO.maxPrice !=null and goodsVO.maxPrice >0"><![CDATA[ and g.DISCOUNT_PRICE <= #{goodsVO.maxPrice}]]></if>
+        <if test="goodsVO.minArea !=null and goodsVO.minArea >0"><![CDATA[ and h.FLOOR_AREA >= #{goodsVO.minArea}]]></if>
+        <if test="goodsVO.maxArea !=null and goodsVO.maxArea >0"><![CDATA[ and h.FLOOR_AREA <= #{goodsVO.maxArea}]]></if>
+        <if test="goodsVO.q !=null and goodsVO.q !=''">
+            <![CDATA[ and (g.NAME like CONCAT('%','${goodsVO.q}','%' ) or g.HOUSE_TYPE_NAME like CONCAT('%','${goodsVO.q}','%' ) 
+                    or g.STYLE_NAME like CONCAT('%','${goodsVO.q}','%' ) or b.NAME like CONCAT('%','${goodsVO.q}','%' ) 
+                    or ar.NAME like CONCAT('%','${goodsVO.q}','%' ))]]>
+        </if>
+        <if test="goodsVO.isRecommend !=null and goodsVO.isRecommend !=''">and g.IS_RECOMMEND = 'y'</if>
+        ) )
+    </select>
+    
+    <!--
+      - ===============================================
+      - 查询4S店的产品包信息
+      - @author caoqi
+      - @date 2014-06-30
+      - ===============================================
+    -->
+    <select id="query" resultMap="RM_Goods" parameterType="java.lang.Integer">
+        select
+            g.ID,
+            g.`NAME`,
+            g.STYLE_ID,
+            g.STYLE_NAME,
+            g.HOUSE_ID,
+            g.HOUSE_TYPE_ID,
+            g.HOUSE_TYPE_NAME,
+            g.IS_RECOMMEND,
+            g.PHOTO_PATH,
+            g.FLOOR_PLAN_PATH,
+            g.ORIGINAL_PRICE,
+            g.DISCOUNT_PRICE,
+            g.SUMMARY,
+            g.STATUS,
+            g.GMT_CREATE,
+            g.OWNER_ID,
+            g.SALES_FILE_PATH,
+            g.EFFECT_FILE_PATH,
+            g.EFFECT_PATH,
+            g.IS_PROMOTION,
+            g.GMT_MODIFIED,
+            g.CAN_DIY,
+            g.AVERAGE_PRICE,
+            g.IS_DIY
+        from
+            G_GOODS as g where g.`STATUS` = 'published' and g.ID = #{id}
+    </select>
+    
+    <!--
+      - ===============================================
+      - 查询Goods
+      - @author jipengfei
+      - @date 2014-06-16
+      - ===============================================
+    -->
+    <select id="listSimilarGoods" resultMap="RM_Goods_Building">
+        <![CDATA[
+            select 
+            g.ID,
+            g.NAME,
+            g.STYLE_NAME,
+            g.STYLE_ID,
+            g.HOUSE_ID,
+            g.HOUSE_TYPE_ID,
+            g.HOUSE_TYPE_NAME,
+            g.IS_RECOMMEND,
+            g.PHOTO_PATH,
+            g.FLOOR_PLAN_PATH,
+            g.ORIGINAL_PRICE,
+            g.DISCOUNT_PRICE,
+            g.SUMMARY,
+            g.STATUS,
+            g.GMT_CREATE,
+            g.GMT_MODIFIED,
+            g.OWNER_ID,
+            g.SALES_FILE_PATH,
+            g.EFFECT_FILE_PATH,
+            g.EFFECT_PATH,
+            h.PHOTO_PATH as ORI_PHOTO_PATH,
+            h.BUILDING_ID,
+            h.BUILDING_NAME,
+            h.FLOOR_AREA
+        from G_GOODS g left join (
+            select
+                h.ID,
+                h.BUILDING,
+                h.TYPE,
+                h.PHOTO_PATH,
+                h.FLOOR_AREA,
+                h.MEMO,
+                h.GMT_CREATE,
+                h.OWNER_ID,
+                h.GMT_MODIFIED,
+                b.NAME as BUILDING_NAME,
+                b.ID as BUILDING_ID
+            from
+                G_HOUSE as h left join G_BUILDING b on h.BUILDING = b.ID
+            where h.IS_DELETED='n') h 
+        on g.HOUSE_ID = h.ID where g.HOUSE_ID = #{houseId} and g.ID <> #{goodsId}
+        limit #{pageSize}
+        ]]>
+    </select>
+    
+    <!--
+      - ===============================================
+      - 查询Goods
+      - @author caoqi
+      - @date 2014-07-02
+      - ===============================================
+    -->
+    <select id="pageForGoodsByBuilding" resultMap="RM_Goods" parameterType="com.goujia.website.base.ges.vo.GoodsVO">
+        select DISTINCT
+            g.ID,
+            g.`NAME`,
+            g.STYLE_ID,
+            g.STYLE_NAME,
+            g.HOUSE_ID,
+            g.HOUSE_TYPE_ID,
+            g.HOUSE_TYPE_NAME,
+            g.IS_RECOMMEND,
+            g.PHOTO_PATH,
+            g.FLOOR_PLAN_PATH,
+            g.ORIGINAL_PRICE,
+            g.DISCOUNT_PRICE,
+            g.SUMMARY,
+            g.STATUS,
+            g.GMT_CREATE,
+            g.OWNER_ID,
+            g.SALES_FILE_PATH,
+            g.EFFECT_FILE_PATH,
+            g.EFFECT_PATH,
+            g.GMT_MODIFIED
+        from
+            G_GOODS as g
+        left join G_HOUSE as h on h.ID = g.HOUSE_ID
+        left join G_SHOP_GOODS as sg on sg.GOODS_ID = g.ID
+        where
+            g.STATUS = 'published'
+        and g.STATUS = 'published'
+        and sg.STATUS = 'enable'
+        <if test="buildingId !=null and buildingId >0">and h.BUILDING = #{buildingId}</if>
+        order by
+            g.GMT_CREATE desc   
+    </select>
+    
+    
+    <!--
+      - ===============================================
+      - 查询所有Goods
+      - @author Caorz
+      - @date 2014-07-02
+      - ===============================================
+    -->
+    <select id="pageAllGoods" resultMap="RM_Goods" parameterType="com.goujia.website.base.ges.vo.GoodsVO">
+        select DISTINCT
+            g.ID,
+            g.NAME,
+            g.STYLE_ID,
+            g.STYLE_NAME,
+            g.HOUSE_ID,
+            g.HOUSE_TYPE_ID,
+            g.HOUSE_TYPE_NAME,
+            g.IS_RECOMMEND,
+            g.PHOTO_PATH,
+            g.FLOOR_PLAN_PATH,
+            g.ORIGINAL_PRICE,
+            g.DISCOUNT_PRICE,
+            g.SUMMARY,
+            g.STATUS,
+            g.GMT_CREATE,
+            g.OWNER_ID,
+            g.SALES_FILE_PATH,
+            g.EFFECT_FILE_PATH,
+            g.EFFECT_PATH,
+            g.GMT_MODIFIED
+        from
+            G_GOODS as g
+        where
+            g.STATUS = 'published'
+        order by
+            g.ID desc   
+    </select>
+    
+    
+    
+    <!--
+      - ===============================================
+      - 查询所有的商品
+      - @author Caorz
+      - @date 2014-08-23
+      - ===============================================
+    -->
+    <select id="pageForGoods" resultMap="RM_Goods_Building" parameterType="com.goujia.website.base.ges.vo.GoodsVO">
+        select 
+            g.ID, 
+            g.NAME,
+            g.STYLE_ID,
+            g.STYLE_NAME, 
+            g.HOUSE_ID,
+            g.HOUSE_TYPE_ID,
+            g.HOUSE_TYPE_NAME,
+            g.PHOTO_PATH,
+            g.FLOOR_PLAN_PATH,
+            g.ORIGINAL_PRICE,
+            g.DISCOUNT_PRICE,
+            g.SUMMARY,
+            g.STATUS,
+            g.GMT_CREATE,
+            g.GMT_MODIFIED,
+            g.OWNER_ID,
+            g.SALES_FILE_PATH,
+            g.EFFECT_FILE_PATH,
+            g.EFFECT_PATH,
+            g.STYLE_ID,
+            h.FLOOR_AREA,
+            h.PHOTO_PATH as ORI_PHOTO_PATH,
+            sg.SALE_NUM
+        from G_SHOP_GOODS sg right join G_GOODS g on sg.GOODS_ID = g.ID 
+        left join G_HOUSE h on g.HOUSE_ID = h.ID
+        left join G_BUILDING b on h.BUILDING = b.ID
+        left join G_AREA ar on b.COUNTY_ID = ar.ID
+        where g.STATUS != 'deleted'
+            <if test="status !=null and status !=''"> and g.STATUS = #{status}</if>
+            <if test="shopId != null and shopId >0"> and sg.SHOP_ID = #{shopId}</if>
+            <if test="buildingId != null and buildingId >0"> and b.ID = #{buildingId}</if>
+            <if test="provinceId != null and provinceId >0"> and b.PROVINCE_ID = #{provinceId}</if>
+            <if test="cityId != null and cityId >0"> and b.CITY_ID = #{cityId}</if>
+            <if test="countyId != null and countyId >0"> and b.COUNTY_ID = #{countyId}</if>
+            <if test="styleId != null and styleId >0"> and g.STYLE_ID = #{styleId}</if>
+            <if test="houseTypeId != null and houseTypeId >0"> and g.HOUSE_TYPE_ID = #{houseTypeId}</if>
+            <if test="minPrice !=null and minPrice >0"><![CDATA[ and g.DISCOUNT_PRICE >= #{minPrice}]]></if>
+            <if test="maxPrice !=null and maxPrice >0"><![CDATA[ and g.DISCOUNT_PRICE <= #{maxPrice}]]></if>
+            <if test="minArea !=null and minArea >0"><![CDATA[ and h.FLOOR_AREA >= #{minArea}]]></if>
+            <if test="maxArea !=null and maxArea >0"><![CDATA[ and h.FLOOR_AREA <= #{maxArea}]]></if>
+            <if test="name !=null and name !=''"><![CDATA[ and g.NAME like CONCAT('%','${name}','%' ) ]]></if>
+            <if test="isRecommend !=null and isRecommend !=''">and g.IS_RECOMMEND = 'y'</if>
+            <if test="houseId != null and houseId >0"> and g.HOUSE_ID = #{houseId}</if>
+        group by g.ID
+        <if test="orderName == 'default'.toString()">order by g.GMT_CREATE desc</if>
+        <if test="orderName == 'price'.toString()">order by g.DISCOUNT_PRICE ${orderType}</if>
+        <if test="orderName == 'last'.toString()">order by g.GMT_MODIFIED ${orderType}</if>
+        <if test="orderName == 'sales'.toString()">order by sg.SALE_NUM ${orderType}</if>
+    </select>
+
+    <!--
+      - ===============================================
+      - 查询所有的商品
+      - @author caoqi
+      - @date 2014-10-14
+      - ===============================================
+    -->
+    <select id="listForGoods" resultMap="RM_Goods" parameterType="com.goujia.website.base.ges.entity.Goods">
+        select
+            g.ID,
+            g.NAME,
+            g.STYLE_ID,
+            g.STYLE_NAME,
+            g.HOUSE_ID,
+            g.HOUSE_TYPE_ID,
+            g.HOUSE_TYPE_NAME,
+            g.PHOTO_PATH,
+            g.FLOOR_PLAN_PATH,
+            g.ORIGINAL_PRICE,
+            g.DISCOUNT_PRICE,
+            g.SUMMARY,
+            g.STATUS,
+            g.GMT_CREATE,
+            g.GMT_MODIFIED,
+            g.OWNER_ID,
+            g.SALES_FILE_PATH,
+            g.EFFECT_FILE_PATH,
+            g.EFFECT_PATH,
+            g.STYLE_ID
+        from G_GOODS g
+
+        <where>
+            <if test="houseId != null and houseId >0"> and g.HOUSE_ID = #{houseId}</if>
+            <![CDATA[and g.STATUS <> "deleted"]]>
+        </where>
+
+    </select>
+    
+    <!--
+      - ===============================================
+      - 查询商品的记录数
+      - @author Caorz
+      - @date 2014-08-23
+      - ===============================================
+    -->
+    <select id="countForGoods" resultType="java.lang.Integer" parameterType="com.goujia.website.base.ges.vo.GoodsVO">
+         SELECT COUNT(t.ID) FROM (SELECT 
+             g.ID
+            FROM
+              G_SHOP_GOODS sg 
+              RIGHT JOIN G_GOODS g 
+                ON sg.GOODS_ID = g.ID 
+              LEFT JOIN G_HOUSE h 
+                ON g.HOUSE_ID = h.ID 
+              LEFT JOIN G_BUILDING b 
+                ON h.BUILDING = b.ID 
+              LEFT JOIN G_AREA ar 
+                ON b.COUNTY_ID = ar.ID 
+        where g.STATUS != 'deleted'
+            <if test="status !=null and status !=''"> and g.STATUS = #{status}</if>
+            <if test="shopId != null and shopId >0"> and sg.SHOP_ID = #{shopId}</if>
+            <if test="buildingId != null and buildingId >0"> and b.ID = #{buildingId}</if>
+            <if test="provinceId != null and provinceId >0"> and b.PROVINCE_ID = #{provinceId}</if>
+            <if test="cityId != null and cityId >0"> and b.CITY_ID = #{cityId}</if>
+            <if test="countyId != null and countyId >0"> and b.COUNTY_ID = #{countyId}</if>
+            <if test="styleId != null and styleId >0"> and g.STYLE_ID = #{styleId}</if>
+            <if test="houseTypeId != null and houseTypeId >0"> and g.HOUSE_TYPE_ID = #{houseTypeId}</if>
+            <if test="minPrice !=null and minPrice >0"><![CDATA[ and g.DISCOUNT_PRICE >= #{minPrice}]]></if>
+            <if test="maxPrice !=null and maxPrice >0"><![CDATA[ and g.DISCOUNT_PRICE <= #{maxPrice}]]></if>
+            <if test="minArea !=null and minArea >0"><![CDATA[ and h.FLOOR_AREA >= #{minArea}]]></if>
+            <if test="maxArea !=null and maxArea >0"><![CDATA[ and h.FLOOR_AREA <= #{maxArea}]]></if>
+            <if test="name !=null and name !=''"><![CDATA[ and g.NAME like CONCAT('%','${name}','%' ) ]]></if>
+            <if test="isRecommend !=null and isRecommend !=''">and g.IS_RECOMMEND = 'y'</if>
+            <if test="houseId != null and houseId >0"> and g.HOUSE_ID = #{houseId}</if>
+            GROUP BY g.ID ) t
+    </select>
+    
+    
+    <!--
+      - ===============================================
+      - 批量修改产品状态
+      - @author Caorz
+      - @date 2014-08-29
+      - ===============================================
+    -->
+    <update id="updateStatus" parameterType="com.goujia.website.base.ges.vo.GoodsVO">
+        update G_GOODS set GMT_MODIFIED = now(),MODIFIER_ID = #{modifierId}
+        <if test="status != null and status !=''">, STATUS=#{status}</if>
+        where ID in (${ids})
+    </update>
+
+
+    <!--
+      - ===============================================
+      - 查询shop关联的goods分页
+      - @author caoqi
+      - @date 2014-06-23
+      - ===============================================
+    -->
+
+    <select id="pageForGoodsDetail" resultMap="RM_Goods_Shop" parameterType="com.goujia.website.base.ges.vo.GoodsShopVO">
+        select distinct
+            g.ID,
+            g.NAME,
+            g.STYLE_ID,
+            g.STYLE_NAME,
+            g.HOUSE_ID,
+            g.HOUSE_TYPE_ID,
+            g.HOUSE_TYPE_NAME,
+            g.IS_RECOMMEND,
+            g.PHOTO_PATH,
+            g.FLOOR_PLAN_PATH,
+            g.ORIGINAL_PRICE,
+            g.DISCOUNT_PRICE,
+            g.SUMMARY,
+            g.STATUS,
+            g.GMT_CREATE,
+            g.OWNER_ID,
+            g.SALES_FILE_PATH,
+            g.EFFECT_FILE_PATH,
+            g.EFFECT_PATH,
+            g.GMT_MODIFIED,
+            b.NAME as BUILDING_NAME,
+            GROUP_CONCAT(sg.SHOP_ID) as SHOP_IDS,
+            sg.STATUS as SHOP_GOODS_STATUS,
+            h.CODE as HOUSE_CODE,
+            h.FLOOR_AREA as FLOOR_AREA
+        from
+            G_GOODS as g
+            inner join G_HOUSE as h ON h.ID = g.HOUSE_ID
+            inner join G_BUILDING as b ON h.BUILDING = b.ID
+            left join G_SHOP_GOODS as sg ON sg.GOODS_ID = g.ID
+            left join G_SHOP as s on s.ID = sg.SHOP_ID
+        where
+            g.STATUS = 'published'
+            and h.IS_DELETED = 'n'
+            <if test="join == 1"> and sg.SHOP_ID = #{shopId}
+                and s.IS_DELETED = 'n'</if>
+            <if test="join == 11"> and sg.SHOP_ID = #{shopId}
+                and s.IS_DELETED = 'n'
+                and sg.STATUS = 'enable'</if>
+            <if test="join == 12"> and sg.SHOP_ID = #{shopId}
+                and s.IS_DELETED = 'n'
+                and sg.STATUS = 'disable'</if>
+            <if test="name != null and name != ''"> and g.NAME like CONCAT('%','${name}','%' )</if>
+            <if test="buildingId != null and buildingId >0"> and b.ID = #{buildingId}</if>
+            <if test="houseId != null and houseId >0"> and h.ID = #{houseId}</if>
+            <if test="provinceId != null and provinceId >0"> and b.PROVINCE_ID = #{provinceId}</if>
+            <if test="cityId != null and cityId >0"> and b.CITY_ID = #{cityId}</if>
+            <if test="countyId != null and countyId >0"> and b.COUNTY_ID = #{countyId}</if>
+        GROUP BY
+            g.ID
+        order by
+            <if test="join > 0">sg.ORDER_INDEX asc,</if>
+            g.ID desc
+    </select>
+
+    <!--
+      - ===============================================
+      - 查询shop关联的goods数量
+      - @author caoqi
+      - @date 2014-06-23
+      - ===============================================
+    -->
+
+    <select id="countForGoodsDetail" resultType="java.lang.Integer"  parameterType="com.goujia.website.base.ges.vo.GoodsShopVO">
+        select
+          COUNT(*)
+        from(
+            select distinct
+                g.ID,
+                g.NAME,
+                g.STYLE_ID,
+                g.STYLE_NAME,
+                g.HOUSE_ID,
+                g.HOUSE_TYPE_ID,
+                g.HOUSE_TYPE_NAME,
+                g.IS_RECOMMEND,
+                g.PHOTO_PATH,
+                g.FLOOR_PLAN_PATH,
+                g.ORIGINAL_PRICE,
+                g.DISCOUNT_PRICE,
+                g.SUMMARY,
+                g.STATUS,
+                g.GMT_CREATE,
+                g.OWNER_ID,
+                g.SALES_FILE_PATH,
+                g.EFFECT_FILE_PATH,
+                g.EFFECT_PATH,
+                g.GMT_MODIFIED,
+                b.NAME as BUILDING_NAME,
+                GROUP_CONCAT(sg.SHOP_ID) as SHOP_IDS,
+                sg.STATUS as SHOP_GOODS_STATUS,
+                h.CODE as HOUSE_CODE,
+                h.FLOOR_AREA as FLOOR_AREA
+            from
+                G_GOODS as g
+                inner join G_HOUSE as h ON h.ID = g.HOUSE_ID
+                inner join G_BUILDING as b ON h.BUILDING = b.ID
+                left join G_SHOP_GOODS as sg ON sg.GOODS_ID = g.ID
+                left join G_SHOP as s on s.ID = sg.SHOP_ID
+            where
+                g.STATUS = 'published'
+            and h.IS_DELETED = 'n'
+            <if test="join == 1"> and sg.SHOP_ID = #{shopId}
+                and s.IS_DELETED = 'n'</if>
+            <if test="join == 11"> and sg.SHOP_ID = #{shopId}
+                and s.IS_DELETED = 'n'
+                and sg.STATUS = 'enable'</if>
+            <if test="join == 12"> and sg.SHOP_ID = #{shopId}
+                and s.IS_DELETED = 'n'
+                and sg.STATUS = 'disable'</if>
+            <if test="name != null and name != ''"> and g.NAME like CONCAT('%','${name}','%' )</if>
+            <if test="buildingId != null and buildingId >0"> and b.ID = #{buildingId}</if>
+            <if test="houseId != null and houseId >0"> and h.ID = #{houseId}</if>
+            <if test="provinceId != null and provinceId >0"> and b.PROVINCE_ID = #{provinceId}</if>
+            <if test="cityId != null and cityId >0"> and b.CITY_ID = #{cityId}</if>
+            <if test="countyId != null and countyId >0"> and b.COUNTY_ID = #{countyId}</if>
+            GROUP BY
+                g.ID
+            order by
+                <if test="join > 0">sg.ORDER_INDEX asc,</if>
+                g.ID desc
+        ) as s
+    </select>
+    <!-- 根据城市ID获取所有的产品包 -->
+    <select id="selectByAllProductByCityId" resultMap="RM_Goods_Building" parameterType="com.goujia.website.base.ges.vo.GoodsVO">
+        select 
+            g.STYLE_NAME, 
+            g.HOUSE_TYPE_NAME,
+            h.FLOOR_AREA,
+            b.NAME as BUILDING_NAME,
+            ar.name as countyName,
+            g.DISCOUNT_PRICE
+        from G_SHOP_GOODS sg left join G_GOODS g on sg.GOODS_ID = g.ID 
+        left join G_HOUSE h on g.HOUSE_ID = h.ID
+        left join G_BUILDING b on h.BUILDING = b.ID
+        left join G_AREA ar on b.COUNTY_ID = ar.ID
+        where sg.STATUS = 'enable' and g.STATUS = 'published'
+                and b.CITY_ID = #{cityId}
+        group by g.ID
+    </select>
+    <select id="listByCityAndName" resultMap="RM_Goods_Building" parameterType="map">
+        select 
+        	goods.ID,
+            goods.NAME,
+            goods.STYLE_NAME, 
+            goods.HOUSE_TYPE_NAME,
+            house.FLOOR_AREA,
+            build.NAME as BUILDING_NAME,
+            area.name as countyName,
+            goods.DISCOUNT_PRICE
+        from (
+        	select * from G_GOODS where STATUS='published'
+        	<if test="name!=null and name!=''">
+        		and NAME like '%${name}%'
+        	</if>
+        ) goods 
+        inner join G_HOUSE house on goods.HOUSE_ID = house.ID
+        inner join (select * from G_BUILDING where CITY_ID=#{city}) build on house.BUILDING = build.ID
+        inner join G_AREA area on build.COUNTY_ID = area.ID
+    </select>
+    <select id="countByCityAndName" resultType="long" parameterType="map">
+        select 
+        	count(1)
+        from (
+        	select * from G_GOODS where STATUS='published'
+        	<if test="name!=null and name!=''">
+        		and NAME like '%${name}%'
+        	</if>
+        ) goods 
+        inner join G_HOUSE house on goods.HOUSE_ID = house.ID
+        inner join (select * from G_BUILDING where CITY_ID=#{city}) build on house.BUILDING = build.ID
+    </select>
+    <!-- 全景家列表,阳台列表及猜你喜欢 -->
+    <select id="getPageGoodsList" resultMap="RM_Goods_Building" parameterType="com.goujia.website.base.ges.vo.GoodsVO">
+        select 
+            distinct sg.GOODS_ID,
+            g.ID, 
+            g.NAME,
+            g.PHOTO_PATH,
+            g.EFFECT_PATH,
+            g.IS_RECOMMEND,
+            g.DISCOUNT_PRICE,
+            g.STYLE_NAME, 
+            g.IS_PROMOTION as isPromotion
+        from G_SHOP_GOODS sg left join G_GOODS g on sg.GOODS_ID = g.ID 
+        left join G_HOUSE h on g.HOUSE_ID = h.ID
+        left join G_BUILDING b on h.BUILDING = b.ID
+        left join G_AREA ar on b.COUNTY_ID = ar.ID
+        where  sg.STATUS = 'enable' and g.STATUS = 'published' 
+        <if test="goodsVO.shopId != null and goodsVO.shopId >0"> and sg.SHOP_ID = #{goodsVO.shopId}</if>
+        <if test="goodsVO.buildingId != null and goodsVO.buildingId >0"> and b.ID = #{goodsVO.buildingId}</if>
+        <if test="goodsVO.provinceId != null and goodsVO.provinceId >0"> and b.PROVINCE_ID = #{goodsVO.provinceId}</if>
+        <if test="0 == type and goodsVO.cityId != null and goodsVO.cityId >0"> and b.CITY_ID = #{goodsVO.cityId}</if>
+        <if test="1 == type and goodsVO.cityId != null and goodsVO.cityId >0"> and b.COUNTY_ID = #{goodsVO.cityId}</if>
+        <if test="goodsVO.styleId != null and goodsVO.styleId >0"> and g.STYLE_ID = #{goodsVO.styleId}</if>
+        <if test="null != goodsVO.isPromotion and '' != goodsVO.isPromotion">and g.IS_PROMOTION=#{goodsVO.isPromotion}</if>
+        <if test="goodsVO.isDiy != null and goodsVO.isDiy != ''"> AND g.IS_DIY=#{goodsVO.isDiy}</if>
+        <if test="goodsVO.houseTypeId != null and goodsVO.houseTypeId >0"> and g.HOUSE_TYPE_ID = #{goodsVO.houseTypeId}</if>
+        <if test="goodsVO.minPrice !=null and goodsVO.minPrice >0"><![CDATA[ and g.DISCOUNT_PRICE >= #{goodsVO.minPrice}]]></if>
+        <if test="goodsVO.maxPrice !=null and goodsVO.maxPrice >0"><![CDATA[ and g.DISCOUNT_PRICE <= #{goodsVO.maxPrice}]]></if>
+        <if test="goodsVO.minArea !=null and goodsVO.minArea >0"><![CDATA[ and h.FLOOR_AREA >= #{goodsVO.minArea}]]></if>
+        <if test="goodsVO.maxArea !=null and goodsVO.maxArea >0"><![CDATA[ and h.FLOOR_AREA <= #{goodsVO.maxArea}]]></if>
+        <if test="goodsVO.isRecommend !=null and goodsVO.isRecommend !=''">and g.IS_RECOMMEND = #{goodsVO.isRecommend}</if>
+        <if test="goodsVO.effectPath !=null and goodsVO.effectPath !=''">and g.EFFECT_PATH != ""</if>
+        <if test="goodsVO.countyId != null and goodsVO.countyId > 0"> and b.COUNTY_ID = #{goodsVO.countyId}</if>
+        <if test="goodsVO.goodsType != null and goodsVO.goodsType != ''"> and g.GOODS_TYPE=#{goodsVO.goodsType}</if>
+        <if test="goodsVO.q !=null and goodsVO.q !=''">
+            <![CDATA[ and (g.NAME like CONCAT('%','${goodsVO.q}','%' ) or g.HOUSE_TYPE_NAME like CONCAT('%','${goodsVO.q}','%' ) 
+                    or g.STYLE_NAME like CONCAT('%','${goodsVO.q}','%' ) or b.NAME like CONCAT('%','${goodsVO.q}','%' ) 
+                    or ar.NAME like CONCAT('%','${goodsVO.q}','%' ))]]>
+        </if>
+        group by g.ID
+        <if test="goodsVO.orderName == 'default'.toString()">order by g.IS_PROMOTION desc ,g.GMT_CREATE desc</if>
+        <if test="goodsVO.orderName == 'price'.toString()">order by g.IS_PROMOTION desc , g.DISCOUNT_PRICE ${goodsVO.orderType}</if>
+        <if test="goodsVO.orderName == 'last'.toString()">order by g.IS_PROMOTION desc , g.GMT_MODIFIED ${goodsVO.orderType}</if>
+        <if test="goodsVO.orderName == 'sales'.toString()">order by g.IS_PROMOTION desc , sg.SALE_NUM ${goodsVO.orderType}</if>
+    </select>
+    
+    <select id="getPageGoodsListCount" resultType="java.lang.Integer" parameterType="com.goujia.website.base.ges.vo.GoodsVO">
+        select 
+            count(distinct sg.GOODS_ID)
+        from G_SHOP_GOODS sg 
+        left join G_GOODS g on sg.GOODS_ID = g.ID  
+        left join G_HOUSE h on g.HOUSE_ID = h.ID
+        left join G_BUILDING b on h.BUILDING = b.ID
+        left join G_AREA ar on b.COUNTY_ID = ar.ID
+        where sg.STATUS = 'enable' and g.STATUS = 'published'
+        <if test="goodsVO.shopId != null and goodsVO.shopId >0"> and sg.SHOP_ID = #{goodsVO.shopId}</if>
+        <if test="goodsVO.buildingId != null and goodsVO.buildingId >0"> and b.ID = #{goodsVO.buildingId}</if>
+        <if test="goodsVO.provinceId != null and goodsVO.provinceId >0"> and b.PROVINCE_ID = #{goodsVO.provinceId}</if>
+        <if test="0 == type and goodsVO.cityId != null and goodsVO.cityId >0"> and b.CITY_ID = #{goodsVO.cityId}</if>
+        <if test="1 == type and goodsVO.cityId != null and goodsVO.cityId >0"> and b.COUNTY_ID = #{goodsVO.cityId}</if>
+        <if test="goodsVO.houseTypeId != null and goodsVO.houseTypeId >0"> and g.HOUSE_TYPE_ID = #{goodsVO.houseTypeId}</if>
+        <if test="goodsVO.styleId != null and goodsVO.styleId >0"> and g.STYLE_ID = #{goodsVO.styleId}</if>
+        <if test="null != goodsVO.isPromotion and '' != goodsVO.isPromotion">and g.IS_PROMOTION=#{goodsVO.isPromotion}</if>
+        <if test="goodsVO.isDiy != null and goodsVO.isDiy != ''"> AND g.IS_DIY = #{goodsVO.isDiy}</if>
+        <if test="goodsVO.minPrice !=null and goodsVO.minPrice >0"><![CDATA[ and g.DISCOUNT_PRICE >= #{goodsVO.minPrice}]]></if>
+        <if test="goodsVO.maxPrice !=null and goodsVO.maxPrice >0"><![CDATA[ and g.DISCOUNT_PRICE <= #{goodsVO.maxPrice}]]></if>
+        <if test="goodsVO.minArea !=null and goodsVO.minArea >0"><![CDATA[ and h.FLOOR_AREA >= #{goodsVO.minArea}]]></if>
+        <if test="goodsVO.maxArea !=null and goodsVO.maxArea >0"><![CDATA[ and h.FLOOR_AREA <= #{goodsVO.maxArea}]]></if>
+        <if test="goodsVO.effectPath !=null and goodsVO.effectPath !=''">and g.EFFECT_PATH != ""</if>
+        <if test="goodsVO.countyId != null and goodsVO.countyId > 0"> and b.COUNTY_ID = #{goodsVO.countyId}</if>
+        <if test="goodsVO.goodsType != null and goodsVO.goodsType != ''"> and g.GOODS_TYPE=#{goodsVO.goodsType}</if>
+        <if test="goodsVO.q !=null and goodsVO.q !=''">
+            <![CDATA[ and (g.NAME like CONCAT('%','${goodsVO.q}','%' ) or g.HOUSE_TYPE_NAME like CONCAT('%','${goodsVO.q}','%' ) 
+                    or g.STYLE_NAME like CONCAT('%','${goodsVO.q}','%' ) or b.NAME like CONCAT('%','${goodsVO.q}','%' ) 
+                    or ar.NAME like CONCAT('%','${goodsVO.q}','%' ))]]>
+        </if>
+        <if test="goodsVO.isRecommend !=null and goodsVO.isRecommend !=''">and g.IS_RECOMMEND = #{goodsVO.isRecommend}</if>
+    </select>
+    
+    <!-- diy 相关接口 -->
+    <select id="listDiy" resultMap="RM_GoodsDiyVO" parameterType="java.lang.Integer" >
+        select 
+            g.ID, 
+            g.NAME,
+            g.STYLE_ID,
+            g.STYLE_NAME, 
+            g.HOUSE_ID,
+            g.HOUSE_TYPE_ID,
+            g.HOUSE_TYPE_NAME,
+            g.PHOTO_PATH,
+            g.FLOOR_PLAN_PATH,
+            g.ORIGINAL_PRICE,
+            g.DISCOUNT_PRICE,
+            g.SUMMARY,
+            g.STATUS,
+            g.GMT_CREATE,
+            g.GMT_MODIFIED,
+            g.OWNER_ID,
+            g.IS_RECOMMEND,
+            g.SALES_FILE_PATH,
+            g.EFFECT_FILE_PATH,
+            g.EFFECT_PATH,
+            g.IS_PROMOTION,
+            g.AVERAGE_PRICE,
+            g.GOODS_TYPE,
+            g.CAN_DIY,
+            g.IS_DIY,
+            gd.RELATION_GOODS_ID,
+            gd.RELATION_DIY_ID,
+            gd.CREATOR_ID,
+            gd.CREATOR_TYPE,
+            CASE gd.CREATOR_TYPE WHEN 0 THEN c.HEAD_PATH ELSE u.HEAD_PORTRAIT END HEAD_PATH,
+            CASE gd.CREATOR_TYPE WHEN 0 THEN c.LOGIN_NAME ELSE u.REAL_NAME END CREATOR_NAME
+        from g_goods_diy gd inner join G_GOODS g on gd.DIY_ID = g.ID
+            left join g_bbs_member c on gd.CREATOR_ID = c.ID
+            left join g_user u on gd.CREATOR_ID = u.ID
+        where g.STATUS != 'deleted' and gd.RELATION_DIY_ID = #{id}
+        order by g.GMT_CREATE desc
+    </select>
+    
+    <!-- diy频道列表 -->
+    <select id="standardDiyList" resultMap="RM_Goods_Building" parameterType="java.lang.Integer">
+        SELECT  
+            ID,NAME,PHOTO_PATH
+        FROM g_goods WHERE 
+        IS_DIY=#{isDiy} AND STATUS = 'published'
+        ORDER BY GMT_CREATE DESC
+    </select>
+</mapper>

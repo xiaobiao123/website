@@ -1,0 +1,634 @@
+#*#parse("header.vm")*# #Html("begin") #Head("begin") #Title("文章管理") #LoadBootstrap("default") #LoadSUI("default") #LoadSUI("editor") #Head("end")
+#LoadBootstrap("default")
+#LoadSUI("default")
+#LoadSUI("upload")
+
+<style type="text/css">
+	.checkbox{
+		width: 14px;
+        height: 14px;
+	}
+    hr{
+        border-top: 2px solid #999;
+        margin-top: 4px;
+    }
+    .space{
+        margin-left: 10px;
+    }
+    #create_but{
+        height: 30px;
+        font-size: 10px;
+    }
+</style>
+<body >
+    #parse("header.vm")
+    <div class="modal" id="product_dialog" tabindex="-1" role="dialog" aria-labelledby="product_dialog" aria-hidden="true">
+        <div class="modal-dialog" style="width:800px;">
+            <div class="modal-content" style="padding:5px;">
+                <div class="modal-header" style="height:50px;">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                </div>
+                <div class="modal-body">
+                    
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-dismiss="modal">完成</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <input type="hidden" id="path_root" value="$request.contextPath"/>
+    <div role="tabpanel">
+        <!-- Nav tabs -->
+        <ul class="nav nav-tabs" role="tablist">
+            <li role="presentation" class="active"><a href="#formal" aria-controls="formal" role="tab" data-toggle="tab">在线的文章</a></li>
+            <li role="presentation"><a href="#nullify" aria-controls="nullify" role="tab" data-toggle="tab">作废的文章</a></li>
+            <li class="pull-right" style="margin-right:20px;"><button type="button" id="create_but" class="btn btn-sm btn-warning" onclick="loadList_formal(0)">创建新文章</button><li>
+        </ul>
+        <!-- Tab panes -->
+        <div class="tab-content">
+            <div role="tabpanel" class="tab-pane active" id="formal">
+            	<div class="container" id="formal_container">
+            		<div class="row">
+            			<div class="col-md-1">
+                            <div class="row" style="padding-top:13px;">
+                                <div class="col-md-1">
+                                    <input type="checkbox"  class="checkbox" id="ck_all"/>
+                                </div>
+                                <div class="col-md-6" style="padding-right:0px;padding-top:3px;">
+                                    全选
+                                </div>
+                            </div>
+            			</div>
+            			<div class="col-md-1">
+            				<button type="button" class="btn btn-sm btn-success" id="batch__but">批量作废</button>
+            			</div>
+            			<div class="col-md-3 pull-right">
+                				<div class="row">
+                					<div class="col-md-9">
+                						<input class="form-control" id="search_input" placeholder="按标题"/>
+                					</div>
+                					<div class="col-md-1">
+                						<button type="button" id="search_but" class="btn btn-sm btn-success" onclick="loadList_formal(0)">搜索</button>
+                					</div>
+                				</div>
+            				
+            			</div>
+            		</div>
+                    <div class="row">
+                        <hr/>
+                    </div>
+                    <div class="row" id="flush_content">
+                		<div class="row">
+                            <table class="table table-hover table-striped">
+                            #foreach($item in $formal.result)
+                              <tr align="center">
+                                    <td><input type="checkbox"  class="checkbox checkbox_formal"  value="${item.id}"/></td>
+                                    <td><a href="javascript:void(0);" onclick="detail_d(${item.id})">$!{item.articleName}</a></td>
+                                    <td>$!{item.userName}</td>
+                                    <td>$date.formatYYYYMMDD($!{item.gmtCreate})</td>
+                                    <td><a href="javascript:void(0);" onclick="update_u(${item.id})">编辑</a><span class="space"></span><a href="javascript:void(0);" onclick="relate_product(${item.id})">关联产品包</a><span class="space"></span><a href="javascript:void(0);" onclick="delete_d(${item.id})">删除</a></td>
+                              </tr>
+                              #end
+                            </table>
+                		</div>
+                		<div class="row">
+                            <ul class="pagination pull-right">
+                                #if($!formal.hasPre)
+                                    <li class="first"><a href="#first" onclick="loadList_formal('1');">首页</a></li>
+                                    <li class="prev"><a href="#prePage" onclick="loadList_formal('$formal.prePage');"><i class="icon-double-angle-left"></i></a></li>
+                                #else
+                                    <li class="first disabled"><a>首页</a></li>
+                                    <li class="prev disabled"><a><i class="icon-double-angle-left"></i></a></li>
+                                #end
+                                #foreach($pNo in $formal.closestPage)
+                                    <li #if($formal.pageNo == $pNo)class="active"#end><a href="#$!pNo" onclick="loadList_formal('$!pNo');">$!pNo</a></li>
+                                #end
+                                #if($!formal.hasNext)
+                                    <li class="next"><a href="#nextPage" onclick="loadList_formal('$formal.nextPage');"><i class="icon-double-angle-right"></i></a></li>
+                                    <li class="last"><a href="#totalPages" onclick="loadList_formal('$formal.totalPages');">尾页</a></li>
+                                #else
+                                    <li class="next disabled"><a><i class="icon-double-angle-right"></i></a></li>
+                                    <li class="last disabled"><a>尾页</a></li>
+                                #end
+                                    <li style="white-space:nowrap;display:inline-block">
+                                    &nbsp;共$!formal.totalPages页， 去第<input type="text" id="pageNo" name="pageNo" value="$!formal.pageNo" style="width:40px" class="page-go" onkeypress="if(event.keyCode==13) { $(this).closest('ul').find('button').click(); }"/>页
+                                    <button type="button" class="btn btn-xs btn-inverse" onclick="loadList_formal();">确认</button>
+                                    </li>
+                            </ul>
+                		</div>
+                    </div>
+            	</div>
+            </div>
+            <div role="tabpanel" class="tab-pane" id="nullify">
+            	<div class="container" id="nullify_container">
+                    <div class="row">
+                        <div class="col-md-1">
+                            <div class="row" style="padding-top:13px;">
+                                <div class="col-md-1">
+                                    <input type="checkbox"  class="checkbox" id="ck_all"/>
+                                </div>
+                                <div class="col-md-6" style="padding-right:0px;padding-top:3px;">
+                                    全选
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-1">
+                            <button type="button" class="btn btn-sm btn-success" id="batch__but">批量还原</button>
+                        </div>
+                        <div class="col-md-3 pull-right">
+                                <div class="row">
+                                    <div class="col-md-9">
+                                        <input class="form-control" id="search_input" placeholder="按标题"/>
+                                    </div>
+                                    <div class="col-md-1">
+                                        <button type="button" id="search_but" class="btn btn-sm btn-success" onclick="loadList_nullify(0)">搜索</button>
+                                    </div>
+                                </div>
+                            
+                        </div>
+                    </div>
+                    <div class="row">
+                        <hr/>
+                    </div>
+                    <div class="row" id="flush_content">
+                        <div class="row">
+                            <table class="table table-hover table-striped">
+                            #foreach($item in $nullify.result)
+                              <tr align="center">
+                                    <td><input type="checkbox"  class="checkbox checkbox_nullify" value="${item.id}"/></td>
+                                    <td><a href="javascript:void(0);" onclick="detail_d(${item.id})">$!{item.articleName}</a></td>                                    <td>$!{item.userName}</td>
+                                    <td>$date.formatYYYYMMDD($!{item.gmtCreate})</td>
+                                    <td><a href="javascript:void(0);" onclick="update_u(${item.id})">编辑</a><span class="space"></span><a href="javascript:void(0);" onclick="relate_product(${item.id})">关联产品包</a><span class="space"></span><a href="javascript:void(0);" onclick="return_d(${item.id})">还原</a></td>
+                              </tr>
+                              #end
+                            </table>
+                        </div>
+                        <div class="row">
+                            <ul class="pagination pull-right">
+                                #if($!nullify.hasPre)
+                                    <li class="first"><a href="#first" onclick="loadList_nullify('1');">首页</a></li>
+                                    <li class="prev"><a href="#prePage" onclick="loadList_nullify('$nullify.prePage');"><i class="icon-double-angle-left"></i></a></li>
+                                #else
+                                    <li class="first disabled"><a>首页</a></li>
+                                    <li class="prev disabled"><a><i class="icon-double-angle-left"></i></a></li>
+                                #end
+                                #foreach($pNo in $nullify.closestPage)
+                                    <li #if($nullify.pageNo == $pNo)class="active"#end><a href="#$!pNo" onclick="loadList_nullify('$!pNo');">$!pNo</a></li>
+                                #end
+                                #if($!nullify.hasNext)
+                                    <li class="next"><a href="#nextPage" onclick="loadList_nullify('$nullify.nextPage');"><i class="icon-double-angle-right"></i></a></li>
+                                    <li class="last"><a href="#totalPages" onclick="loadList_nullify('$nullify.totalPages');">尾页</a></li>
+                                #else
+                                    <li class="next disabled"><a><i class="icon-double-angle-right"></i></a></li>
+                                    <li class="last disabled"><a>尾页</a></li>
+                                #end
+                                    <li style="white-space:nowrap;display:inline-block">
+                                    &nbsp;共$!nullify.totalPages页， 去第<input type="text" id="pageNo" name="pageNo" value="$!nullify.pageNo" style="width:40px" class="page-go" onkeypress="if(event.keyCode==13) { $(this).closest('ul').find('button').click(); }"/>页
+                                    <button type="button" class="btn btn-xs btn-inverse" onclick="loadList_nullify();">确认</button>
+                                    </li>
+                            </ul>
+                        </div>
+                    </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="dialog">
+
+    </div>
+    <script type=text/javascript src="$!request.contextPath/source/sui/library/ueditor/ueditor.config.js"></script>
+    <script type=text/javascript src="$!request.contextPath/source/sui/library/ueditor/ueditor.all.js"></script>
+    <link rel=stylesheet href="$!request.contextPath/source/sui/library/ueditor/themes/default/css/ueditor.css"> 
+    <script type="text/javascript" src="$!request.contextPath/assets/js/alertify.js"></script>
+    <script type="text/javascript" src="$!request.contextPath/assets/js/jquery.json-2.4.js"></script>
+
+    <script type="text/javascript">
+
+        function get_pop_label_array(dialog_id){
+            var array=dialog_map[dialog_id];
+            if(array==null || array==undefined){
+                dialog_map[dialog_id]=new Array();
+                array=dialog_map[dialog_id];
+            }
+            return array;
+        }
+
+        function label_pop_ready_show(key){
+            var value=dialog_map[key];
+            if(value!=null && value!=undefined && value.length!=0)
+            {
+                var show=$("#"+key+" #checked_label");
+                for(var i=0;i<value.length;i++){
+                    show.append("<span>"+value[i].name+"</span>");
+                }
+                var list=$("#"+key+" .childLabel a");
+                $.each(list,function(i,obj){
+                    obj=$(obj);
+                    var id=obj.attr("value");
+                    if(is_contain(value,id))
+                        obj.addClass("checked");
+                });
+            }
+        }
+        function is_contain(array,id){
+            for(var i=0;i<array.length;i++){
+                if(array[i].id==id)
+                    return true;
+            }
+        }
+        
+
+        function pop_clear_label(dialog_id){
+            var show=$("#"+dialog_id+" #checked_label");
+            show.empty();
+            dialog_map[dialog_id]=new Array();
+            var list=$("#"+dialog_id+" .childLabel .checked");
+            $.each(list,function(i,obj){
+                $(obj).removeClass("checked");
+            });
+        }
+        function pop_submit(show_input,dialog_id){
+            var pop_label_array=get_pop_label_array(dialog_id);
+            var str="";
+            for(var i=0;i<pop_label_array.length;i++){
+                str+=pop_label_array[i].name;
+                str+=';';
+            }
+            $("#"+show_input).val(str);
+            $("#"+dialog_id).modal("hide");
+        }
+        function pop_check_label(dialog_id,obj,id){
+            var pop_label_array=get_pop_label_array(dialog_id);
+            obj=$(obj);
+            if(obj.hasClass('checked')){
+                obj.removeClass('checked');
+                for(var i=pop_label_array.length-1;i>=0;i--){
+                    if(pop_label_array[i].id==id){
+                        pop_label_array.splice(i,1);
+                        break;
+                    }
+                }
+                var show=$("#"+dialog_id+" #checked_label");
+                show.empty();
+                for(var i=0;i<pop_label_array.length;i++){
+                    show.append("<span>"+pop_label_array[i].name+"</span>");
+                }
+                        
+            }
+            else{
+                var val=obj.text();
+                var label={id:id,name:val};
+                pop_label_array.push(label);
+                obj.addClass('checked');
+                $("#"+dialog_id +" #checked_label").append("<span>"+val+"</span>");
+            }
+        }
+        var pageSize=$!formal.pageSize;
+        var editor;
+        var path_root;
+        $(document).ready(function(){
+            path_root=$("#path_root").val();
+            var param={};
+            var timestamp=(new Date()).valueOf();
+            $("#create_but").click(function(){
+                $.get("$request.contextPath/article/add.htm?timestamp="+timestamp,function(html,statusText){
+                    $("#dialog").empty();
+                    $("#dialog").append(html);
+                    $('#detail_dialog').modal({backdrop: 'static', keyboard: false});
+                    $("#detail_dialog").modal("show");
+                    editor = new UE.ui.Editor();
+                    editor.render('myEditor');
+                    $("#topic_clear_but").click(function(){
+                        hadTopic=new Array();
+                        $("#topic_input").val("");
+                    });
+                    $("#topic_check_but").click(function(){
+                        var all=$("input[id^='topic_check_']:checked");
+                        $.each(all,function(i,item){
+                            var id=item.value;
+                            var name=$("#topic_hidden_name_"+id).val();
+                            var obj={id:id,name:name};
+                            hadTopic.push(obj);
+                        });
+                        var str="";
+                        for(var i=0;i<hadTopic.length;i++){
+                            str+=hadTopic[i].name;
+                            str+=";";        
+                        }
+                        $("#topic_input").val(str);
+                        $("#topic_dialog").modal("hide");
+                    });
+                    $("#detail_dialog_but").click(function(){
+                        var param={};
+                        param["imagePath"]=$("#infoImage").val();
+                        param["articleName"]=$("#detail_container #name").val();
+                        param["category_label"]=$.toJSON(dialog_map['category_label_dialog']);
+                        param["technology_label"]=$.toJSON(dialog_map['technology_label_dialog']);
+                        param["material_label"]=$.toJSON(dialog_map['material_label_dialog']);
+                        param["style_label"]=$.toJSON(dialog_map['style_label_dialog']);
+                        param["content"]=editor.getContent(); 
+                        param["topic_list"]=$.toJSON(hadTopic);
+                        $.post("$request.contextPath/article/add.htm",param,function(data,statusText){
+                            var data_=eval("("+data+")");
+                            alert(data_.msg);
+                            if(data_.result){
+                                $("#search_input").val("");
+                                loadList_formal(1);
+                                $("#detail_dialog").modal("hide");
+                            }
+                                
+                        });
+                    });
+                    
+                });
+            });
+            $("#formal #ck_all").click(function(){
+                if ($(this).is(":checked")) {
+                    $("#formal .checkbox").prop('checked',true);
+                }
+                else{
+                    $("#formal .checkbox").prop('checked',false);
+                }
+            });
+            $("#nullify #ck_all").click(function(){
+                if ($(this).is(":checked")) {
+                    $("#nullify .checkbox").prop('checked',true);
+                }
+                else{
+                    $("#nullify .checkbox").prop('checked',false);
+                }
+            });
+            $("#formal #batch__but").click(function(){
+                var all=$("#formal .checkbox:checked");
+                var list=new Array;
+                $.each(all,function(i,item){
+                    list.push(item.value);
+                });
+                $.post("$request.contextPath/article/delete.htm",{idList:$.toJSON(list)},function(data,statusText){
+                    var data_=eval("("+data+")");
+                    alert(data_.msg);
+                    if(data_.result){
+                        loadList_formal(1);
+                        loadList_nullify(1);
+                    }
+                });
+
+            });
+            $("#nullify #batch__but").click(function(){
+                var all=$("#nullify .checkbox:checked");
+                var list=new Array;
+                $.each(all,function(i,item){
+                    list.push(item.value);
+                });
+                $.post("$request.contextPath/article/return.htm",{idList:$.toJSON(list)},function(data,statusText){
+                    var data_=eval("("+data+")");
+                    alert(data_.msg);
+                    if(data_.result){
+                        loadList_formal(1);
+                        loadList_nullify(1);
+                    }
+                });
+
+            });
+        });
+        function detail_d(id){
+            update_u(id);
+            // $.get("$request.contextPath/article/detail.htm?id="+id,function(html,statusText){
+            //     $("#dialog").empty();
+            //     $("#dialog").append(html);
+            //     detail_load_ready(id);
+
+                
+            // });
+        }
+        function update_u(id){
+            $.get("$request.contextPath/article/update.htm?id="+id,function(html,statusText){
+                $("#dialog").empty();
+                $("#dialog").append(html);
+                $("#topic_clear_but").click(function(){
+                    hadTopic=new Array();
+                    $("#topic_input").val("");
+                });
+                $("#topic_check_but").click(function(){
+                    var all=$("input[id^='topic_check_']:checked");
+                    $.each(all,function(i,item){
+                        var id=item.value;
+                        var name=$("#topic_hidden_name_"+id).val();
+                        var obj={id:id,name:name};
+                        hadTopic.push(obj);
+                    });
+                    var str="";
+                    for(var i=0;i<hadTopic.length;i++){
+                        str+=hadTopic[i].name;
+                        str+=";";        
+                    }
+                    $("#topic_input").val(str);
+                    $("#topic_dialog").modal("hide");
+                });
+                $("#detail_dialog_but").click(function(){
+                    var param={"id":id};
+                    param["imagePath"]=$("#infoImage").val();
+                    param["articleName"]=$("#detail_container #name").val();
+                    param["category_label"]=$.toJSON(dialog_map['category_label_dialog']);
+                    param["technology_label"]=$.toJSON(dialog_map['technology_label_dialog']);
+                    param["material_label"]=$.toJSON(dialog_map['material_label_dialog']);
+                    param["style_label"]=$.toJSON(dialog_map['style_label_dialog']);
+                    param["content"]=editor.getContent();
+                    param["topic_list"]=$.toJSON(hadTopic);
+                    $.post("$request.contextPath/article/update.htm",param,function(data,statusText){
+                        var data_=eval("("+data+")");
+                        alert(data_.msg);
+                        if(data_.result){
+                            $("#search_input").val("");
+                            loadList_formal(1);
+                            $("#detail_dialog").modal("hide");
+                        }
+                            
+                    });
+                });
+                update_load_ready(id);
+                
+
+
+                
+            });
+        }
+        function update_load_ready(id){
+            $.post("$request.contextPath/article/getOne.htm",{"id":id},function(data,statusText){
+                var data_=eval("("+data+")");
+                if(data_.result){
+                    $("#infoImage").val(data_.obj.imagePath);
+                    $("#infoImage_preview").attr("src","$!reviewImagePath"+data_.obj.imagePath);
+                    $("#name").val(data_.obj.articleName);
+                    pop_clear_label("category_label_dialog");
+                    pop_clear_label("technology_label_dialog");
+                    pop_clear_label("material_label_dialog");
+                    pop_clear_label("style_label_dialog");
+
+                    dialog_map["category_label_dialog"]=data_.obj.categoryLabelList;
+                    dialog_map["technology_label_dialog"]=data_.obj.technologyLabelList;
+                    dialog_map["material_label_dialog"]=data_.obj.materialLabelList;
+                    dialog_map["style_label_dialog"]=data_.obj.styleLabelList;
+                    hadTopic=data_.obj.topicList;
+                    var str="";
+                    $.each(data_.obj.categoryLabelList,function(i,item){
+                        str+=item.name;
+                        str+=";";
+                    });
+                    $("#category_label_input").val(str);
+                    str="";
+                    $.each(data_.obj.technologyLabelList,function(i,item){
+                        str+=item.name;
+                        str+=";";
+                    });
+                    $("#technology_label_input").val(str);
+                    str="";
+                    $.each(data_.obj.materialLabelList,function(i,item){
+                        str+=item.name;
+                        str+=";";
+                    });
+                    $("#material_label_input").val(str);
+                    str="";
+                    $.each(data_.obj.styleLabelList,function(i,item){
+                        str+=item.name;
+                        str+=";";
+                    });
+                    $("#style_label_input").val(str);
+                    str="";
+                    $.each(data_.obj.topicList,function(i,item){
+                        str+=item.name;
+                        str+=";";
+                    });
+                    $("#topic_input").val(str);
+                    $('#detail_dialog').modal({backdrop: 'static', keyboard: false});
+                    $("#detail_dialog").modal("show");
+                    editor=new UE.ui.Editor();
+                    editor.render("myEditor");
+                    editor.addListener("ready", function () {
+                        editor.setContent(data_.obj.content);
+                    });
+                }
+                else{
+                    alert(data_.msg);
+                }
+            });
+        }
+        function detail_load_ready(id){
+            $.get("$request.contextPath/article/getOne.htm?id="+id,function(data,statusText){
+                var data_=eval("("+data+")");
+                if(data_.result){
+                    $("#infoImage_preview").attr("src",data_.obj.imagePath);
+                    $("#name").val(data_.obj.articleName);
+                    $("#content_div").append(data_.obj.content);
+                    var str="";
+                    $.each(data_.obj.categoryLabelList,function(i,item){
+                        str+=item.name;
+                        str+=";";
+                    });
+                    $("#category_label_input").val(str);
+                    str="";
+                    $.each(data_.obj.technologyLabelList,function(i,item){
+                        str+=item.name;
+                        str+=";";
+                    });
+                    $("#technology_label_input").val(str);
+                    str="";
+                    $.each(data_.obj.materialLabelList,function(i,item){
+                        str+=item.name;
+                        str+=";";
+                    });
+                    $("#material_label_input").val(str);
+                    str="";
+                    $.each(data_.obj.styleLabelList,function(i,item){
+                        str+=item.name;
+                        str+=";";
+                    });
+                    $("#style_label_input").val(str);
+                    str="";
+                    $.each(data_.obj.topicList,function(i,item){
+                        str+=item.name;
+                        str+=";";
+                    });
+                    $("#topic_input").val(str);
+                    $('#detail_dialog').modal({backdrop: 'static', keyboard: false});
+                    $("#detail_dialog").modal("show");
+                }
+                else{
+                    alert(data_.msg);
+                }
+            });
+        }
+        
+        function delete_d(id){
+            var list=new Array;
+            list.push(id);
+            $.post("$request.contextPath/article/delete.htm",{idList:$.toJSON(list)},function(data,statusText){
+                var data_=eval("("+data+")");
+                alert(data_.msg);
+                if(data_.result){
+                    loadList_formal(1);
+                    loadList_nullify(1);
+                }
+            });
+        }
+        function return_d(id){
+            var list=new Array;
+            list.push(id);
+            $.post("$request.contextPath/article/return.htm",{idList:$.toJSON(list)},function(data,statusText){
+                var data_=eval("("+data+")");
+                alert(data_.msg);
+                if(data_.result){
+                    loadList_formal(1);
+                    loadList_nullify(1);
+                }
+            });
+        }
+        
+        function loadList_formal(pageNo){
+            var param={};
+            param["pageSize"]=pageSize;
+            param["name"]=$("#formal #search_input").val();
+            if(!!pageNo && !isNaN(pageNo)){
+                $("#pageNo").val(pageNo);
+                param["pageNo"]=pageNo;
+            }
+            else{
+                param["pageNo"]=$("#pageNo").val();
+            }
+            $.post("$request.contextPath/article/formal/list.htm",param,function(html,statusText){
+                var content=$("#formal #flush_content");
+                content.empty();
+                content.append(html);
+                $("#formal #ck_all").prop('checked',false);
+            });
+        }
+        function loadList_nullify(pageNo){
+            var param={};
+            param["pageSize"]=pageSize;
+            param["name"]=$("#nullify #search_input").val();
+            if(!!pageNo && !isNaN(pageNo)){
+                $("#pageNo").val(pageNo);
+                param["pageNo"]=pageNo;
+            }
+            else{
+                param["pageNo"]=$("#pageNo").val();
+            }
+            $.post("$request.contextPath/article/nullify/list.htm",param,function(html,statusText){
+                var content=$("#nullify #flush_content");
+                content.empty();
+                content.append(html);
+                $("#nullify #ck_all").prop('checked',false);
+            });
+        }
+        function relate_product(id){
+            $.post("$request.contextPath/product/list.htm",{"articleId":id},function(html,statusText){
+                $("#product_dialog .modal-body").html(html);
+                $("#product_dialog").modal("show");
+            });
+        }
+
+        
+    </script>
+    #*#Footer()*# #parse("footer.vm")

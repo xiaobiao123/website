@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.goujia.website.base.dao.rec.RecommendInfoMapper">
+	<resultMap id="RM_RecommendInfo" type="com.goujia.website.base.entity.rec.RecommendInfo">
+		<id column="REC_ID" property="recId" jdbcType="INTEGER" />
+		<result column="POS_ID" property="posId" jdbcType="INTEGER" />
+		<result column="INFO_ID" property="infoId" jdbcType="INTEGER" />
+		<result column="INFO_TITLE" property="infoTitle" jdbcType="VARCHAR" />
+		<result column="INFO_IMAGE" property="infoImage" jdbcType="VARCHAR" />
+		<result column="INFO_STATUS" property="infoStatus" jdbcType="VARCHAR" />
+		<result column="AVAILABLE_TIME" property="availableTime" jdbcType="DATE" />
+		<result column="EXPIRE_TIME" property="expireTime" jdbcType="DATE" />
+		<result column="CREATE_TIME" property="createTime" jdbcType="TIMESTAMP" />
+		<result column="CREATE_USER" property="createUser" jdbcType="VARCHAR" />
+		<result column="SORT_ORDER" property="sortOrder" jdbcType="INTEGER" />
+		<result column="INFO_CONTENT" property="infoContent" jdbcType="VARCHAR" />
+		<result column="INFO_URL" property="infoUrl" jdbcType="VARCHAR" />
+	</resultMap>
+	
+	<resultMap id="RM_RecommendInfoVO" type="com.goujia.website.base.vo.rec.RecommendInfoVO" extends="RM_RecommendInfo">
+		
+	</resultMap>
+	
+	<sql id="Base_Column_List">
+		info.REC_ID, info.POS_ID, info.INFO_ID, info.INFO_TITLE, info.INFO_IMAGE, info.INFO_STATUS, info.AVAILABLE_TIME,
+		info.EXPIRE_TIME,
+		info.CREATE_TIME, info.CREATE_USER, info.SORT_ORDER, info.INFO_CONTENT, info.INFO_URL
+	</sql>
+	<sql id="Base_Query_Condition">
+		<if test="infoType != null and infoType != ''">
+			AND pos.INFO_TYPE = #{infoType,jdbcType=INTEGER}
+		</if>
+		<if test="posId != null">
+			AND info.POS_ID = #{posId,jdbcType=INTEGER}
+		</if>
+		<if test="posCode != null and posCode != ''">
+			AND pos.POS_CODE = #{posCode,jdbcType=INTEGER}
+		</if>
+		<if test="posName != null and posName != ''">
+            AND pos.POS_NAME like  CONCAT('%', #{posName,jdbcType=VARCHAR},'%')
+        </if>
+        <if test="infoTitle != null and infoTitle != ''">
+            AND info.INFO_TITLE like  CONCAT('%', #{infoTitle,jdbcType=VARCHAR},'%')
+        </if>
+		<!-- 
+		<if test="infoId != null">
+			AND INFO_ID = #{infoId,jdbcType=INTEGER}
+		</if>
+		<if test="infoTitle != null">
+			AND INFO_TITLE = #{infoTitle,jdbcType=VARCHAR}
+		</if>
+		<if test="infoImage != null">
+			AND INFO_IMAGE = #{infoImage,jdbcType=VARCHAR}
+		</if>
+		<if test="infoStatus != null">
+			AND INFO_STATUS = #{infoStatus,jdbcType=VARCHAR}
+		</if>
+		<if test="availableTime != null">
+			AND AVAILABLE_TIME = #{availableTime,jdbcType=DATE}
+		</if>
+		<if test="expireTime != null">
+			AND EXPIRE_TIME = #{expireTime,jdbcType=DATE}
+		</if>
+		<if test="createTime != null">
+			AND CREATE_TIME = #{createTime,jdbcType=TIMESTAMP}
+		</if>
+		<if test="createUser != null">
+			AND CREATE_USER = #{createUser,jdbcType=VARCHAR}
+		</if>
+		<if test="sortOrder != null">
+			AND SORT_ORDER = #{sortOrder,jdbcType=INTEGER}
+		</if>
+		<if test="infoContent != null">
+			AND INFO_CONTENT = #{infoContent,jdbcType=VARCHAR}
+		</if>-->
+	</sql>
+	<select id="get" resultMap="RM_RecommendInfoVO" parameterType="java.lang.Integer">
+		select
+		<include refid="Base_Column_List" />
+		from G_REC_RECOMMEND_INFO info
+		where REC_ID = #{recId,jdbcType=INTEGER}
+	</select>
+	<select id="list" resultMap="RM_RecommendInfoVO" parameterType="com.goujia.website.base.vo.rec.RecommendInfoSearchParam">
+		select
+		<include refid="Base_Column_List" />
+		from G_REC_RECOMMEND_INFO info, G_REC_RECOMMEND_POSITION pos 
+		where info.POS_ID = pos.POS_ID 
+		<include refid="Base_Query_Condition" />
+	</select>
+	<select id="count" resultType="int" parameterType="com.goujia.website.base.vo.rec.RecommendInfoSearchParam">
+		select count(*) from G_REC_RECOMMEND_INFO info, G_REC_RECOMMEND_POSITION pos where info.POS_ID = pos.POS_ID 
+		<include refid="Base_Query_Condition" />
+	</select>
+	<delete id="delete" parameterType="java.lang.Integer">
+		delete from G_REC_RECOMMEND_INFO
+		where REC_ID = #{recId,jdbcType=INTEGER}
+	</delete>
+	<insert id="insert" parameterType="com.goujia.website.base.entity.rec.RecommendInfo" useGeneratedKeys="true" keyProperty="REC_ID">
+		insert into G_REC_RECOMMEND_INFO (REC_ID, POS_ID, INFO_ID,
+		INFO_TITLE, INFO_IMAGE, INFO_STATUS,
+		AVAILABLE_TIME, EXPIRE_TIME, CREATE_TIME,
+		CREATE_USER, SORT_ORDER, INFO_CONTENT, INFO_URL
+		)
+		values (#{recId,jdbcType=INTEGER}, #{posId,jdbcType=INTEGER},
+		#{infoId,jdbcType=INTEGER},
+		#{infoTitle,jdbcType=VARCHAR}, #{infoImage,jdbcType=VARCHAR}, #{infoStatus,jdbcType=VARCHAR},
+		#{availableTime,jdbcType=DATE}, #{expireTime,jdbcType=DATE},
+		now(),
+		#{createUser,jdbcType=VARCHAR}, #{sortOrder,jdbcType=INTEGER}, #{infoContent,jdbcType=VARCHAR}, #{infoUrl,jdbcType=VARCHAR}
+		)
+	</insert>
+	<update id="update" parameterType="com.goujia.website.base.entity.rec.RecommendInfo">
+		update G_REC_RECOMMEND_INFO
+		<set>
+			<if test="posId != null">
+				POS_ID = #{posId,jdbcType=INTEGER},
+			</if>
+			<if test="infoId != null">
+				INFO_ID = #{infoId,jdbcType=INTEGER},
+			</if>
+			<if test="infoTitle != null">
+				INFO_TITLE = #{infoTitle,jdbcType=VARCHAR},
+			</if>
+			<if test="infoImage != null">
+				INFO_IMAGE = #{infoImage,jdbcType=VARCHAR},
+			</if>
+			<if test="infoStatus != null">
+				INFO_STATUS = #{infoStatus,jdbcType=VARCHAR},
+			</if>
+			<if test="availableTime != null">
+				AVAILABLE_TIME = #{availableTime,jdbcType=DATE},
+			</if>
+			<if test="expireTime != null">
+				EXPIRE_TIME = #{expireTime,jdbcType=DATE},
+			</if>
+			<if test="createTime != null">
+				CREATE_TIME = #{createTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="createUser != null">
+				CREATE_USER = #{createUser,jdbcType=VARCHAR},
+			</if>
+			<if test="sortOrder != null">
+				SORT_ORDER = #{sortOrder,jdbcType=INTEGER},
+			</if>
+			<if test="infoContent != null">
+				INFO_CONTENT = #{infoContent,jdbcType=VARCHAR},
+			</if>
+			<if test="infoUrl != null">
+				INFO_URL = #{infoUrl,jdbcType=VARCHAR},
+			</if>
+		</set>
+		where REC_ID = #{recId,jdbcType=INTEGER}
+	</update>
+	
+	<!-- 根据posid获取推荐信息 -->
+	<select id="getListForPosId" resultMap="RM_RecommendInfo" parameterType="java.lang.Integer">
+	    select
+        <include refid="Base_Column_List" />
+        from G_REC_RECOMMEND_INFO info
+        where POS_ID = #{posId,jdbcType=INTEGER}
+        AND now()>info.AVAILABLE_TIME
+        AND info.EXPIRE_TIME>now()
+        AND info.INFO_STATUS='y'
+        ORDER BY info.SORT_ORDER ASC
+	</select>
+	
+	<select id="listHotQuestion" resultMap="RM_RecommendInfoVO"
+	   parameterType="com.goujia.website.base.vo.rec.RecommendInfoSearchParam">
+	    select
+        <include refid="Base_Column_List" />
+        from G_REC_RECOMMEND_INFO info
+        where POS_ID = #{posId,jdbcType=INTEGER}
+        AND now()>info.AVAILABLE_TIME
+        AND info.EXPIRE_TIME>now()
+        AND info.INFO_STATUS='y'
+	   </select>
+</mapper>

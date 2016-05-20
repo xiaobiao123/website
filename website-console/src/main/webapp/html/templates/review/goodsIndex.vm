@@ -1,0 +1,159 @@
+#Html("begin")
+#Head("begin")
+#Title("系统管理-评论管理-产品包评论管理")
+#LoadBootstrap("default")
+#LoadSUI("default")
+#Head("end")
+<body>
+    #parse("header.vm")
+    <form class="form-inline align-right" action="$request.contextPath/goods/review/listPage.htm?isDeleted=n" method="post">
+        <div class="page-header">
+            <div class="form-group">
+                <label>
+                        <select name="searchIf" id="searchIf">
+                            <option value="1" #if($!searchParam.searchIf==1)selected=selected#end>内容查询</option>
+                            <option value="2" #if($!searchParam.searchIf==2)selected=selected#end>产品包查询</option>
+                            <option value="3" #if($!searchParam.searchIf==3)selected=selected#end>创建者查询</option>
+                        </select>
+                </label>
+                    <input type="text" name="searchText" value="$!searchParam.searchText" class="input-medium">
+            </div>
+
+            <div class="vspace-sm"></div>
+            <div class="form-group">
+                <button class="btn btn-sm btn-primary" type="submit">
+                    <i class="icon-search align-top"></i>查询
+                </button>
+            </div>
+            </div>
+        <!-- /.page-header -->
+    <ul class="nav nav-tabs" id="online">
+          <li class="active">
+             <a href="$request.contextPath/goods/review/listPage.htm?isDeleted=n">
+               在线评论
+            </a>
+          </li>
+          <li class="">
+           <a href="$request.contextPath/goods/review/listPage.htm?isDeleted=y">
+               作废评论
+            </a>
+          </li>
+        </ul>
+        <!--nav-table end-->
+        
+        <div class="tab-content">
+            <div class="table-responsive">
+                <div class="dataTables_wrapper">
+                    <!-- 结账 多个class "amount1-list" -->
+                    <table id="" class="table table-striped table-bordered table-hover J_Table amount-list">
+                        <thead>
+                            <tr>
+                                <th width="80px" class = "center">  
+                                <input id="SelectAll" type="checkbox">全选/反选
+                                    </th>
+                                <th width="80px" class="center">#</th>
+                                <th width="80px" class="center">产品包名称</th>
+                                <th width="1000px" class="center">评论</th>
+                                <th class="center">操作</th>
+                            </tr>
+                        </thead>
+    
+                        <tbody>
+                            #if($page && $page.result)
+                                #foreach($info in $!page.result)
+                                    <tr data-id="$!info.id">
+                                        <td class="center" style="vertical-align:middle">
+                                        <input id="subcheck" name="subcheck" value = "$!info.id" type="checkbox"/></td>
+                                        <td class="center" style="vertical-align:middle" >$!info.id</td>
+                                        <td class="center" style="vertical-align:middle" >
+                                            $!info.goodsName
+                                            </td>
+                                        <td class="center" maxlength="15" style="vertical-align:middle">$!info.content</td>
+                                        <td class="center"  style="vertical-align:middle">
+                                             <button class="btn btn-xs btn-info " type="button" onclick="disable($!info.id)">
+                                                <i class="icon-edit"> 作废 </i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                #end
+                            #end
+                        </tbody>
+                    </table>
+    
+                    <!--批量操作+分页 start-->
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <div class="dataTables_paginate paging_bootstrap" >
+                                    <span  text-align="left"> 
+                                <a onclick="disableAll()">批量作废
+                        </a>
+                                    </span>
+                                #Pagination($page)
+                            </div>
+                        </div>
+                    </div>
+                    <!--批量操作+分页 end-->
+                </div>
+            </div><!-- /.table-responsive -->
+        </div><!-- /.table-content -->
+    </form>
+    <!-- PAGE CONTENT ENDS -->
+    
+    <script>
+ 
+        function disable(id){
+        $.ajax({
+        type : 'POST',
+        url : '$!request.contextPath/goods/review/disable.htm?ids='+id,
+        dataTpe: "json",
+        success : function(res) {
+            res = eval(res);
+            if(res){
+                location.reload();
+            }else{
+                alert("废弃失败，请重新操作！");
+                location.reload();
+            }
+        },
+    });
+    }
+    
+     //全选、取消全选的事件  
+    
+    $("#SelectAll").click(function(){
+    var bischecked = $("#SelectAll").is(':checked');
+    var subcheck = $('input[name="subcheck"]');
+    bischecked?subcheck.prop('checked',true):subcheck.prop('checked',false);
+    });
+    
+    function disableAll(){
+     var ids="";
+     var count = 0;
+        $('input[name="subcheck"]:checked').each(function() {
+                ids += ","+$(this).val();
+                count = count +1;
+        });
+        if(count > 0){
+         ids = ids.substring(1,ids.length);
+          $.ajax({
+         type : 'POST',
+         url : '$!request.contextPath/goods/review/disable.htm?ids=' + ids,
+         dataTpe: "json",
+         success : function(res) {
+               if(res){
+                location.reload();
+            }else{
+                alert("废弃失败，请重新操作！");
+                location.reload();
+            }
+             },
+         });
+    }else{
+    alert("请选择废弃项！");
+    }
+    }
+        
+    </script>
+    #parse("footer.vm")
+</body>
+#Html("end")

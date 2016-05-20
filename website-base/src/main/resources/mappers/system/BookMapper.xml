@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.goujia.website.base.dao.system.BookMapper" >
+  <resultMap id="BaseResultMap" type="com.goujia.website.base.entity.system.Book" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="province" property="province" jdbcType="VARCHAR" />
+    <result column="city" property="city" jdbcType="VARCHAR" />
+    <result column="villagename" property="villagename" jdbcType="VARCHAR" />
+    <result column="area" property="area" jdbcType="DOUBLE" />
+    <result column="room" property="room" jdbcType="INTEGER" />
+    <result column="hall" property="hall" jdbcType="INTEGER" />
+    <result column="toilet" property="toilet" jdbcType="INTEGER" />
+    <result column="money" property="money" jdbcType="DOUBLE" />
+    <result column="startdate" property="startdate" jdbcType="TIMESTAMP" />
+    <result column="idea" property="idea" jdbcType="VARCHAR" />
+    <result column="phonenumber" property="phonenumber" jdbcType="VARCHAR" />
+    <result column="customer" property="customer" jdbcType="VARCHAR" />
+    <result column="model" property="model" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, province, city, villagename, area, room, hall, toilet, money, startdate, idea, 
+    phonenumber, customer, model
+  </sql>
+  <sql id="Base_Query_Condition">
+        <if test="province != null and province != ''">
+            AND book.province like  CONCAT('%', #{province,jdbcType=VARCHAR},'%')
+        </if>
+        <if test="city != null and city != ''">
+            AND book.city like  CONCAT('%', #{city,jdbcType=VARCHAR},'%')
+        </if>
+        <if test="model != null and model != ''">
+            AND book.model = #{model,jdbcType=VARCHAR}
+        </if>
+    </sql>
+  <select id="listPage" resultMap="BaseResultMap" parameterType="com.goujia.website.base.vo.system.BookSearchParam">
+        select
+        <include refid="Base_Column_List" />
+        from g_bbs_book book
+        where  1=1
+        <include refid="Base_Query_Condition" />
+  </select>
+    <select id="count" resultType="int" parameterType="com.goujia.website.base.vo.system.BookSearchParam">
+        select count(*) from g_bbs_book  book
+          where  1=1
+        <include refid="Base_Query_Condition" />
+    </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from g_bbs_book
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from g_bbs_book
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="add" parameterType="com.goujia.website.base.entity.system.Book" >
+    insert into g_bbs_book (id, province, city, 
+      villagename, area, room, 
+      hall, toilet, money, 
+      startdate, idea, phonenumber, 
+      customer, model)
+    values (#{id,jdbcType=INTEGER}, #{province,jdbcType=VARCHAR}, #{city,jdbcType=VARCHAR}, 
+      #{villagename,jdbcType=VARCHAR}, #{area,jdbcType=DOUBLE}, #{room,jdbcType=INTEGER}, 
+      #{hall,jdbcType=INTEGER}, #{toilet,jdbcType=INTEGER}, #{money,jdbcType=DOUBLE}, 
+      #{startdate,jdbcType=TIMESTAMP}, #{idea,jdbcType=VARCHAR}, #{phonenumber,jdbcType=VARCHAR}, 
+      #{customer,jdbcType=VARCHAR}, #{model,jdbcType=VARCHAR})
+  </insert>
+  <insert id="addSelective" parameterType="com.goujia.website.base.entity.system.Book" >
+    insert into g_bbs_book
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="province != null" >
+        province,
+      </if>
+      <if test="city != null" >
+        city,
+      </if>
+      <if test="villagename != null" >
+        villagename,
+      </if>
+      <if test="area != null" >
+        area,
+      </if>
+      <if test="room != null" >
+        room,
+      </if>
+      <if test="hall != null" >
+        hall,
+      </if>
+      <if test="toilet != null" >
+        toilet,
+      </if>
+      <if test="money != null" >
+        money,
+      </if>
+      <if test="startdate != null" >
+        startdate,
+      </if>
+      <if test="idea != null" >
+        idea,
+      </if>
+      <if test="phonenumber != null" >
+        phonenumber,
+      </if>
+      <if test="customer != null" >
+        customer,
+      </if>
+      <if test="model != null" >
+        model,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="province != null" >
+        #{province,jdbcType=VARCHAR},
+      </if>
+      <if test="city != null" >
+        #{city,jdbcType=VARCHAR},
+      </if>
+      <if test="villagename != null" >
+        #{villagename,jdbcType=VARCHAR},
+      </if>
+      <if test="area != null" >
+        #{area,jdbcType=DOUBLE},
+      </if>
+      <if test="room != null" >
+        #{room,jdbcType=INTEGER},
+      </if>
+      <if test="hall != null" >
+        #{hall,jdbcType=INTEGER},
+      </if>
+      <if test="toilet != null" >
+        #{toilet,jdbcType=INTEGER},
+      </if>
+      <if test="money != null" >
+        #{money,jdbcType=DOUBLE},
+      </if>
+      <if test="startdate != null" >
+        #{startdate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="idea != null" >
+        #{idea,jdbcType=VARCHAR},
+      </if>
+      <if test="phonenumber != null" >
+        #{phonenumber,jdbcType=VARCHAR},
+      </if>
+      <if test="customer != null" >
+        #{customer,jdbcType=VARCHAR},
+      </if>
+      <if test="model != null" >
+        #{model,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.goujia.website.base.entity.system.Book" >
+    update g_bbs_book
+    <set >
+      <if test="province != null" >
+        province = #{province,jdbcType=VARCHAR},
+      </if>
+      <if test="city != null" >
+        city = #{city,jdbcType=VARCHAR},
+      </if>
+      <if test="villagename != null" >
+        villagename = #{villagename,jdbcType=VARCHAR},
+      </if>
+      <if test="area != null" >
+        area = #{area,jdbcType=DOUBLE},
+      </if>
+      <if test="room != null" >
+        room = #{room,jdbcType=INTEGER},
+      </if>
+      <if test="hall != null" >
+        hall = #{hall,jdbcType=INTEGER},
+      </if>
+      <if test="toilet != null" >
+        toilet = #{toilet,jdbcType=INTEGER},
+      </if>
+      <if test="money != null" >
+        money = #{money,jdbcType=DOUBLE},
+      </if>
+      <if test="startdate != null" >
+        startdate = #{startdate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="idea != null" >
+        idea = #{idea,jdbcType=VARCHAR},
+      </if>
+      <if test="phonenumber != null" >
+        phonenumber = #{phonenumber,jdbcType=VARCHAR},
+      </if>
+      <if test="customer != null" >
+        customer = #{customer,jdbcType=VARCHAR},
+      </if>
+      <if test="model != null" >
+        model = #{model,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.goujia.website.base.entity.system.Book" >
+    update g_bbs_book
+    set province = #{province,jdbcType=VARCHAR},
+      city = #{city,jdbcType=VARCHAR},
+      villagename = #{villagename,jdbcType=VARCHAR},
+      area = #{area,jdbcType=DOUBLE},
+      room = #{room,jdbcType=INTEGER},
+      hall = #{hall,jdbcType=INTEGER},
+      toilet = #{toilet,jdbcType=INTEGER},
+      money = #{money,jdbcType=DOUBLE},
+      startdate = #{startdate,jdbcType=TIMESTAMP},
+      idea = #{idea,jdbcType=VARCHAR},
+      phonenumber = #{phonenumber,jdbcType=VARCHAR},
+      customer = #{customer,jdbcType=VARCHAR},
+      model = #{model,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

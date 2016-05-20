@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.goujia.website.base.dao.code.sms.SmsValidationMapper" >
+  <resultMap id="baseMap" type="com.goujia.website.base.entity.code.sms.SmsValidation" >
+    <id column="id" property="id"/>
+    <result column="phone" property="phone"/>
+    <result column="smsCode" property="smsCode"/>
+    <result column="pubdate" property="pubdate"/>
+  </resultMap>
+  <insert id="create" parameterType="com.goujia.website.base.entity.code.sms.SmsValidation">
+    	insert into g_sms_code(phone,smsCode,pubdate) values(#{phone},#{smsCode},now())
+  </insert>
+  <select id="findLastByPhone" parameterType="map" resultMap="baseMap">
+  	select * from g_sms_code where phone=#{phone} order by pubdate desc limit 1
+  </select>
+</mapper>

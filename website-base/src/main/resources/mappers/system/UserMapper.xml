@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.goujia.website.base.dao.system.UserMapper">
+	<resultMap id="RM_User_View" type="com.goujia.website.base.entity.system.User">
+		<id column="ID" property="id" jdbcType="INTEGER" />
+		<result column="USER_NAME" property="userName" jdbcType="VARCHAR" />
+		<result column="EMAIL" property="email" jdbcType="VARCHAR" />
+		<result column="PASSWORD_KEY" property="passwordKey" jdbcType="VARCHAR" />
+		<result column="REAL_NAME" property="realName" jdbcType="VARCHAR" />
+		<result column="PHONE" property="phone" jdbcType="VARCHAR" />
+		<result column="IS_DELETED" property="isDeleted" jdbcType="VARCHAR" />
+		<result column="ORG_TYPE" property="orgType" jdbcType="VARCHAR" />
+		<result column="ORG_ID" property="orgId" jdbcType="INTEGER" />
+		<result column="GMT_CREATE" property="gmtCreate" jdbcType="TIMESTAMP" />
+		<result column="GMT_MODIFIED" property="gmtModified" jdbcType="TIMESTAMP" />
+		<result column="OWNER_ID" property="ownerId" jdbcType="INTEGER" />
+		<result column="POSITION" property="position" jdbcType="VARCHAR" />
+		<result column="HEAD_PORTRAIT" property="headPortrait" jdbcType="VARCHAR" />
+		<result column="BRIEF_INTRODUCTION" property="briefIntroduction" jdbcType="VARCHAR" />
+		<result column="QR_CODE" property="qrCode" jdbcType="VARCHAR" />
+		<result column="QQ" property="qq" jdbcType="VARCHAR" />
+	</resultMap>
+	<resultMap type="com.goujia.website.base.vo.system.UserVO"  id="RM_UserVO_Detail" extends="RM_User_View">
+		<result property="isBoss" column="IS_BOSS" jdbcType="VARCHAR"       javaType="java.lang.String" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		ID, USER_NAME, EMAIL, PASSWORD_KEY, REAL_NAME, PHONE, IS_DELETED,
+		ORG_TYPE, ORG_ID,
+		GMT_CREATE, GMT_MODIFIED, OWNER_ID, POSITION, HEAD_PORTRAIT, BRIEF_INTRODUCTION,
+		QR_CODE, QQ
+	</sql>
+	<select id="get" resultMap="RM_UserVO_Detail" parameterType="java.lang.Integer">
+		select
+		<include refid="Base_Column_List" />
+		from G_USER
+		where ID = #{id,jdbcType=INTEGER}
+	</select>
+	<delete id="delete" parameterType="java.lang.Integer">
+		delete from G_USER
+		where ID = #{id,jdbcType=INTEGER}
+	</delete>
+	<insert id="insert" parameterType="com.goujia.website.base.entity.system.User">
+		<selectKey resultType="int" order="AFTER" keyProperty="id">
+			SELECT @@IDENTITY AS id
+		</selectKey>
+		insert into G_USER (USER_NAME, EMAIL,
+		PASSWORD_KEY, REAL_NAME, PHONE,
+		IS_DELETED, ORG_TYPE, ORG_ID,
+		GMT_CREATE, GMT_MODIFIED, OWNER_ID,
+		POSITION, HEAD_PORTRAIT, BRIEF_INTRODUCTION,
+		QR_CODE, QQ)
+		values (#{userName,jdbcType=VARCHAR},
+		#{email,jdbcType=VARCHAR},
+		#{passwordKey,jdbcType=VARCHAR}, #{realName,jdbcType=VARCHAR}, #{phone,jdbcType=VARCHAR},
+		'n', #{orgType,jdbcType=VARCHAR},
+		#{orgId,jdbcType=INTEGER},
+		now(), #{gmtModified,jdbcType=TIMESTAMP}, #{ownerId,jdbcType=INTEGER},
+		#{position,jdbcType=VARCHAR}, #{headPortrait,jdbcType=VARCHAR},
+		#{briefIntroduction,jdbcType=VARCHAR},
+		#{qrCode,jdbcType=VARCHAR}, #{qq,jdbcType=VARCHAR})
+	</insert>
+	<update id="update" parameterType="com.goujia.website.base.entity.system.User">
+		update G_USER
+		<set>
+			<if test="email != null">
+				EMAIL = #{email,jdbcType=VARCHAR},
+			</if>
+			<if test="passwordKey != null">
+				PASSWORD_KEY = #{passwordKey,jdbcType=VARCHAR},
+			</if>
+			<if test="realName != null">
+				REAL_NAME = #{realName,jdbcType=VARCHAR},
+			</if>
+			<if test="phone != null">
+				PHONE = #{phone,jdbcType=VARCHAR},
+			</if>
+			<if test="isDeleted != null">
+				IS_DELETED = #{isDeleted,jdbcType=VARCHAR},
+			</if>
+			<if test="orgType != null">
+				ORG_TYPE = #{orgType,jdbcType=VARCHAR},
+			</if>
+			<if test="orgId != null">
+				ORG_ID = #{orgId,jdbcType=INTEGER},
+			</if>
+			<if test="gmtCreate != null">
+				GMT_CREATE = #{gmtCreate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="gmtModified != null">
+				GMT_MODIFIED = #{gmtModified,jdbcType=TIMESTAMP},
+			</if>
+			<if test="ownerId != null">
+				OWNER_ID = #{ownerId,jdbcType=INTEGER},
+			</if>
+			<if test="position != null">
+				POSITION = #{position,jdbcType=VARCHAR},
+			</if>
+			<if test="headPortrait != null">
+				HEAD_PORTRAIT = #{headPortrait,jdbcType=VARCHAR},
+			</if>
+			<if test="briefIntroduction != null">
+				BRIEF_INTRODUCTION = #{briefIntroduction,jdbcType=VARCHAR},
+			</if>
+			<if test="qrCode != null">
+				QR_CODE = #{qrCode,jdbcType=VARCHAR},
+			</if>
+			<if test="qq != null">
+				QQ = #{qq,jdbcType=VARCHAR},
+			</if>
+		</set>
+		where ID = #{id,jdbcType=INTEGER}
+	</update>
+	
+	<select id="findByNameAndPwd" resultMap="RM_UserVO_Detail" parameterType="com.goujia.website.base.entity.system.User">
+	    select
+        <include refid="Base_Column_List" />
+        from G_USER
+        where USER_NAME = #{userName,jdbcType=VARCHAR} and PASSWORD_KEY=#{passwordKey,jdbcType=VARCHAR}
+	</select>
+	<select id="getByUserName" resultMap="RM_UserVO_Detail" parameterType="map">
+	    select
+        <include refid="Base_Column_List" />
+        from G_USER
+        where USER_NAME = #{user}
+	</select>
+	<select id="findAll" resultMap="RM_User_View">
+		select * from G_USER 
+	</select>
+	<select id="getByPhone" resultMap="RM_UserVO_Detail" parameterType="map">
+		select * from G_USER  where phone=#{phone}
+	</select>
+</mapper>

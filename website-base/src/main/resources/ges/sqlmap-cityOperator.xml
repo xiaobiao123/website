@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.goujia.website.base.ges.dao.CityOperatorMapper">
+    <!-- - =============================================== - 返回CityOperator 
+        POJO - @author caoqi - @date 2014-06-13 - =============================================== -->
+    <resultMap type="com.goujia.website.base.ges.entity.CityOperator"
+        id="RM_CityOperator_View">
+        <id property="id" column="ID" jdbcType="INTEGER" javaType="java.lang.Integer" />
+        <result property="contactName" column="CONTACT_NAME" jdbcType="VARCHAR"
+            javaType="java.lang.String" />
+        <result property="companyName" column="COMPANY_NAME" jdbcType="VARCHAR"
+            javaType="java.lang.String" />
+        <result property="legalName" column="LEGAL_NAME" jdbcType="VARCHAR"
+            javaType="java.lang.String" />
+        <result property="phone" column="PHONE" jdbcType="VARCHAR"
+            javaType="java.lang.String" />
+        <result property="email" column="EMAIL" jdbcType="VARCHAR"
+            javaType="java.lang.String" />
+        <result property="provinceId" column="PROVINCE_ID" jdbcType="INTEGER"
+            javaType="java.lang.Integer" />
+        <result property="cityId" column="CITY_ID" jdbcType="INTEGER"
+            javaType="java.lang.Integer" />
+        <result property="address" column="ADDRESS" jdbcType="VARCHAR"
+            javaType="java.lang.String" />
+        <result property="accountName" column="ACCOUNT_NAME" jdbcType="VARCHAR"
+            javaType="java.lang.String" />
+        <result property="accountNum" column="ACCOUNT_NUM" jdbcType="VARCHAR"
+            javaType="java.lang.String" />
+        <result property="star" column="STAR" jdbcType="INTEGER"
+            javaType="java.lang.Integer" />
+        <result property="remark" column="REMARK" jdbcType="VARCHAR"
+            javaType="java.lang.String" />
+        <result property="isDeleted" column="IS_DELETED" jdbcType="VARCHAR"
+            javaType="java.lang.String" />
+        <result property="projectQuality" column="PROJECT_QUALITY"
+            jdbcType="DOUBLE" javaType="java.lang.Double" />
+        <result property="customSatisfied" column="CUSTOM_SATISFIED"
+            jdbcType="DOUBLE" javaType="java.lang.Double" />
+        <result property="urgentNeed" column="URGENT_NEED " jdbcType="VARCHAR"
+            javaType="java.lang.String" />
+        <result property="status" column="STATUS" jdbcType="VARCHAR"
+            javaType="java.lang.String" />
+        <result property="ownerId" column="OWNER_ID" jdbcType="INTEGER"
+            javaType="java.lang.Integer" />
+        <result property="gmtCreate" column="GMT_CREATE" jdbcType="TIMESTAMP"
+            javaType="java.util.Date" />
+        <result property="gmtModified" column="GMT_MODIFIED" jdbcType="TIMESTAMP"
+            javaType="java.util.Date" />
+        <result property="idCard" column="ID_CARD" jdbcType="VARCHAR"
+            javaType="java.lang.String" />
+        <result property="countryId" column="COUNTRY_ID" jdbcType="INTEGER"
+            javaType="java.lang.Integer" />
+    </resultMap>
+    <resultMap type="com.goujia.website.base.ges.vo.CityOperatorVo"
+        id="RM_CityOperator_VO" extends="RM_CityOperator_View">
+        <result property="shopId" column="shop_id" jdbcType="INTEGER" />
+    </resultMap>
+
+
+
+    <!-- - =============================================== - 查询CityOperator信息 
+        - @author caoqi - @date 2014-06-13 - =============================================== -->
+    <select id="listForCityOperator" resultMap="RM_CityOperator_View"
+        parameterType="com.goujia.website.base.ges.entity.CityOperator">
+        select
+        o.ID,
+        o.CONTACT_NAME,
+        o.COMPANY_NAME,
+        o.LEGAL_NAME,
+        o.PHONE,
+        o.EMAIL,
+        o.PROVINCE_ID,
+        o.CITY_ID,
+        o.ADDRESS,
+        o.ACCOUNT_NUM,
+        o.ACCOUNT_NAME,
+        o.STAR,
+        o.REMARK,
+        o.IS_DELETED,
+        o.PROJECT_QUALITY,
+        o.CUSTOM_SATISFIED,
+        o.URGENT_NEED,
+        o.STATUS,
+        o.OWNER_ID,
+        o.GMT_CREATE,
+        o.GMT_MODIFIED,
+        o.ID_CARD,
+        o.COUNTRY_ID
+        from
+        G_CITY_OPERATOR as o
+        where o.IS_DELETED='n'
+        <if test="id !=null and id >0">and o.ID = #{id}</if>
+        <if test="contactName !=null and contactName !=''">and o.CONTACT_NAME like CONCAT('%','${contactName}','%' )
+        </if>
+        <if test="provinceId !=null and provinceId >0">
+            and o.PROVINCE_ID=#{provinceId}
+            <if test="cityId !=null and cityId > 0">and o.CITY_ID=#{cityId}</if>
+        </if>
+        order by
+        o.ID desc
+
+    </select>
+
+    <!-- - =============================================== - 查询CityOperator信息 
+        - @author fengchun - @date 2014-06-30 - =============================================== -->
+    <select id="queryForCityOperator" resultMap="RM_CityOperator_View"
+        parameterType="com.goujia.website.base.ges.entity.CityOperator">
+        select
+        o.ID,
+        o.CONTACT_NAME,
+        o.COMPANY_NAME,
+        o.LEGAL_NAME,
+        o.PHONE,
+        o.EMAIL,
+        o.PROVINCE_ID,
+        o.CITY_ID,
+        o.ADDRESS,
+        o.ACCOUNT_NUM,
+        o.ACCOUNT_NAME,
+        o.STAR,
+        o.REMARK,
+        o.IS_DELETED,
+        o.PROJECT_QUALITY,
+        o.CUSTOM_SATISFIED,
+        o.URGENT_NEED,
+        o.STATUS,
+        o.OWNER_ID,
+        o.GMT_CREATE,
+        o.GMT_MODIFIED,
+        o.ID_CARD,
+        o.COUNTRY_ID
+        from
+        G_CITY_OPERATOR as o
+        where
+        o.ID = #{id}
+    </select>
+    <select id="getByCountryId" resultMap="RM_CityOperator_VO"
+        parameterType="java.lang.Integer">
+        select
+        o.ID,
+        o.CONTACT_NAME,
+        o.COMPANY_NAME,
+        o.LEGAL_NAME,
+        o.PHONE,
+        o.EMAIL,
+        o.PROVINCE_ID,
+        o.CITY_ID,
+        o.ADDRESS,
+        o.ACCOUNT_NUM,
+        o.ACCOUNT_NAME,
+        o.STAR,
+        o.REMARK,
+        o.IS_DELETED,
+        o.PROJECT_QUALITY,
+        o.CUSTOM_SATISFIED,
+        o.URGENT_NEED,
+        o.STATUS,
+        o.OWNER_ID,
+        o.GMT_CREATE,
+        o.GMT_MODIFIED,
+        o.ID_CARD,
+        o.COUNTRY_ID,
+        s.ID as shop_id
+        from
+        G_CITY_OPERATOR as o inner join g_shop s on o.id = s.operator_id
+        where o.IS_DELETED='n' and s.IS_DELETED = 'n'
+        <if test="city !=null and city >0">and o.COUNTRY_ID= #{city}</if>
+    </select>
+    <select id="getByCityId" resultMap="RM_CityOperator_VO"
+        parameterType="java.lang.Integer">
+        select
+        o.ID,
+        o.CONTACT_NAME,
+        o.COMPANY_NAME,
+        o.LEGAL_NAME,
+        o.PHONE,
+        o.EMAIL,
+        o.PROVINCE_ID,
+        o.CITY_ID,
+        o.ADDRESS,
+        o.ACCOUNT_NUM,
+        o.ACCOUNT_NAME,
+        o.STAR,
+        o.REMARK,
+        o.IS_DELETED,
+        o.PROJECT_QUALITY,
+        o.CUSTOM_SATISFIED,
+        o.URGENT_NEED,
+        o.STATUS,
+        o.OWNER_ID,
+        o.GMT_CREATE,
+        o.GMT_MODIFIED,
+        o.ID_CARD,
+        o.COUNTRY_ID,
+        s.ID as shop_id
+        from
+        G_CITY_OPERATOR as o inner join g_shop s on o.id = s.operator_id
+        where o.IS_DELETED='n' and s.IS_DELETED = 'n' and o.COUNTRY_ID is NULL
+        <if test="city !=null and city >0">and o.CITY_ID= #{city}</if>
+    </select>
+    <!-- 根据城市ID来获取城运商ID -->
+    <select id="selectOperatorIdByCity" resultMap="RM_CityOperator_VO"
+        parameterType="java.lang.String">
+        select
+        ID
+        from
+        G_CITY_OPERATOR
+        WHERE
+        CITY_ID= #{city} ORDER BY GMT_CREATE LIMIT 1
+    </select>
+</mapper>

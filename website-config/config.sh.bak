@@ -1,0 +1,25 @@
+path=/home/goujia/project/goujia/web/website
+
+cd $path/website
+
+git pull origin `git branch -a |tail -1 |awk -F'/' '{print $NF}'`
+
+mvn clean package
+
+sed -i 's/PATH_CONTEXT="\/web"/PATH_CONTEXT="http:\/\/test_manage.goujiawang.com"/g' $path/website/website-console/target/website-console-0.0.1-SNAPSHOT/source/sui/library/ueditor/ueditor.config.js
+
+cp -Rf $path/bin/application.properties.console $path/website/website-console/target/website-console-0.0.1-SNAPSHOT/WEB-INF/classes/
+cp -Rf $path/bin/application.properties.web $path/website/website-web/target/website-web-0.0.1-SNAPSHOT/WEB-INF/classes/application.properties
+cp -Rf $path/bin/application.properties.sync $path/website/website-sync/target/website-sync-0.0.1-SNAPSHOT/WEB-INF/classes/application.properties
+
+rm -rf $path/bin/jetty/logs/*
+cd $path/bin/jetty
+./bin/jetty.sh restart
+
+rm -rf $path/bin/jettyweb/logs/*
+cd $path/bin/jettyweb
+./bin/jetty.sh restart
+
+rm -rf $path/bin/jettysync/logs/*
+cd $path/bin/jettysync
+./bin/jetty.sh restart

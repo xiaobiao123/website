@@ -1,0 +1,119 @@
+#Html("begin")
+#Head("begin")
+#Title("系统管理-密码管理")
+#LoadBootstrap("default")
+#LoadSUI("default")
+#LoadSUI("editor")
+#Head("end")
+<body>
+    #parse("header.vm")
+    
+    <!--nav-table start-->
+    <ul class="nav nav-tabs" id="">
+        <li class="active">
+            <a href="javascript:;">
+                 个人信息
+            </a>
+        </li>
+    </ul>
+    <!--nav-table end-->
+    
+    <!-- PAGE CONTENT BEGINS -->
+    <p></p>
+    <form id="J_Form" name="J_Form" class="form-horizontal" role="form" action="index.php" method="post" >
+        <div class="form-group">
+            <label class="control-label col-xs-12 col-sm-2 no-padding-right" for="title"><span class="red">*</span>原密码：</label>
+                <div class="clearfix">
+                    <div class="col-xs-12 col-sm-9">
+                        <div class="clearfix">
+                            <input type="password" name="oldPwd" id="oldPwd" class="col-xs-12 col-sm-6">
+                        </div>
+                    </div>
+                </div>
+        </div>
+
+        <div class="space-2"></div>
+        <div class="form-group">
+            <label class="control-label col-xs-12 col-sm-2 no-padding-right" for=""><span class="red">*</span>新密码：</label>
+
+            <div class="clearfix">
+                <div class="col-xs-12 col-sm-9">
+                    <div class="clearfix">
+                        <input type="password" name="newPwd" id="newPwd" class="col-xs-12 col-sm-6" >
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="space-2"></div>
+        <div class="clearfix form-actions">
+            <div class="col-md-offset-3 col-md-7">
+                <button type="button" id="J_SAVE" class="btn btn-info J_LoadingBtn" data-loading-text="修改中...">
+                    <i class="icon-ok bigger-110"></i>
+                    修改
+                </button>
+            </div>
+        </div>
+
+    </form>
+    
+    <script>
+        $(function(){
+            $("#J_Form").validate({
+            rules : {
+                oldPwd : {
+                    required : true
+                },
+                newPwd : {
+                    required : true
+                }
+            },
+            messages: {
+                oldPwd: {
+                    required: "原密码不能为空！"
+                },
+                newPwd: {
+                    required: "新密码不能为空！"
+                }
+            },
+            /* 错误信息的显示位置 */
+            errorPlacement: function(error, element) {
+                if(element.is(':checkbox') || element.is(':radio')) {
+                    var controls = element.closest('div[class*="col-"]');
+                    if(controls.find(':checkbox,:radio').length > 1) controls.append(error);
+                    else error.insertAfter(element.nextAll('.lbl:eq(0)').eq(0));
+                }else if(element.is('.select2')) {
+                    error.insertAfter(element.siblings('[class*="select2-container"]:eq(0)'));
+                }else if(element.is('.chosen-select')) {
+                    error.insertAfter(element.siblings('[class*="chosen-container"]:eq(0)'));
+                }else error.insertAfter(element.parent());
+            }
+        });
+        });
+        
+        $("#J_SAVE").click(function(){
+            if($('#J_Form').valid()){
+                $.ajax({
+                   dataTpe: "json",
+                   type: "POST",
+                   url: '$!request.contextPath/home/updateUserPwd.htm',
+                   data: $("#J_Form").serialize(),
+                   success: function(res){
+                   var obj = eval(res);
+                     if(obj[0]){
+                        alert(obj[1]);
+                        window.location.href="$!request.contextPath/home/logout.htm";
+                     } else {
+                        alert(obj[1]);
+                     }
+                   },
+                   error: function() {
+                    alert(DS.msg.error, DS.msg.tip);
+                   }
+                });
+            }
+        });
+    </script>
+    <!-- PAGE CONTENT ENDS -->
+    #parse("footer.vm")
+</body>
+#Html("end")

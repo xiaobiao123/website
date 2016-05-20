@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+    
+<mapper namespace="com.goujia.website.base.ges.dao.GoodsDetailMapper">
+
+	<!--
+      - ===============================================
+      - 返回GoodsTypeOpt POJO
+      - @author zhangjl
+      - @date 2014-06-30
+      - ===============================================
+	-->
+	<resultMap  type="com.goujia.website.base.ges.entity.GoodsDetail"  id="RM_Goods_Detail">
+		<id     property="id"             column="ID"  	     		jdbcType="INTEGER"   javaType="java.lang.Integer" />
+		<result property="goodsId"        column="GOODS_ID"     	jdbcType="INTEGER"   javaType="java.lang.Integer" />
+		<result property="name"           column="NAME"     		jdbcType="VARCHAR"   javaType="java.lang.String"  />
+		<result property="photoPath"      column="PHOTO_PATH"   	jdbcType="VARCHAR"   javaType="java.lang.String"  />
+		<result property="isDeleted"      column="IS_DELETED"   	jdbcType="VARCHAR"   javaType="java.lang.String"  />
+		<result property="orderIndex"     column="ORDER_INDEX"  	jdbcType="INTEGER"   javaType="java.lang.Integer" />
+		<result property="gmtCreate"      column="GMT_CREATE"   	jdbcType="TIMESTAMP" javaType="java.util.Date"    />
+		<result property="gmtModified"    column="GMT_MODIFIED" 	jdbcType="TIMESTAMP" javaType="java.util.Date"    />
+		<result property="ownerId"        column="OWNER_ID"   		jdbcType="INTEGER"   javaType="java.lang.Integer" />
+	</resultMap>
+	
+	<!--
+      - ===============================================
+      - 新增GoodsTypeOpt
+      - @author jipengfei
+      - @date 2014-06-30
+      - ===============================================
+	-->
+	<insert id="create" parameterType="com.goujia.website.base.ges.entity.GoodsDetail"
+	 useGeneratedKeys="true" keyProperty="id">
+		insert into G_GOODS_DETAIL (
+			ID, 
+			GOODS_ID,
+			NAME, 
+			PHOTO_PATH,
+			ORDER_INDEX,
+			IS_DELETED,
+			GMT_CREATE,
+			GMT_MODIFIED,
+			OWNER_ID
+		) values (
+			#{id}, 
+			#{goodsId}, 
+			#{name}, 
+			#{photoPath},
+			#{orderIndex},
+			'n',
+			now(),
+			now(),
+			#{ownerId}
+		)
+	</insert>
+	
+	<!--
+      - ===============================================
+      - 修改ShopGoods
+      - @author jipengfei
+      - @date 2014-06-13
+      - ===============================================
+	-->
+	<update id="update" parameterType="com.goujia.website.base.ges.entity.GoodsDetail">
+		update G_GOODS_DETAIL set GMT_MODIFIED = now()
+		<if test="goodsId !=null and goodsId >0">,GOODS_ID = #{goodsId}</if>
+		<if test="name !=null and name !=''">,NAME = #{name}</if>
+		<if test="photoPath !=null and photoPath !=''">,PHOTO_PATH = #{photoPath}</if>
+		<if test="isDeleted !=null and isDeleted !=''">,IS_DELETED = #{isDeleted}</if>
+		<if test="orderIndex !=null and orderIndex >0">,ORDER_INDEX = #{orderIndex}</if>
+		where ID = #{id}
+	</update>
+	
+	<!--
+      - ===============================================
+      - 查询GoosType
+      - @author jipengfei
+      - @date 2014-07-02
+      - ===============================================
+	-->
+	<select id="listGoodsDetail" resultMap="RM_Goods_Detail" parameterType="java.lang.Integer">
+		select
+			ID, 
+			GOODS_ID,
+			NAME, 
+			PHOTO_PATH,
+			ORDER_INDEX,
+			IS_DELETED,
+			GMT_CREATE,
+			GMT_MODIFIED,
+			OWNER_ID
+		from G_GOODS_DETAIL where GOODS_ID = #{goodsId} and IS_DELETED = 'n' order by ORDER_INDEX asc
+	</select>
+	
+	<!--
+      - ===============================================
+      - 查询ShopGoods
+      - @author jipengfei
+      - @date 2014-07-02
+      - ===============================================
+	-->
+	<select id="query" resultMap="RM_Goods_Detail" parameterType="java.lang.Integer">
+		select
+			ID, 
+			GOODS_ID,
+			NAME, 
+			PHOTO_PATH,
+			ORDER_INDEX,
+			IS_DELETED,
+			GMT_CREATE,
+			GMT_MODIFIED,
+			OWNER_ID
+		from G_GOODS_DETAIL where ID = #{id} order by ORDER_INDEX
+	</select>
+</mapper>

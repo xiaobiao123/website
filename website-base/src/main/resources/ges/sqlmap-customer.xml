@@ -1,0 +1,385 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.goujia.website.base.ges.dao.CustomerMapper" >
+  <resultMap id="BaseResultMap" type="com.goujia.website.base.ges.entity.Customer" >
+    <id column="ID" property="id" jdbcType="INTEGER" />
+    <result column="NAME" property="name" jdbcType="VARCHAR" />
+    <result column="ACCOUNT_ID" property="accountId" jdbcType="VARCHAR" />
+    <result column="ACCOUNT_TYPE" property="accountType" jdbcType="VARCHAR" />
+    <result column="GENDER" property="gender" jdbcType="VARCHAR" />
+    <result column="AGE" property="age" jdbcType="INTEGER" />
+    <result column="PHONE" property="phone" jdbcType="VARCHAR" />
+    <result column="EMAIL" property="email" jdbcType="VARCHAR" />
+    <result column="BUILDING_NAME" property="buildingName" jdbcType="VARCHAR" />
+    <result column="PROVINCE" property="province" jdbcType="INTEGER" />
+    <result column="CITY" property="city" jdbcType="INTEGER" />
+    <result column="ADDRESS" property="address" jdbcType="VARCHAR" />
+    <result column="COMPANY" property="company" jdbcType="VARCHAR" />
+    <result column="ID_NO" property="idNo" jdbcType="VARCHAR" />
+    <result column="REMARK" property="remark" jdbcType="VARCHAR" />
+    <result column="IS_DELETED" property="isDeleted" jdbcType="VARCHAR" />
+    <result column="GMT_CREATE" property="gmtCreate" jdbcType="TIMESTAMP" />
+    <result column="GMT_MODIFIED" property="gmtModified" jdbcType="TIMESTAMP" />
+    <result column="OWNER_ID" property="ownerId" jdbcType="INTEGER" />
+    <result column="JOB_TYPE" property="jobType" jdbcType="INTEGER" />
+    <result column="IDEAL_PRICE" property="idealPrice" jdbcType="DOUBLE" />
+    <result column="CUSTOMER_FOCUS" property="customerFocus" jdbcType="INTEGER" />
+    <result column="INDUSTRY_UNDERSTANDING_LEVEL" property="industryUnderstandingLevel" jdbcType="INTEGER" />
+    <result column="EXPECTED_DECORATION_DATE" property="expectedDecorationDate" jdbcType="TIMESTAMP" />
+    <result column="LIVING_CONDITION" property="livingCondition" jdbcType="INTEGER" />
+    <result column="EXPECTED_DECORATION_STYLE" property="expectedDecorationStyle" jdbcType="VARCHAR" />
+    <result column="OPERATOR_ID" property="operatorId" jdbcType="INTEGER" />
+    <result column="SHOP_ID" property="shopId" jdbcType="INTEGER" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    ID, NAME, ACCOUNT_ID, ACCOUNT_TYPE, GENDER, AGE, PHONE, EMAIL, BUILDING_NAME, PROVINCE, 
+    CITY, ADDRESS, COMPANY, ID_NO, REMARK, IS_DELETED, GMT_CREATE, GMT_MODIFIED, OWNER_ID, 
+    JOB_TYPE, IDEAL_PRICE, CUSTOMER_FOCUS, INDUSTRY_UNDERSTANDING_LEVEL, EXPECTED_DECORATION_DATE, 
+    LIVING_CONDITION, EXPECTED_DECORATION_STYLE, OPERATOR_ID, SHOP_ID
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from g_customer
+    where ID = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from g_customer
+    where ID = #{id,jdbcType=INTEGER}
+  </delete>
+   <select id="get" resultMap="BaseResultMap" parameterType="com.goujia.website.base.ges.entity.Customer" >
+    select 
+    <include refid="Base_Column_List" />
+    from g_customer
+    where  IS_DELETED='n'
+     <if test="name != null" >
+     and NAME = #{name,jdbcType=VARCHAR}
+     </if>
+      <if test="shopId != null" >
+     and SHOP_ID = #{shopId,jdbcType=INTEGER}
+     </if>
+      <if test="phone != null" >
+     and PHONE = #{phone,jdbcType=VARCHAR}
+     </if>
+      <if test="city != null" >
+         and CITY = #{city,jdbcType=INTEGER}
+         </if>
+  </select>
+  <insert id="insert" parameterType="com.goujia.website.base.ges.entity.Customer" useGeneratedKeys="true" keyProperty="id">
+    insert into g_customer (NAME, ACCOUNT_ID, 
+      ACCOUNT_TYPE, GENDER, AGE, 
+      PHONE, EMAIL, BUILDING_NAME, 
+      PROVINCE, CITY, ADDRESS, 
+      COMPANY, ID_NO, REMARK, 
+      IS_DELETED, GMT_CREATE, GMT_MODIFIED, 
+      OWNER_ID, JOB_TYPE, IDEAL_PRICE, 
+      CUSTOMER_FOCUS, INDUSTRY_UNDERSTANDING_LEVEL, 
+      EXPECTED_DECORATION_DATE, LIVING_CONDITION, 
+      EXPECTED_DECORATION_STYLE, OPERATOR_ID, SHOP_ID
+      )
+    values (#{name,jdbcType=VARCHAR}, #{accountId,jdbcType=VARCHAR}, 
+      #{accountType,jdbcType=VARCHAR}, #{gender,jdbcType=VARCHAR}, #{age,jdbcType=INTEGER}, 
+      #{phone,jdbcType=VARCHAR}, #{email,jdbcType=VARCHAR}, #{buildingName,jdbcType=VARCHAR}, 
+      #{province,jdbcType=INTEGER}, #{city,jdbcType=INTEGER}, #{address,jdbcType=VARCHAR}, 
+      #{company,jdbcType=VARCHAR}, #{idNo,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR}, 
+      'n', now(), now(), 
+      15, #{jobType,jdbcType=INTEGER}, #{idealPrice,jdbcType=DOUBLE}, 
+      #{customerFocus,jdbcType=INTEGER}, #{industryUnderstandingLevel,jdbcType=INTEGER}, 
+      #{expectedDecorationDate,jdbcType=TIMESTAMP}, #{livingCondition,jdbcType=INTEGER}, 
+      #{expectedDecorationStyle,jdbcType=VARCHAR}, #{operatorId,jdbcType=INTEGER}, #{shopId,jdbcType=INTEGER}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.goujia.website.base.ges.entity.Customer" >
+    insert into g_customer
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        ID,
+      </if>
+      <if test="name != null" >
+        NAME,
+      </if>
+      <if test="accountId != null" >
+        ACCOUNT_ID,
+      </if>
+      <if test="accountType != null" >
+        ACCOUNT_TYPE,
+      </if>
+      <if test="gender != null" >
+        GENDER,
+      </if>
+      <if test="age != null" >
+        AGE,
+      </if>
+      <if test="phone != null" >
+        PHONE,
+      </if>
+      <if test="email != null" >
+        EMAIL,
+      </if>
+      <if test="buildingName != null" >
+        BUILDING_NAME,
+      </if>
+      <if test="province != null" >
+        PROVINCE,
+      </if>
+      <if test="city != null" >
+        CITY,
+      </if>
+      <if test="address != null" >
+        ADDRESS,
+      </if>
+      <if test="company != null" >
+        COMPANY,
+      </if>
+      <if test="idNo != null" >
+        ID_NO,
+      </if>
+      <if test="remark != null" >
+        REMARK,
+      </if>
+      <if test="isDeleted != null" >
+        IS_DELETED,
+      </if>
+      <if test="gmtCreate != null" >
+        GMT_CREATE,
+      </if>
+      <if test="gmtModified != null" >
+        GMT_MODIFIED,
+      </if>
+      <if test="ownerId != null" >
+        OWNER_ID,
+      </if>
+      <if test="jobType != null" >
+        JOB_TYPE,
+      </if>
+      <if test="idealPrice != null" >
+        IDEAL_PRICE,
+      </if>
+      <if test="customerFocus != null" >
+        CUSTOMER_FOCUS,
+      </if>
+      <if test="industryUnderstandingLevel != null" >
+        INDUSTRY_UNDERSTANDING_LEVEL,
+      </if>
+      <if test="expectedDecorationDate != null" >
+        EXPECTED_DECORATION_DATE,
+      </if>
+      <if test="livingCondition != null" >
+        LIVING_CONDITION,
+      </if>
+      <if test="expectedDecorationStyle != null" >
+        EXPECTED_DECORATION_STYLE,
+      </if>
+      <if test="operatorId != null" >
+        OPERATOR_ID,
+      </if>
+      <if test="shopId != null" >
+        SHOP_ID,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="name != null" >
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="accountId != null" >
+        #{accountId,jdbcType=VARCHAR},
+      </if>
+      <if test="accountType != null" >
+        #{accountType,jdbcType=VARCHAR},
+      </if>
+      <if test="gender != null" >
+        #{gender,jdbcType=VARCHAR},
+      </if>
+      <if test="age != null" >
+        #{age,jdbcType=INTEGER},
+      </if>
+      <if test="phone != null" >
+        #{phone,jdbcType=VARCHAR},
+      </if>
+      <if test="email != null" >
+        #{email,jdbcType=VARCHAR},
+      </if>
+      <if test="buildingName != null" >
+        #{buildingName,jdbcType=VARCHAR},
+      </if>
+      <if test="province != null" >
+        #{province,jdbcType=INTEGER},
+      </if>
+      <if test="city != null" >
+        #{city,jdbcType=INTEGER},
+      </if>
+      <if test="address != null" >
+        #{address,jdbcType=VARCHAR},
+      </if>
+      <if test="company != null" >
+        #{company,jdbcType=VARCHAR},
+      </if>
+      <if test="idNo != null" >
+        #{idNo,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null" >
+        #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="isDeleted != null" >
+        #{isDeleted,jdbcType=VARCHAR},
+      </if>
+      <if test="gmtCreate != null" >
+        #{gmtCreate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="gmtModified != null" >
+        #{gmtModified,jdbcType=TIMESTAMP},
+      </if>
+      <if test="ownerId != null" >
+        #{ownerId,jdbcType=INTEGER},
+      </if>
+      <if test="jobType != null" >
+        #{jobType,jdbcType=INTEGER},
+      </if>
+      <if test="idealPrice != null" >
+        #{idealPrice,jdbcType=DOUBLE},
+      </if>
+      <if test="customerFocus != null" >
+        #{customerFocus,jdbcType=INTEGER},
+      </if>
+      <if test="industryUnderstandingLevel != null" >
+        #{industryUnderstandingLevel,jdbcType=INTEGER},
+      </if>
+      <if test="expectedDecorationDate != null" >
+        #{expectedDecorationDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="livingCondition != null" >
+        #{livingCondition,jdbcType=INTEGER},
+      </if>
+      <if test="expectedDecorationStyle != null" >
+        #{expectedDecorationStyle,jdbcType=VARCHAR},
+      </if>
+      <if test="operatorId != null" >
+        #{operatorId,jdbcType=INTEGER},
+      </if>
+      <if test="shopId != null" >
+        #{shopId,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.goujia.website.base.ges.entity.Customer" >
+    update g_customer
+    <set >
+      <if test="name != null" >
+        NAME = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="accountId != null" >
+        ACCOUNT_ID = #{accountId,jdbcType=VARCHAR},
+      </if>
+      <if test="accountType != null" >
+        ACCOUNT_TYPE = #{accountType,jdbcType=VARCHAR},
+      </if>
+      <if test="gender != null" >
+        GENDER = #{gender,jdbcType=VARCHAR},
+      </if>
+      <if test="age != null" >
+        AGE = #{age,jdbcType=INTEGER},
+      </if>
+      <if test="phone != null" >
+        PHONE = #{phone,jdbcType=VARCHAR},
+      </if>
+      <if test="email != null" >
+        EMAIL = #{email,jdbcType=VARCHAR},
+      </if>
+      <if test="buildingName != null" >
+        BUILDING_NAME = #{buildingName,jdbcType=VARCHAR},
+      </if>
+      <if test="province != null" >
+        PROVINCE = #{province,jdbcType=INTEGER},
+      </if>
+      <if test="city != null" >
+        CITY = #{city,jdbcType=INTEGER},
+      </if>
+      <if test="address != null" >
+        ADDRESS = #{address,jdbcType=VARCHAR},
+      </if>
+      <if test="company != null" >
+        COMPANY = #{company,jdbcType=VARCHAR},
+      </if>
+      <if test="idNo != null" >
+        ID_NO = #{idNo,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null" >
+        REMARK = #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="isDeleted != null" >
+        IS_DELETED = #{isDeleted,jdbcType=VARCHAR},
+      </if>
+      <if test="gmtCreate != null" >
+        GMT_CREATE = #{gmtCreate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="gmtModified != null" >
+        GMT_MODIFIED = #{gmtModified,jdbcType=TIMESTAMP},
+      </if>
+      <if test="ownerId != null" >
+        OWNER_ID = #{ownerId,jdbcType=INTEGER},
+      </if>
+      <if test="jobType != null" >
+        JOB_TYPE = #{jobType,jdbcType=INTEGER},
+      </if>
+      <if test="idealPrice != null" >
+        IDEAL_PRICE = #{idealPrice,jdbcType=DOUBLE},
+      </if>
+      <if test="customerFocus != null" >
+        CUSTOMER_FOCUS = #{customerFocus,jdbcType=INTEGER},
+      </if>
+      <if test="industryUnderstandingLevel != null" >
+        INDUSTRY_UNDERSTANDING_LEVEL = #{industryUnderstandingLevel,jdbcType=INTEGER},
+      </if>
+      <if test="expectedDecorationDate != null" >
+        EXPECTED_DECORATION_DATE = #{expectedDecorationDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="livingCondition != null" >
+        LIVING_CONDITION = #{livingCondition,jdbcType=INTEGER},
+      </if>
+      <if test="expectedDecorationStyle != null" >
+        EXPECTED_DECORATION_STYLE = #{expectedDecorationStyle,jdbcType=VARCHAR},
+      </if>
+      <if test="operatorId != null" >
+        OPERATOR_ID = #{operatorId,jdbcType=INTEGER},
+      </if>
+      <if test="shopId != null" >
+        SHOP_ID = #{shopId,jdbcType=INTEGER},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.goujia.website.base.ges.entity.Customer" >
+    update g_customer
+    set NAME = #{name,jdbcType=VARCHAR},
+      ACCOUNT_ID = #{accountId,jdbcType=VARCHAR},
+      ACCOUNT_TYPE = #{accountType,jdbcType=VARCHAR},
+      GENDER = #{gender,jdbcType=VARCHAR},
+      AGE = #{age,jdbcType=INTEGER},
+      PHONE = #{phone,jdbcType=VARCHAR},
+      EMAIL = #{email,jdbcType=VARCHAR},
+      BUILDING_NAME = #{buildingName,jdbcType=VARCHAR},
+      PROVINCE = #{province,jdbcType=INTEGER},
+      CITY = #{city,jdbcType=INTEGER},
+      ADDRESS = #{address,jdbcType=VARCHAR},
+      COMPANY = #{company,jdbcType=VARCHAR},
+      ID_NO = #{idNo,jdbcType=VARCHAR},
+      REMARK = #{remark,jdbcType=VARCHAR},
+      IS_DELETED = #{isDeleted,jdbcType=VARCHAR},
+      GMT_CREATE = #{gmtCreate,jdbcType=TIMESTAMP},
+      GMT_MODIFIED = #{gmtModified,jdbcType=TIMESTAMP},
+      OWNER_ID = #{ownerId,jdbcType=INTEGER},
+      JOB_TYPE = #{jobType,jdbcType=INTEGER},
+      IDEAL_PRICE = #{idealPrice,jdbcType=DOUBLE},
+      CUSTOMER_FOCUS = #{customerFocus,jdbcType=INTEGER},
+      INDUSTRY_UNDERSTANDING_LEVEL = #{industryUnderstandingLevel,jdbcType=INTEGER},
+      EXPECTED_DECORATION_DATE = #{expectedDecorationDate,jdbcType=TIMESTAMP},
+      LIVING_CONDITION = #{livingCondition,jdbcType=INTEGER},
+      EXPECTED_DECORATION_STYLE = #{expectedDecorationStyle,jdbcType=VARCHAR},
+      OPERATOR_ID = #{operatorId,jdbcType=INTEGER},
+      SHOP_ID = #{shopId,jdbcType=INTEGER}
+    where ID = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

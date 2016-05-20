@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.goujia.website.base.dao.topic.TopicArticleMapper" >
+   <!-- 
+	  -==============================
+	  -话题管理详情页面
+	  -@author liuxinyu
+	  -@date 2015-06-03
+	  -==============================
+	 -->
+  <resultMap id="RM_TopicArticle" type="com.goujia.website.base.entity.topic.TopicArticle" >
+    <id     property="id"           column="ID"            jdbcType="INTEGER"  />
+    <result property="topicId"      column="TOPIC_ID"      jdbcType="INTEGER" />
+    <result property="articleId"    column="ARTICLE_ID"    jdbcType="INTEGER" />
+    <result property="gmtCreate"    column="GMT_CREATE"    jdbcType="TIMESTAMP" />
+    <result property="gmtModified"  column="GMT_MODIFIED"  jdbcType="TIMESTAMP" />
+  </resultMap>
+  	<resultMap  id="RM_Topic" type="com.goujia.website.base.entity.topic.Topic"  >
+		<id      column="ID"                           property="id"             		 jdbcType="INTEGER"   javaType="java.lang.Integer"  />
+		<result  column="NAME"                  	   property="name"                   jdbcType="VARCHAR"   javaType="java.lang.String"/>
+	</resultMap>
+  
+  <!-- 
+	  -==============================
+	  -话题管理详情页面关联
+	  -@author liuxinyu
+	  -@date 2015-06-03
+	  -==============================
+   -->
+	 <resultMap type="com.goujia.website.base.vo.topic.TopicArticleVo" id="RM_TopicArticleVo" extends="RM_TopicArticle" >
+	 	<result column="joinNum" property="joinNum"/>
+	    <result property="imagePath"         column="IMAGE_PATH"           jdbcType="VARCHAR"   javaType="java.lang.String"  />
+		<result property="articleName"       column="ARTICLE_NAME"   	   jdbcType="VARCHAR"   javaType="java.lang.String"  />
+		<result property="labelIds"          column="LABEL_IDS"            jdbcType="VARCHAR"   javaType="java.lang.String"  />
+		<result property="hitNum"            column="HIT_NUM"              jdbcType="INTEGER"   javaType="java.lang.Integer"  />
+		<result property="gmtCreate"         column="GMT_CREATE"           jdbcType="TIMESTAMP" javaType="java.util.Date"  />
+		<result property="shareNum"          column="SHARE_NUM"            jdbcType="INTEGER"   javaType="java.lang.Integer"  />
+		<result property="collectionNum"     column="COLLECTION_NUM"       jdbcType="INTEGER"   javaType="java.lang.Integer"  />
+		<result property="introduction"     column="INTRODUCTION"          jdbcType="VARCHAR"   javaType="java.lang.String"  />
+	 </resultMap>
+
+	 <!-- 
+	  -==============================
+	  -新增
+	  -@author liuxinyu
+	  -@date 2015-06-03
+	  -==============================
+      -->
+	 <!-- <insert id="create" parameterType="com.goujia.website.base.entity.topic.TopicArticle" useGeneratedKeys="true" keyProperty="id">
+	      insert into G_BBS_TOPIC_ARTICLE(
+	          TOPIC_ID,
+	          ARTICLE_ID,
+	          GMT_CREATE,
+	          GMT_MODIFIED
+	      ) values (
+	         #{topicId},
+	         #{articleId},
+	         #{gmtCreate},
+	         #{GMT_MODIFIED}
+	      ) 
+	  
+	  </insert>  -->
+      <!-- 
+	  -==============================
+	  -详情页面查询
+	  -@author liuxinyu
+	  -@date 2015-06-03
+	  -==============================
+      -->
+     <!--  <select id="query" resultMap="RM_ArticleMessageVo" parameterType="com.goujia.website.base.entity.topic.ArticleMessage">
+              select 
+               s.ID, 
+               s.ARTICLE_NAME,
+               s.GMT_CREATE,
+               s.userId,
+               c.USER_NAME
+             from G_BBS_ARTICLE s 
+             left join G_USER c on s.ARTICLE_ID = c.ID 
+             where c.IS_DELETED = 'n'
+             <if test="id != null and id != ''"> and s.ID = #{id}</if>         
+      </select>
+       -->
+      <!-- 
+	  -==============================
+	  -查询话题数量
+	  -@author liuxinyu
+	  -@date 2015-06-03
+	  -==============================
+      -->
+        <select id="count" resultType="java.lang.Integer" parameterType="com.goujia.website.base.entity.topic.TopicArticle">
+             select count(*)
+            from G_BBS_TOPIC_ARTICLE s
+             left join G_BBS_ARTICLE a on s.ARTICLE_ID = a.ID  
+             left join G_USER u on a.USER_ID = u.ID 
+             where  a.IS_DELETED = 'n'     
+      </select> 
+       
+      <!-- 
+	  -==============================
+	  -新增
+	  -@author liuxinyu
+	  -@date 2015-06-03
+	  -==============================
+      -->
+      <select id="list" resultType="com.goujia.website.base.vo.topic.TopicArticleVo" parameterType="Integer">
+        select s.ID as id,
+               s.TOPIC_ID as topicId,
+               a.ARTICLE_NAME as articleName,
+               a.GMT_CREATE as gmtCreate,
+               u.USER_NAME as userName
+             from G_BBS_TOPIC_ARTICLE s
+             left join G_BBS_ARTICLE a on s.ARTICLE_ID = a.ID  
+             left join G_USER u on a.USER_ID = u.ID
+             where s.TOPIC_ID = #{topicId}
+      </select>
+      
+      
+       <!-- 
+	  -==============================
+	  -话题管理文章详情页查询
+	  -@author liuxinyu
+	  -@date 2015-06-19
+	  -==============================
+      -->
+      <select id="pageList" resultType="com.goujia.website.base.vo.topic.TopicArticlePageVo" parameterType="Integer">
+        select   
+               s.TOPIC_ID as topicId,
+               a.ARTICLE_NAME as articleName,
+               a.GMT_CREATE as gmtCreate,
+               a.IMAGE_PATH as imagePath,
+               a.SHARE_NUM as shareNum,
+               a.COLLECTION_NUM as collectionNum,
+               a.INTRODUCTION as introduction,
+               a.LOVE_NUM as loveNum,
+               a.HIT_NUM as hitNum,
+               c.LABEL_IDS as labelIds,
+               c.CRAFT_LABELS as craftLabels,
+               c.MATERIAL_LABELS as materialLabels,
+               c.STYLE_LABELS as styleLabels,
+               u.USER_NAME as userName
+             from G_BBS_TOPIC_ARTICLE s
+             left join G_BBS_ARTICLE a on s.ARTICLE_ID = a.ID  
+             left join G_USER u on a.USER_ID = u.ID
+             left join G_BBS_TOPIC c on s.TOPIC_ID = c.ID
+             where s.TOPIC_ID = #{topicId}
+      </select>
+       
+       <!-- 
+	  -==============================
+	  -删除
+	  -@author liuxinyu
+	  -@date 2015-06-03
+	  -==============================
+      -->
+     <delete id="delete" parameterType="java.lang.Integer">
+		delete  from G_BBS_TOPIC_ARTICLE  where ID=#{id}
+	</delete>
+	
+	<!-- 话题下的文章分页查询 -->
+	<select id="relationedArticlePage" resultType="com.goujia.website.base.vo.topic.TopicArticleVo"
+	parameterType="java.lang.Integer">
+	SELECT     DISTINCT a.ARTICLE_ID as articleId,b.IMAGE_PATH as articleImage,
+                b.ARTICLE_NAME as articleName,b.INTRODUCTION as articleIntroduction
+    FROM
+         G_BBS_TOPIC_ARTICLE a
+    LEFT JOIN G_BBS_ARTICLE b on a.ARTICLE_ID = b.ID
+    WHERE 
+    b.IS_DELETED='n'
+    AND 
+    a.TOPIC_ID=#{topicId}
+	
+	</select>
+	
+	
+     <insert id="batchCreate" parameterType="map">
+		insert into G_BBS_TOPIC_ARTICLE(TOPIC_ID,ARTICLE_ID,GMT_CREATE,GMT_MODIFIED) 
+		values
+		<foreach collection="list" item="at" separator=",">
+			(
+				#{at.topicId},#{at.articleId},now(),now()
+			)
+		</foreach>
+		
+	</insert>
+	<delete id="realDeleteByArticId" parameterType="map">
+		delete from G_BBS_TOPIC_ARTICLE where ARTICLE_ID=#{article}
+	</delete>
+	<select id="findAllByArticleId" parameterType="map" resultMap="RM_Topic">
+		select topic.ID,topic.NAME from (select * from G_BBS_TOPIC_ARTICLE where ARTICLE_ID=#{article}) ta
+		left join G_BBS_TOPIC topic on topic.ID=ta.TOPIC_ID
+	</select>
+             
+      
+</mapper>

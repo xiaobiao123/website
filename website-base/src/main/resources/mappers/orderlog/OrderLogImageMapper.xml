@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.goujia.website.base.dao.orderlog.OrderLogImageMapper" >
+  <resultMap id="BaseResultMap" type="com.goujia.website.base.entity.orderlog.OrderLogImage" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="image_path" property="imagePath" jdbcType="VARCHAR" />
+    <result column="log_id" property="logId" jdbcType="INTEGER" />
+    <result column="gmt_create" property="gmtCreate" jdbcType="TIMESTAMP" />
+    <result column="gmt_modified" property="gmtModified" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, image_path, log_id, gmt_create, gmt_modified
+  </sql>
+  <delete id="deleteByLog" parameterType="java.lang.Integer" >
+    delete from g_bbs_order_log_image
+    where log_id = #{log_id,jdbcType=INTEGER}
+  </delete>
+  <insert id="add" parameterType="com.goujia.website.base.entity.orderlog.OrderLogImage" >
+    insert into g_bbs_order_log_image (id, image_path, log_id, 
+      gmt_create, gmt_modified)
+    values (#{id,jdbcType=INTEGER}, #{imagePath,jdbcType=VARCHAR}, #{logId,jdbcType=INTEGER}, 
+      now(), now())
+  </insert>
+  <!-- 获得日志图片 -->
+  <select id="getAllByLog" parameterType="java.lang.Integer"
+  resultType="java.lang.String">
+    select image_path as imagePath from g_bbs_order_log_image
+    where log_id=#{log_id}
+    order by gmt_modified asc
+  </select>
+</mapper>

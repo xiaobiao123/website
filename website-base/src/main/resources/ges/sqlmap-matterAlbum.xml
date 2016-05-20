@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+    
+<mapper namespace="com.goujia.website.base.ges.dao.MatterAlbumMapper">
+
+	<resultMap  type="com.goujia.website.base.ges.entity.MatterAlbum"		              id="RM_MatterAlbum_View">
+		<id		property="id"      	   column="ID"           jdbcType="INTEGER"   javaType="java.lang.Integer" />
+		<result property="matterId"    column="MATTER_ID"	 jdbcType="INTEGER"   javaType="java.lang.Integer" />
+		<result property="name"        column="NAME"		 jdbcType="VARCHAR"   javaType="java.lang.String"  />
+		<result property="imagePath"   column="IMAGE_PATH"	 jdbcType="VARCHAR"   javaType="java.lang.String"  />
+		<result property="orderIndex"  column="ORDER_INDEX"	 jdbcType="INTEGER"   javaType="java.lang.Integer" />
+		<result property="isDeleted"   column="IS_DELETED"	 jdbcType="VARCHAR"   javaType="java.lang.String"  />
+		<result property="gmtCreate"   column="GMT_CREATE"	 jdbcType="TIMESTAMP" javaType="java.util.Date"    />
+		<result property="gmtModified" column="GMT_MODIFIED" jdbcType="TIMESTAMP" javaType="java.util.Date"    />
+		<result property="ownerId"     column="OWNER_ID"	 jdbcType="INTEGER"   javaType="java.lang.Integer" />
+	</resultMap>
+	
+	<select id="listForMatterAlbum" resultMap="RM_MatterAlbum_View" 
+	parameterType="java.lang.Integer">
+		select 
+			ID,
+			MATTER_ID,
+			NAME,
+			IMAGE_PATH,
+			ORDER_INDEX,
+			IS_DELETED,
+			GMT_CREATE,
+			OWNER_ID,
+			GMT_MODIFIED
+		from G_MATTER_ALBUM
+		where MATTER_ID = #{matterId} and IS_DELETED = 'n'
+		order by ORDER_INDEX asc
+	</select>
+	
+	<select id="count" resultType="int" parameterType="java.lang.Integer">
+		select count(ID)
+		from G_MATTER_ALBUM
+		where MATTER_ID = #{matterId} and p.IS_DELETED = 'n'
+	</select>
+</mapper>

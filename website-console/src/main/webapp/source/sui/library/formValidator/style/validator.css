@@ -1,0 +1,70 @@
+.onShow
+{
+    background:url(../images/onShow.gif) 0 -2px no-repeat; 
+	font-size: 12px;
+	line-height:30px;
+	height:30px;
+	vertical-align:middle;
+	bottom: -16px;
+    color: rgb(225,102,0);
+    left: 0;
+    padding-left: 20px;
+    width: 291px;
+    z-index: 100;
+}
+.onFocus
+{
+    background:url(../images/onFocus.gif) 0 -2px no-repeat; 
+	font-size: 12px;
+	line-height:30px;
+	height:30px;
+	vertical-align:middle;
+	bottom: -16px;
+    color: rgb(225,102,0);
+    left: 0;
+    padding-left: 20px;
+    width: 291px;
+    z-index: 100;
+}
+.onError
+{
+    background:url(../images/onError.gif) 0 -2px no-repeat;
+	font-size: 12px;
+	line-height:30px;
+	height:30px;
+	vertical-align:middle;
+	bottom: -16px;
+    color: #e6393d;
+    left: 0;
+    padding-left: 20px;
+    width: 291px;
+    z-index: 100;
+}
+.onCorrect
+{
+    background:url(../images/onCorrect.gif) 0 -2px no-repeat;
+	font-size: 12px;
+	line-height:30px;
+	height:30px;
+	vertical-align:middle;
+	bottom: -16px;
+    color: green;
+    left: 0;
+    padding-left: 20px;
+    width: 291px;
+    z-index: 100;
+}
+.onLoad
+{
+    background:url(../images/onLoad.gif) no-repeat 3px 3px;
+	font-size: 12px;
+	line-height:30px;
+	height:30px;
+	vertical-align:middle;
+	bottom: -16px;
+    color: #e6393d;
+    left: 0;
+    padding-left: 20px;
+    width: 291px;
+    z-index: 100;
+} 

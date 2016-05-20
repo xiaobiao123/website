@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.goujia.website.base.dao.membercollection.MemberCollectionMapper" >
+  <resultMap id="BaseResultMap" type="com.goujia.website.base.entity.membercollection.MemberCollection" >
+    <id column="ID" property="id" jdbcType="INTEGER" />
+    <result column="USER_ID" property="userId" jdbcType="INTEGER" />
+    <result column="PROPERTY_TYPE" property="propertyType" jdbcType="VARCHAR" />
+    <result column="COLLECTION_CONTENT_ID" property="collectionContentId" jdbcType="INTEGER" />
+    <result column="GMT_CREATE" property="gmtCreate" jdbcType="TIMESTAMP" />
+    <result column="GMT_MODIFIED" property="gmtModified" jdbcType="TIMESTAMP" />
+    <result column="IS_DELETED" property="isDeleted" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    ID, USER_ID, PROPERTY_TYPE, COLLECTION_CONTENT_ID, GMT_CREATE, GMT_MODIFIED,IS_DELETED
+  </sql>
+  <select id="get" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from G_BBS_USER_COLLECTION
+    where ID = #{id,jdbcType=INTEGER}
+  </select>
+  <select id="countByContent" resultType="java.lang.Integer" parameterType="com.goujia.website.base.entity.membercollection.MemberCollection" >
+    select 
+    count(id)
+    from G_BBS_USER_COLLECTION
+    where is_deleted = 'n'
+    <if test="null != propertyType and '' != propertyType">and PROPERTY_TYPE = #{propertyType}</if>
+    <if test="null != collectionContentId and '' != collectionContentId">and COLLECTION_CONTENT_ID = #{collectionContentId}</if>
+    <if test="null != userId and '' != userId">and USER_ID = #{userId}</if>
+  </select>
+  <delete id="delete" parameterType="java.lang.Integer" >
+    delete from G_BBS_USER_COLLECTION
+    where ID = #{id,jdbcType=INTEGER}
+  </delete>
+  <update id="deleteByContent" parameterType="com.goujia.website.base.entity.membercollection.MemberCollection" >
+    update G_BBS_USER_COLLECTION
+    set is_deleted = 'y'
+    where 
+     <if test="null != userId and '' != userId">
+      USER_ID = #{userId}
+     </if>
+     <if test="null != propertyType and '' != propertyType">
+      and PROPERTY_TYPE = #{propertyType}
+     </if>
+     <if test="null != collectionContentId and '' != collectionContentId">
+      and COLLECTION_CONTENT_ID = #{collectionContentId}
+     </if>
+     <if test="null != id and '' != id">
+     and id = #{id}
+     </if>
+  </update>
+  <insert id="insert" parameterType="com.goujia.website.base.entity.membercollection.MemberCollection" useGeneratedKeys="true" keyProperty="id" >
+    insert into G_BBS_USER_COLLECTION ( USER_ID, PROPERTY_TYPE, 
+      COLLECTION_CONTENT_ID, GMT_CREATE, GMT_MODIFIED,IS_DELETED
+      )
+    values ( #{userId,jdbcType=INTEGER}, #{propertyType,jdbcType=VARCHAR}, 
+      #{collectionContentId,jdbcType=INTEGER}, now(), now(),'n'
+      )
+  </insert>
+  <update id="update" parameterType="com.goujia.website.base.entity.membercollection.MemberCollection" >
+    update G_BBS_USER_COLLECTION
+    <set >
+      <if test="userId != null" >
+        USER_ID = #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="propertyType != null" >
+        PROPERTY_TYPE = #{propertyType,jdbcType=VARCHAR},
+      </if>
+      <if test="collectionContentId != null" >
+        COLLECTION_CONTENT_ID = #{collectionContentId,jdbcType=INTEGER},
+      </if>
+      <if test="isDeleted != null" >
+        IS_DELETED = #{isDeleted,jdbcType=INTEGER},
+      </if>
+        GMT_MODIFIED = now(),
+    </set>
+    where ID = #{id,jdbcType=INTEGER}
+  </update>
+  <!-- 查询收藏列表 -->
+  <select id="collectList" resultMap="BaseResultMap"
+   parameterType="com.goujia.website.base.entity.membercollection.MemberCollection">
+  select 
+   <include refid="Base_Column_List" />
+  from G_BBS_USER_COLLECTION
+  <where>
+  IS_DELETED='n' 
+  <if test="null != userId and '' != userId">
+  and USER_ID = #{userId,jdbcType=INTEGER}
+  </if>
+  <if test="null != propertyType and '' != propertyType">
+  and PROPERTY_TYPE = #{propertyType,jdbcType=VARCHAR}
+  </if>
+  <if test="null != collectionContentId and '' != collectionContentId">
+  and COLLECTION_CONTENT_ID = #{collectionContentId,jdbcType=INTEGER}
+  </if>
+  </where>
+  </select>
+  <select id="collectListWithPage" resultMap="BaseResultMap"
+   parameterType="com.goujia.website.base.entity.membercollection.MemberCollection">
+  select 
+   <include refid="Base_Column_List" />
+  from G_BBS_USER_COLLECTION
+  <where>
+  IS_DELETED = 'n'
+  <if test="null != userId and '' != userId">
+  and USER_ID = #{userId,jdbcType=INTEGER}
+  </if>
+  <if test="null != propertyType and '' != propertyType">
+  and PROPERTY_TYPE = #{propertyType,jdbcType=VARCHAR}
+  </if>
+  <if test="null != collectionContentId and '' != collectionContentId">
+  and COLLECTION_CONTENT_ID = #{collectionContentId,jdbcType=INTEGER}
+  </if>
+  </where>
+  </select>
+  
+  <select id="selectTopic" resultType="com.goujia.website.base.entity.membercollection.MemberCollection" parameterType="com.goujia.website.base.entity.membercollection.MemberCollection">
+      select 
+      <include refid="Base_Column_List" />
+	  from G_BBS_USER_COLLECTION
+	  where
+	  USER_ID = #{userId,jdbcType=INTEGER}
+	  and PROPERTY_TYPE = #{propertyType,jdbcType=VARCHAR}
+	  and COLLECTION_CONTENT_ID = #{collectionContentId,jdbcType=INTEGER}
+  </select>
+  
+  <delete id="deleteByMember" parameterType="com.goujia.website.base.entity.membercollection.MemberCollection">
+  	delete from G_BBS_USER_COLLECTION
+    where USER_ID=#{userId} and COLLECTION_CONTENT_ID=#{collectionContentId} and PROPERTY_TYPE=#{propertyType}
+  </delete>
+</mapper>

@@ -1,0 +1,238 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.goujia.website.base.dao.question.QuestionMapper" >
+  <resultMap id="BaseResultMap" type="com.goujia.website.base.entity.question.Question" >
+    <id column="ID" property="id" jdbcType="INTEGER" />
+    <result column="SUBJECT" property="subject" jdbcType="VARCHAR" />
+    <result column="DESCRIPTION" property="description" jdbcType="VARCHAR" />
+    <result column="QUESTION_CATEGORY" property="questionCategory" jdbcType="VARCHAR" />
+    <result column="LABEL" property="label" jdbcType="VARCHAR" />
+    <result column="STATE" property="state" jdbcType="VARCHAR" />
+    <result column="ANWSER_AMOUNT" property="anwserAmount" jdbcType="INTEGER" />
+    <result column="HIT_NUM" property="hitNum" jdbcType="INTEGER" />
+    <result column="SHARE_NUM" property="shareNum" jdbcType="INTEGER" />
+    <result column="COLLECTION_NUM" property="collectionNum" jdbcType="INTEGER" />
+    <result column="IS_ESSENCE" property="isEssence" jdbcType="VARCHAR" />
+    <result column="IS_TOP" property="isTop" jdbcType="VARCHAR" />
+    <result column="USER_ID" property="userId" jdbcType="INTEGER" />
+    <result column="GMT_CREATE" property="gmtCreate" jdbcType="TIMESTAMP" />
+    <result column="GMT_MODIFIED" property="gmtModified" jdbcType="TIMESTAMP" />
+    <result column="IS_DELETED" property="isDeleted" jdbcType="VARCHAR" />
+    <result column=""/>
+  </resultMap>
+  <resultMap type="com.goujia.website.base.vo.question.QuestionVO" id="voMap" extends="BaseResultMap">
+  
+  </resultMap>
+  <sql id="Base_Column_List" >
+    ID, SUBJECT, DESCRIPTION, QUESTION_CATEGORY, LABEL, STATE, ANWSER_AMOUNT, HIT_NUM, 
+    SHARE_NUM, COLLECTION_NUM, IS_ESSENCE, IS_TOP, USER_ID, GMT_CREATE, GMT_MODIFIED, 
+    IS_DELETED
+  </sql>
+   <sql id="Base_Query_Condition">
+	<where>
+	<if test="null != subject and '' != subject ">
+     a.SUBJECT like  CONCAT('%', #{subject,jdbcType=VARCHAR},'%') 
+     </if>
+	<if test="null != questionCategory and '' != questionCategory ">
+     and a.QUESTION_CATEGORY = #{questionCategory,jdbcType=VARCHAR}
+     </if>
+<!--     <if test="null != label and '' != label "> -->
+<!--      and LABEL like  CONCAT('%', #{label,jdbcType=VARCHAR},'%')  -->
+<!--      </if> -->
+     <if test="null != state and '' != state ">
+     and a.STATE = #{state,jdbcType=VARCHAR}
+     </if>
+     <if test="null != userId and '' != userId">
+     and a.USER_ID = #{userId,jdbcType=INTEGER}
+     </if>
+     <if test="null != isEssence and '' != isEssence ">
+     and a.IS_ESSENCE = #{isEssence,jdbcType=VARCHAR}
+     </if>
+<!--      <if test="null != gmtCreate and '' != gmtCreate "> -->
+<!--      and GMT_CREATE = #{gmtCreate,jdbcType=TIMESTAMP} -->
+<!--      </if> -->
+<!--      <if test="null != gmtModified and '' != gmtModified "> -->
+<!--      and GMT_MODIFIED = #{gmtModified,jdbcType=TIMESTAMP} -->
+<!--      </if> -->
+     <if test="null != isDeleted and '' != isDeleted ">
+     and a.IS_DELETED = #{isDeleted,jdbcType=VARCHAR}
+     </if>
+		</where>
+	</sql>
+  <select id="get" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from G_BBS_QUESTION
+    where ID = #{id,jdbcType=INTEGER}
+  </select>
+  <select id="getVO" resultMap="voMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from G_BBS_QUESTION
+    where ID = #{id,jdbcType=INTEGER}
+  </select>
+  
+    <select id="getDetail" resultType="com.goujia.website.base.vo.question.QuestionVO"
+     parameterType="java.lang.Integer" >
+   select a.ID as id,a.SUBJECT as subject,a.GMT_MODIFIED as gmtModified,a.GMT_CREATE as gmtCreate,
+             b.USER_NAME as userName,b.HEAD_PORTRAIT as headImage,
+             a.DESCRIPTION as description
+    from G_BBS_QUESTION a 
+        left join G_USER b on a.user_id = b.id
+    where a.ID = #{id,jdbcType=INTEGER}
+  </select>
+  
+  <!-- 分页查询问题 -->
+  <select id="list" resultType="com.goujia.website.base.vo.question.QuestionVO"
+  parameterType="com.goujia.website.base.vo.question.QuestionSearchParam">
+  	select a.ID as id,a.SUBJECT as subject,a.ANWSER_AMOUNT as anwserAmount,a.GMT_CREATE as gmtCreate,
+             b.USER_NAME as userName,b.HEAD_PORTRAIT as headImage,
+             a.DESCRIPTION as description
+    from G_BBS_QUESTION a 
+        left join G_USER b on a.user_id = b.id
+   <include refid="Base_Query_Condition" />
+  </select>
+  <!-- 分页列表总数 -->
+  <select id="count" resultType="int" 
+  parameterType="com.goujia.website.base.vo.question.QuestionSearchParam">
+  select count(*)
+  from G_BBS_QUESTION a 
+        left join G_USER b on a.user_id = b.id
+   <include refid="Base_Query_Condition" />
+  </select>
+  <delete id="delete" parameterType="java.lang.Integer" >
+    delete from G_BBS_QUESTION
+    where ID = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.goujia.website.base.entity.question.Question" >
+    insert into G_BBS_QUESTION (SUBJECT, DESCRIPTION, 
+      QUESTION_CATEGORY, LABEL, STATE, 
+      ANWSER_AMOUNT, HIT_NUM, SHARE_NUM, 
+      COLLECTION_NUM, IS_ESSENCE, IS_TOP, 
+      USER_ID, GMT_CREATE, GMT_MODIFIED, 
+      IS_DELETED)
+    values (#{subject,jdbcType=VARCHAR}, #{description,jdbcType=VARCHAR}, 
+      #{questionCategory,jdbcType=VARCHAR}, #{label,jdbcType=VARCHAR}, #{state,jdbcType=VARCHAR}, 
+      #{anwserAmount,jdbcType=INTEGER}, #{hitNum,jdbcType=INTEGER}, #{shareNum,jdbcType=INTEGER}, 
+      #{collectionNum,jdbcType=INTEGER}, #{isEssence,jdbcType=VARCHAR}, #{isTop,jdbcType=VARCHAR}, 
+      #{userId,jdbcType=INTEGER}, now(), now(), 
+      #{isDeleted,jdbcType=VARCHAR})
+  </insert>
+  <update id="update" parameterType="com.goujia.website.base.entity.question.Question" >
+    update G_BBS_QUESTION
+    <set >
+      <if test="subject != null" >
+        SUBJECT = #{subject,jdbcType=VARCHAR},
+      </if>
+      <if test="description != null" >
+        DESCRIPTION = #{description,jdbcType=VARCHAR},
+      </if>
+      <if test="questionCategory != null" >
+        QUESTION_CATEGORY = #{questionCategory,jdbcType=VARCHAR},
+      </if>
+      <if test="label != null" >
+        LABEL = #{label,jdbcType=VARCHAR},
+      </if>
+      <if test="state != null" >
+        STATE = #{state,jdbcType=VARCHAR},
+      </if>
+      <if test="anwserAmount != null" >
+        ANWSER_AMOUNT = #{anwserAmount,jdbcType=INTEGER},
+      </if>
+      <if test="hitNum != null" >
+        HIT_NUM = #{hitNum,jdbcType=INTEGER},
+      </if>
+      <if test="shareNum != null" >
+        SHARE_NUM = #{shareNum,jdbcType=INTEGER},
+      </if>
+      <if test="collectionNum != null" >
+        COLLECTION_NUM = #{collectionNum,jdbcType=INTEGER},
+      </if>
+      <if test="isEssence != null" >
+        IS_ESSENCE = #{isEssence,jdbcType=VARCHAR},
+      </if>
+      <if test="isTop != null" >
+        IS_TOP = #{isTop,jdbcType=VARCHAR},
+      </if>
+      <if test="userId != null" >
+        USER_ID = #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="gmtCreate != null" >
+        GMT_CREATE = #{gmtCreate,jdbcType=TIMESTAMP},
+      </if>
+        GMT_MODIFIED = now(),
+      <if test="isDeleted != null" >
+        IS_DELETED = #{isDeleted,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=INTEGER}
+  </update>
+  
+  <update id="disable" parameterType="com.goujia.website.base.entity.question.Question">
+   update G_BBS_QUESTION
+   	 	  set IS_DELETED = 'y'
+   where ID = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="reuse" parameterType="com.goujia.website.base.entity.question.Question">
+   update G_BBS_QUESTION
+   	 	  set IS_DELETED = 'n'
+   where ID = #{id,jdbcType=INTEGER}
+  </update>
+  <select id="findAllByState" parameterType="map" resultMap="voMap">
+  	select * from G_BBS_QUESTION where USER_ID=#{user}
+  	<if test="state!=null and state!=4">
+  		and IS_DELETED='n' 
+  		<if test="state==1">
+  			and STATE='WaitingForAnswer' and ANWSER_AMOUNT=0 and  IS_DELETED='n' 
+  		</if>
+  		<if test="state==2">
+  			and STATE='WaitingForAnswer' and ANWSER_AMOUNT!=0 and  IS_DELETED='n' 
+  		</if>
+  		<if test="state==3">
+  			and STATE='Confirmed'
+  		</if>
+  	</if>
+  	<if test="state!=null and state==4">
+  		and IS_DELETED='y' 
+  	</if>
+  	
+  </select>
+  <select id="countByState" parameterType="map" resultType="long">
+  	select count(1) from G_BBS_QUESTION where USER_ID=#{user}
+  	<if test="state!=null and state!=4">
+  		<if test="state==1">
+  			and STATE='WaitingForAnswer' and ANWSER_AMOUNT=0 and  IS_DELETED='n' 
+  		</if>
+  		<if test="state==2">
+  			and STATE='WaitingForAnswer' and ANWSER_AMOUNT!=0 and  IS_DELETED='n' 
+  		</if>
+  		<if test="state==3">
+  			and STATE='Confirmed' and  IS_DELETED='n' 
+  		</if>
+  	</if>
+  	<if test="state!=null and state==4">
+  		and IS_DELETED='y' 
+  	</if>
+  </select>
+  <!-- 个人关注的问题列表 -->
+  <select id="personQuestion" resultType="com.goujia.website.base.vo.question.QuestionVO"
+  parameterType="java.lang.Integer">
+  select a.ID as id,a.SUBJECT as subject,
+             b.USER_NAME as userName,b.HEAD_PORTRAIT as headImage,
+             a.DESCRIPTION as description
+    from g_bbs_user_collection c 
+        left join G_BBS_QUESTION a on c.COLLECTION_CONTENT_ID = a.ID
+        left join G_USER b on a.user_id = b.id
+    where c.USER_ID = #{userId} and c.PROPERTY_TYPE='Question'
+  </select>
+  <select id="personQuestionCount" resultType="java.lang.Integer" parameterType="java.lang.Integer">
+  select COUNT(a.ID)
+  from g_bbs_user_collection c 
+        left join G_BBS_QUESTION a on c.COLLECTION_CONTENT_ID = a.ID
+        left join G_USER b on a.user_id = b.id
+  where c.USER_ID = #{userId} and c.PROPERTY_TYPE='Question'
+  </select>
+  <update id="isConfirm" parameterType="map">
+  	update G_BBS_QUESTION set STATE='Confirmed' where ID=#{id}
+  </update>
+</mapper>

@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+    
+<mapper namespace="com.goujia.website.base.ges.dao.BudgetCategoryMapper">
+	<!--
+      - ===============================================
+      - 预算分类POJO
+      - @author Caorz
+      - @date 2014-08-07
+      - ===============================================
+	-->
+	<resultMap type="com.goujia.website.base.ges.entity.BudgetCategory"            id="RM_Budget_Category">
+		<id     property="id"            column="ID"  	          jdbcType="INTEGER"   javaType="java.lang.Integer"    />
+		<result property="imgPath"  column="IMG_PATH" jdbcType="VARCHAR" javaType="java.lang.String"  />
+		<result property="parentId"    column="PARENT_ID"    jdbcType="INTEGER" javaType="java.lang.Integer" />
+		<result property="name"   column="NAME"   jdbcType="VARCHAR" javaType="java.lang.String"     />
+	</resultMap>
+
+	<!--
+      - ===============================================
+      - 查询预算
+      - @author Caorz
+      - @date 2014-08-07
+      - ===============================================
+	-->
+	<select id="query" resultMap="RM_Budget_Category" parameterType="java.lang.Integer">
+		select
+			ID,
+			IMG_PATH,
+			PARENT_ID,
+			NAME
+		from G_BUDGET_CATEGORY where ID=#{id}
+	</select>
+	<!--
+      - ===============================================
+      - 查询预算分类
+      - @author Caorz
+      - @date 2014-08-07
+      - ===============================================
+	-->
+	<select id="list" resultMap="RM_Budget_Category" >
+		select
+			ID,
+			IMG_PATH,
+			PARENT_ID,
+			NAME
+		from G_BUDGET_CATEGORY 
+		where PARENT_ID != 0
+		order by ID asc
+	</select>
+	
+	
+</mapper>

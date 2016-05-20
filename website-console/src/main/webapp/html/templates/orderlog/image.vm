@@ -1,0 +1,18 @@
+                         <div class="addImg" style="float: left;margin-right:5px;">
+                             <img alt="Avatar" class="editable img-responsive editable-click editable-empty" id="infoImage$!{i}_preview" style="width:150px; height:150px"/>
+                              <div class="tools">
+                                <a href="#">
+                                    <i class="icon-remove red"></i>
+                                </a>
+                            </div>
+                         
+                        #Uploader_pic({
+                            "width":334,
+                            "height":288,
+                            "rates":"m,s",
+                            "maxSize":40000000,
+                            "fieldName": "infoImage$!{i}", 
+                            "fileFieldName": "infoImageFile", 
+                            "required":"false"
+                        })
+                    </div>

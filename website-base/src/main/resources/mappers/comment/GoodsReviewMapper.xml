@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.goujia.website.base.dao.comment.GoodsReviewMapper" >
+  <resultMap id="BaseResultMap" type="com.goujia.website.base.entity.comment.GoodsReview" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="goods_id" property="goodsId" jdbcType="INTEGER" />
+    <result column="content" property="content" jdbcType="VARCHAR" />
+    <result column="user_id" property="userId" jdbcType="INTEGER" />
+    <result column="gmt_create" property="gmtCreate" jdbcType="TIMESTAMP" />
+    <result column="is_deleted" property="isDeleted" jdbcType="VARCHAR" />
+    <result column="gmt_modify" property="gmtModify" jdbcType="TIMESTAMP" />
+    <result column="goods_name" property="goodsName" jdbcType="VARCHAR" />
+  </resultMap>
+  <resultMap  type="com.goujia.website.base.vo.comment.GoodsReviewVO" id="RM_Goods_Review_VO" extends="BaseResultMap">
+     <result property="userName" column="user_name" jdbcType="VARCHAR" />
+     <result property="headPortrait" column="head_portrait" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, goods_id, content, user_id, gmt_create, is_deleted, gmt_modify, goods_name
+  </sql>
+  
+  
+  <select id="getById" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from g_bbs_goods_review
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+    <!-- 分页查看评论列表 -->
+  <select id="listPage" resultMap="RM_Goods_Review_VO" parameterType="com.goujia.website.base.vo.comment.GoodsReviewSearchParam">
+    select a.*,b.user_name from g_bbs_goods_review a
+    inner join g_user b on a.user_id = b.id
+    <where>
+   <if test="null != searchText and searchIf==1" > a.content like  CONCAT('%', #{searchText},'%') </if>
+    <if test="null != isDeleted and '' != isDeleted"> and a.is_deleted = #{isDeleted}</if>
+    <if test="null != searchText and searchIf==2">and a.goods_name like  CONCAT('%', #{searchText},'%') </if>
+    <if test="null != searchText and searchIf==3">and b.user_name like  CONCAT('%', #{searchText},'%') </if>
+    <if test="null != userId and '' != userId"> and a.user_id = #{userId}</if>
+    </where>
+    </select>
+  <select id="countListPage" resultType="java.lang.Integer" parameterType="com.goujia.website.base.vo.comment.GoodsReviewSearchParam">
+    select count(*) from g_bbs_goods_review a
+    inner join g_user b on a.user_id = b.id
+    <where>
+    <if test="null != searchText and searchIf==1" > a.content like  CONCAT('%', #{searchText},'%') </if>
+    <if test="null != isDeleted and '' != isDeleted"> and a.is_deleted = #{isDeleted}</if>
+    <if test="null != searchText and searchIf==2">and a.goods_name like  CONCAT('%', #{searchText},'%') </if>
+    <if test="null != searchText and searchIf==3">and b.user_name like  CONCAT('%', #{searchText},'%')</if>
+    <if test="null != userId and '' != userId"> and a.user_id = #{userId}</if>
+    </where>
+  </select>
+  <delete id="delete" parameterType="java.lang.Integer" >
+    delete from g_bbs_goods_review
+    where id = #{id}
+  </delete>
+  <insert id="add" parameterType="com.goujia.website.base.entity.comment.GoodsReview" >
+    insert into g_bbs_goods_review (goods_id, content, 
+      user_id, gmt_create, is_deleted, 
+      gmt_modify,goods_name)
+    values (#{goodsId,jdbcType=INTEGER}, #{content,jdbcType=VARCHAR}, 
+      #{userId,jdbcType=INTEGER},now(), 'n', 
+      now(),#{goodsName,jdbcType=VARCHAR})
+  </insert>
+  <update id="update" parameterType="com.goujia.website.base.entity.comment.GoodsReview" >
+    update g_bbs_goods_review set gmt_modify=now()
+      <if test="goodsId != null" >
+        and goods_id = #{goodsId,jdbcType=INTEGER},
+      </if>
+      <if test="content != null" >
+        and content = #{content,jdbcType=VARCHAR},
+      </if>
+      <if test="userId != null" >
+        and user_id = #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="isDeleted != null" >
+        and is_deleted = #{isDeleted,jdbcType=VARCHAR},
+      </if>
+      <if test="goodsName != null" >
+        and goods_name = #{goodsName,jdbcType=VARCHAR},
+      </if>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+    <update id="disableList" parameterType="java.lang.Integer">
+    update g_bbs_goods_review
+    set is_deleted='y'
+    where id in (
+        <foreach collection="list" item="item" separator=",">
+            #{item}
+        </foreach>
+        )
+  </update>
+   <select id="findByGoodsId" parameterType="map" resultMap="RM_Goods_Review_VO">
+    select review.*,user.user_name,user.head_portrait from 
+    (select * from g_bbs_goods_review where goods_id=#{goods} and is_deleted='n' ) review
+    inner join g_user user on user.id=review.user_id
+  </select>
+</mapper>

@@ -1,0 +1,96 @@
+#Html("begin")
+#Head("begin")
+#Title("系统管理-属性管理")
+#LoadBootstrap("default")
+#LoadSUI("default")
+#LoadSUI("editor")
+#Head("end")
+<body>
+	#parse("header.vm")
+	
+	<!--nav-table start-->
+	<ul class="nav nav-tabs" id="">
+		<li class="active">
+			<a href="javascript:;">
+				 基本信息
+			</a>
+		</li>
+	</ul>
+	<!--nav-table end-->
+	
+	<!-- PAGE CONTENT BEGINS -->
+	<form id="J_Form" name="J_Form" class="form-horizontal" role="form" action="index.php" method="post" >
+		#Hidden("id", "$!info.id")
+		<div class="form-group">
+			<label class="control-label col-xs-12 col-sm-2 no-padding-right" for="title">系统属性：</label>
+				<div class="clearfix">
+					<div class="col-xs-12 col-sm-9">
+						<div class="clearfix">
+							<input disabled="true" type="text" name="key" id="key" class="col-xs-12 col-sm-6" value="$!info.key">
+						</div>
+					</div>
+				</div>
+		</div>
+		<div class="form-group">
+			<label class="control-label col-xs-12 col-sm-2 no-padding-right" for="title"><span class="red">*</span>属性值：</label>
+				<div class="clearfix">
+					<div class="col-xs-12 col-sm-9">
+						<div class="clearfix">
+							<input type="text" name="value" id="value" class="col-xs-12 col-sm-6" value="$!info.value">
+						</div>
+					</div>
+				</div>
+		</div>
+        <div class="form-group">
+            <label class="control-label col-xs-12 col-sm-2 no-padding-right" for="title">备注：</label>
+                <div class="clearfix">
+                    <div class="col-xs-12 col-sm-9">
+                        <div class="clearfix">
+                            <input type="text" name="remark" id="remark" class="col-xs-12 col-sm-6" value="$!info.remark">
+                        </div>
+                    </div>
+                </div>
+        </div>
+
+
+		<div class="space-2"></div>
+		<div class="clearfix form-actions">
+			<div class="col-md-offset-3 col-md-7">
+				<button type="button" id="J_SAVE" class="btn btn-info J_LoadingBtn" data-loading-text="保存中...">
+					<i class="icon-ok bigger-110"></i>
+					修改
+				</button>
+			</div>
+		</div>
+	</form>
+	<script  type="text/javascript">
+		$("#J_SAVE").click(function(){
+            var value = $("#value").val();
+            if("" == value){
+                alert("属性值不能为空！");
+                return ;
+            }
+			$.ajax({
+			   dataTpe: "json",
+			   type: "POST",
+			   url: '$!request.contextPath/system/update.htm',
+			   data: $("#J_Form").serialize(),
+			   success: function(res){
+    			   var obj = eval(res);
+    			     if(obj[0]){
+    				 	alert(obj[1]);
+    					window.location.href="$!request.contextPath/system/index.htm";
+    			     } else {
+    				 	alert(obj[1]);
+    			     }
+                },
+			   error: function() {
+				    alert(DS.msg.error, DS.msg.tip);
+			   }
+			});
+        });
+    </script>
+	<!-- PAGE CONTENT ENDS -->
+	#parse("footer.vm")
+</body>
+#Html("end")

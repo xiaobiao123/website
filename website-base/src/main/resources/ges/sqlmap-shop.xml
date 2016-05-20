@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+    
+<mapper namespace="com.goujia.website.base.ges.dao.ShopGesMapper">
+	<!--
+      - ===============================================
+      - 返回Shop POJO
+      - @author caoqi
+      - @date 2014-06-13
+      - ===============================================
+	-->
+	<resultMap  type="com.goujia.website.base.ges.entity.Shop"      id="RM_Shop">
+		<id     property="id"          column="ID"  	     jdbcType="INTEGER"   javaType="java.lang.Integer" />
+		<result property="operatorId"  column="OPERATOR_ID"  jdbcType="INTEGER"   javaType="java.lang.Integer" />
+		<result property="name"  	   column="NAME"         jdbcType="VARCHAR"   javaType="java.lang.String"  />
+		<result property="photoPath"   column="PHOTO_PATH"   jdbcType="VARCHAR"   javaType="java.lang.String"  />
+		<result property="bannerPath"  column="BANNER_PATH"  jdbcType="VARCHAR"   javaType="java.lang.String"  />
+		<result property="summary"     column="SUMMARY"      jdbcType="VARCHAR"   javaType="java.lang.String"  />
+		<result property="contactName" column="CONTACT_NAME" jdbcType="VARCHAR"   javaType="java.lang.String"  />
+		<result property="phone"  	   column="PHONE"     	 jdbcType="VARCHAR"   javaType="java.lang.String"  />
+		<result property="address"     column="ADDRESS"      jdbcType="VARCHAR"   javaType="java.lang.String"  />
+		<result property="foundDate"   column="FOUND_DATE"   jdbcType="DATE"      javaType="java.util.Date"    />
+		<result property="longitude"   column="LONGITUDE"    jdbcType="DOUBLE"    javaType="java.lang.Double"  />
+		<result property="latitude"    column="LATITUDE"     jdbcType="DOUBLE"    javaType="java.lang.Double"  />
+		<result property="provinceId"  column="PROVINCE_ID"  jdbcType="INTEGER"   javaType="java.lang.Integer" />
+		<result property="cityId"  	   column="CITY_ID" 	 jdbcType="INTEGER"   javaType="java.lang.Integer" />
+		<result property="countyId"    column="COUNTY_ID"    jdbcType="INTEGER"   javaType="java.lang.Integer" />
+		<result property="isDeleted"   column="IS_DELETED"   jdbcType="VARCHAR"   javaType="java.lang.String"  />
+		<result property="gmtCreate"   column="GMT_CREATE"	 jdbcType="TIMESTAMP" javaType="java.util.Date"    />
+		<result property="gmtModified" column="GMT_MODIFIED" jdbcType="TIMESTAMP" javaType="java.util.Date"    />
+		<result property="ownerId"     column="OWNER_ID"	 jdbcType="INTEGER"   javaType="java.lang.Integer" />
+        <result property="projectQuality"      column="PROJECT_QUALITY"	     jdbcType="DOUBLE"   javaType="java.lang.Double" />
+        <result property="customSatisfied"     column="CUSTOM_SATISFIED"	 jdbcType="DOUBLE"   javaType="java.lang.Double" />
+	    <result property="code"     column="CODE"      jdbcType="VARCHAR"   javaType="java.lang.String"  />
+        <result property="accountName"     column="ACCOUNT_NAME"      jdbcType="VARCHAR"   javaType="java.lang.String"  />
+        <result property="accountBranchName"     column="ACCOUNT_BRANCH_NAME"      jdbcType="VARCHAR"   javaType="java.lang.String"  />
+        <result property="accountUserName"     column="ACCOUNT_USER_NAME"      jdbcType="VARCHAR"   javaType="java.lang.String"  />
+        <result property="accountNo"     column="ACCOUNT_NO"      jdbcType="VARCHAR"   javaType="java.lang.String"  />
+        
+	</resultMap>
+	
+	<!--
+      - ===============================================
+      - 查询Shop对象
+      - @author caoqi
+      - @date 2014-06-13
+      - ===============================================
+    -->
+    <select id="queryForShop" resultMap="RM_Shop" parameterType="java.lang.Integer">
+        select
+            s.ID,
+            s.OPERATOR_ID,
+            s.NAME,
+            s.PHOTO_PATH,
+            s.BANNER_PATH,
+            s.SUMMARY,
+            s.CONTACT_NAME,
+            s.PHONE,
+            s.ADDRESS,
+            s.FOUND_DATE,
+            s.LONGITUDE,
+            s.LATITUDE,
+            s.PROVINCE_ID,
+            s.CITY_ID,
+            s.COUNTY_ID,
+            s.IS_DELETED,
+            s.GMT_CREATE,
+            s.GMT_MODIFIED,
+            s.OWNER_ID,
+            s.PROJECT_QUALITY,
+            s.ACCOUNT_NAME,
+            s.ACCOUNT_BRANCH_NAME,
+            s.ACCOUNT_USER_NAME,
+            s.ACCOUNT_NO,
+            s.CUSTOM_SATISFIED
+        from
+            G_SHOP as s
+        where s.IS_DELETED='n'
+        and s.ID = #{id}
+        order by
+            s.ID desc
+    </select>
+
+	<!--
+      - ===============================================
+      - 根据产品包查询4S店
+      - @author jipengfei
+      - @date 2014-06-23
+      - ===============================================
+	-->
+	<select id="listForShopByGoods" resultMap="RM_Shop" parameterType="java.lang.Integer">
+		select
+			s.ID,
+			s.OPERATOR_ID,
+			s.NAME,
+			s.PHOTO_PATH,
+			s.BANNER_PATH,
+			s.SUMMARY,
+			s.CONTACT_NAME,
+			s.PHONE,
+			s.ADDRESS,
+			s.FOUND_DATE,
+			s.LONGITUDE,
+			s.LATITUDE,
+			s.PROVINCE_ID,
+			s.CITY_ID,
+			s.COUNTY_ID,
+			s.IS_DELETED,
+			s.GMT_CREATE,
+			s.GMT_MODIFIED,
+			s.OWNER_ID,
+			s.PROJECT_QUALITY,
+            s.CUSTOM_SATISFIED
+		from
+			G_SHOP as s
+		right join G_SHOP_GOODS as sg on sg.SHOP_ID = s.ID
+		where
+			sg.GOODS_ID = #{goodsId} 
+			<if test="0 == typeId and null != cityId">
+            and s.CITY_ID = #{cityId}
+            </if>
+            <if test="1 == typeId and null != cityId">
+            and s.COUNTY_ID = #{cityId}
+            </if>
+            and s.IS_DELETED = 'n' and sg.STATUS = 'enable'
+	</select>
+    <!-- 根据城运商ID获取4S店地址 -->
+	<select id="listForShopByOperatopId" resultType="com.goujia.website.base.ges.entity.ActivityShop" parameterType="java.lang.Integer">
+       select
+        g_4saddress.shop_id as shop_id,
+        g_4saddress.ADDRESS as address,
+        g_4saddress.CONTACT as contact,
+        g_4saddress.PHONE as phone,
+        g_4saddress.LATITUDE as latitude,
+        g_4saddress.LONGITUDE as longitude,
+        g_shop.name as name
+        from
+        g_4saddress
+        INNER JOIN g_shop on g_4saddress.shop_id=g_shop.id and
+         <if test="0 == type and cityId != null">g_shop.CITY_ID = #{cityId} </if>
+         <if test="1 == type and cityId != null">g_shop.COUNTY_ID = #{cityId}</if>
+         and g_shop.IS_DELETED = 'n' and g_shop.STATUS = 'success';
+    </select>
+    <select id="findAllByCity" parameterType="map" resultMap="RM_Shop">
+		select * from g_shop where  CITY_ID=#{city} and IS_DELETED='n' and STATUS="success"
+	</select>
+	<select id="findAllByCounty" parameterType="map" resultMap="RM_Shop">
+		select * from g_shop where  COUNTY_ID=#{county} and IS_DELETED='n' and STATUS="success"
+	</select>
+</mapper>

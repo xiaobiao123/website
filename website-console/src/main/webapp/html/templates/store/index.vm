@@ -1,0 +1,28 @@
+#Html("begin")
+#Head("begin")
+#Title("系统管理-评论管理-产品包评论管理")
+#LoadBootstrap("default")
+#LoadSUI("default")
+#Head("end")
+<body>
+    #parse("header.vm")
+    <form class="form-inline align-right" action="$request.contextPath/store/index.htm?" method="post">
+      <div id="uploader" class="wu-example" style="float:left">
+            <!--用来存放文件信息-->
+            <div id="thelist" class="uploader-list"></div>
+            <div class="btns">
+                <div id="picker">选择文件</div>
+                <button id="ctlBtn" class="btn btn-default" onclick="batloadup()">开始上传</button>
+            </div>
+        </div>
+    </form>
+    <!-- PAGE CONTENT ENDS -->
+    
+    <script>
+    function batloadup(){
+    	alert(document.getElementsByName("txtstr")[0].value);
+    }
+    </script>
+    #parse("footer.vm")
+</body>
+#Html("end")

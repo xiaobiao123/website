@@ -1,0 +1,379 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.goujia.website.base.ges.dao.PaymentRecordMapper">
+	<!-- - =============================================== - @author 重剑 - @date 
+		2015-05-23 - =============================================== -->
+	<resultMap type="com.goujia.website.base.ges.entity.PaymentRecord"
+		id="paymentRecordResultMap">
+		<id property="id" column="ID" jdbcType="INTEGER" javaType="java.lang.Integer" />
+		 <result property="gmtCreate" column="GMT_CREATE" jdbcType="TIMESTAMP"
+			javaType="java.sql.Timestamp" />
+		<result property="gmtModified" column="GMT_MODIFIED" jdbcType="TIMESTAMP"
+			javaType="java.sql.Timestamp" />
+		<result property="gmtSuccess" column="GMT_SUCCESS" jdbcType="TIMESTAMP"
+			javaType="java.sql.Timestamp" />
+		<result property="isDeleted" column="IS_DELETED" jdbcType="VARCHAR"
+			javaType="java.lang.String" /> 
+		 <result property="money" column="MONEY" jdbcType="INTEGER"
+			javaType="java.lang.Integer" />
+		<result property="mode" column="MODE" jdbcType="INTEGER"
+			javaType="java.lang.Integer" />
+		<result property="action" column="ACTION" jdbcType="INTEGER"
+			javaType="java.lang.Integer" />
+		<result property="status" column="STATUS" jdbcType="INTEGER"
+			javaType="java.lang.Integer" />
+		<result property="orderStatus" column="ORDER_STATUS" jdbcType="VARCHAR"
+			javaType="java.lang.String" />
+		<result property="code" column="CODE" jdbcType="VARCHAR"
+			javaType="java.lang.String" />
+		<result property="posSN" column="POS_SN" jdbcType="VARCHAR"
+			javaType="java.lang.String" />
+		<result property="sourceAccount" column="SOURCE_ACCOUNT"
+			jdbcType="VARCHAR" javaType="java.lang.String" />
+		<result property="sourceAccountIDCard" column="SOURCE_ACCOUNT_ID_CARD"
+			jdbcType="VARCHAR" javaType="java.lang.String" />
+		<result property="sourceAccountName" column="SOURCE_ACCOUNT_NAME"
+			jdbcType="VARCHAR" javaType="java.lang.String" />
+		<result property="sourceAccountMobile" column="SOURCE_ACCOUNT_MOBILE"
+			jdbcType="VARCHAR" javaType="java.lang.String" />
+		<result property="targetAccount" column="TARGET_ACCOUNT"
+			jdbcType="VARCHAR" javaType="java.lang.String" />
+		<result property="targetAccountIDCard" column="TARGET_ACCOUNT_ID_CARD"
+			jdbcType="VARCHAR" javaType="java.lang.String" />
+		<result property="targetAccountName" column="target_ACCOUNT_NAME"
+			jdbcType="VARCHAR" javaType="java.lang.String" />
+		<result property="targetAccountMobile" column="TARGET_ACCOUNT_MOBILE"
+			jdbcType="VARCHAR" javaType="java.lang.String" />
+		<association property="order" javaType="com.goujia.website.base.ges.entity.Order">
+           <id property="id" column="ORDER_ID" jdbcType="INTEGER" />
+       </association>
+	</resultMap>
+
+	<select id="queryByOrderId" parameterType="java.lang.Integer"
+		resultMap="paymentRecordResultMap">
+		SELECT
+		PR.ID,
+		PR.GMT_CREATE,
+		PR.GMT_MODIFIED,
+		PR.GMT_SUCCESS,
+		PR.IS_DELETED,
+		PR.MONEY,
+		PR.MODE,
+		PR.ACTION,
+		PR.STATUS,
+		PR.ORDER_STATUS,
+		PR.CODE,
+		PR.POS_SN,
+		PR.SOURCE_ACCOUNT,
+		PR.SOURCE_ACCOUNT_ID_CARD,
+		PR.SOURCE_ACCOUNT_NAME,
+		PR.SOURCE_ACCOUNT_MOBILE,
+		PR.TARGET_ACCOUNT,
+		PR.TARGET_ACCOUNT_ID_CARD,
+		PR.target_ACCOUNT_NAME,
+		PR.TARGET_ACCOUNT_MOBILE,
+		PR.ORDER_ID,
+		PR.OPERATOR_ID
+		FROM
+		G_PAYMENT_RECORD PR, G_ORDER O
+		WHERE
+		PR.ORDER_ID = #{id}
+		AND
+		PR.IS_DELETED = 'n'
+		AND PR.ORDER_STATUS = O.STATUS
+		AND O.ID = #{id}
+		AND
+		O.IS_DELETED = 'n'
+	</select>
+
+
+
+	<update id="updateByBankResponse" parameterType="com.goujia.website.base.ges.entity.PaymentRecord">
+		UPDATE
+		G_PAYMENT_RECORD
+		SET
+		GMT_MODIFIED = #{gmtModified},
+		<if test="gmtSuccess != null">
+			GMT_SUCCESS = #{gmtSuccess},
+		</if>
+		MONEY = #{money},
+		<if test="action != null and action != ''">
+			ACTION = #{action},
+		</if>
+		STATUS = 2,
+		<if test="sourceAccountMobile != null and sourceAccountMobile != ''">
+			SOURCE_ACCOUNT = #{sourceAccount},
+		</if>
+		<if test="sourceAccountIDCard != null and sourceAccountIDCard != ''">
+			SOURCE_ACCOUNT_ID_CARD = #{sourceAccountIDCard},
+		</if>
+		<if test="sourceAccountName != null and sourceAccountName != ''">
+			SOURCE_ACCOUNT_NAME = #{sourceAccountName},
+		</if>
+		<if test="sourceAccountMobile != null and sourceAccountMobile != ''">
+			SOURCE_ACCOUNT_MOBILE = #{sourceAccountMobile},
+		</if>
+		<if test="targetAccount != null and targetAccount != ''">
+			TARGET_ACCOUNT = #{targetAccount},
+		</if>
+		<if test="targetAccountIDCard != null and targetAccountIDCard != ''">
+			TARGET_ACCOUNT_ID_CARD = #{targetAccountIDCard},
+		</if>
+		<if test="targetAccountName != null and targetAccountName != ''">
+			TARGET_ACCOUNT_NAME = #{targetAccountName},
+		</if>
+		<if test="targetAccountMobile != null and targetAccountMobile != ''">
+			TARGET_ACCOUNT_MOBILE = #{targetAccountMobile}
+		</if>
+		WHERE
+		CODE = #{code}
+	</update>
+
+
+	<update id="abandonRelatedPaymentRecord" parameterType="com.goujia.website.base.ges.entity.Order">
+		UPDATE
+		G_ORDER O, G_PAYMENT_RECORD PR
+		SET
+		PR.IS_DELETED = 'y'
+		where
+		O.ID = #{ID}
+		AND O.IS_DELETED = 'n'
+		AND PR.ORDER_ID = O.ID
+		AND PR.IS_DELETED = 'n'
+		AND PR.ORDER_STATUS = O.STATUS
+	</update>
+
+	<!-- 新增订单支付数据 -->
+	<insert id="create" parameterType="com.goujia.website.base.ges.entity.PaymentRecord"
+		useGeneratedKeys="true" keyProperty="id">
+		insert into
+		G_PAYMENT_RECORD (
+		GMT_CREATE,
+		GMT_MODIFIED,
+		GMT_SUCCESS,
+		IS_DELETED,
+		MONEY,
+		MODE,
+		ACTION,
+		STATUS,
+		ORDER_STATUS,
+		CODE,
+		POS_SN,
+		SOURCE_ACCOUNT,
+		SOURCE_ACCOUNT_ID_CARD,
+		SOURCE_ACCOUNT_NAME,
+		SOURCE_ACCOUNT_MOBILE,
+		TARGET_ACCOUNT,
+		TARGET_ACCOUNT_ID_CARD,
+		target_ACCOUNT_NAME,
+		TARGET_ACCOUNT_MOBILE,
+		ORDER_ID,
+		OPERATOR_ID
+		) values (
+		now(),
+		now(),
+		now(),
+		'n',
+		#{money},
+		#{mode},
+		#{action},
+		#{status},
+		#{order.status},
+		#{code},
+		#{posSN},
+		#{sourceAccount},
+		#{sourceAccountIDCard},
+		#{sourceAccountName},
+		#{sourceAccountMobile},
+		#{targetAccount},
+		#{targetAccountIDCard},
+		#{targetAccountName},
+		#{targetAccountMobile},
+		#{order.id},
+		#{operator.id}
+		)
+	</insert>
+
+
+	<update id="delete" parameterType="java.lang.Integer">
+		UPDATE
+		G_PAYMENT_RECORD
+		SET
+		IS_DELETED = 'y'
+		WHERE
+		ID = #{id}
+	</update>
+
+	<select id="queryForPaymentRecord" parameterType="com.goujia.website.base.ges.entity.PaymentRecord"
+		resultMap="paymentRecordResultMap">
+		SELECT
+		PR.ID,
+		PR.GMT_CREATE,
+		PR.GMT_MODIFIED,
+		PR.GMT_SUCCESS,
+		PR.IS_DELETED,
+		PR.MONEY,
+		PR.MODE,
+		PR.ACTION,
+		PR.STATUS,
+		PR.ORDER_STATUS,
+		PR.CODE,
+		PR.POS_SN,
+		PR.SOURCE_ACCOUNT,
+		PR.SOURCE_ACCOUNT_ID_CARD,
+		PR.SOURCE_ACCOUNT_NAME,
+		PR.SOURCE_ACCOUNT_MOBILE,
+		PR.TARGET_ACCOUNT,
+		PR.TARGET_ACCOUNT_ID_CARD,
+		PR.target_ACCOUNT_NAME,
+		PR.TARGET_ACCOUNT_MOBILE,
+		PR.ORDER_ID,
+		PR.OPERATOR_ID
+		FROM
+		G_PAYMENT_RECORD PR, G_ORDER O
+		WHERE
+		PR.ORDER_ID = #{order.id}
+		AND
+		PR.IS_DELETED = 'n'
+		AND PR.ORDER_STATUS = O.STATUS
+		AND O.ID = #{order.id}
+		AND
+		O.IS_DELETED = 'n'
+		AND PR.STATUS="1"
+		<if test="code !=null">
+		AND PR.CODE=#{code}
+		</if>
+	</select>
+
+<!--修改订单支付状态  -->
+	<update id="updateForPaymentRecord" parameterType="com.goujia.website.base.ges.entity.PaymentRecord" >
+	update G_PAYMENT_RECORD A
+	 <set>
+		 <if test="gmtSuccess !=null">
+			A.GMT_SUCCESS =#{gmtSuccess},
+		</if> 
+		<if test="mode !=null">
+			A.MODE=#{mode},
+		</if>
+		<if test="action !=null">
+			A.ACTION=#{action},
+		</if>
+		<if test="status !=null">
+			A.STATUS=#{status},
+		</if>
+		<if test="orderStatus !=null">
+			A.ORDER_STATUS=#{order.status},
+		</if>
+		<if test="code !=null">
+			A.CODE=#{code},
+		</if>
+		 <if test="posSN !=null">
+			A.POS_SN=#{posSN},
+		</if> 
+		 <if test="sourceAccount !=null">
+			A.SOURCE_ACCOUNT=#{sourceAccount},
+		</if> 
+		<if test="sourceAccountIDCard !=null">
+			A.SOURCE_ACCOUNT_ID_CARD=#{sourceAccountIDCard},
+		</if>
+		<if test="sourceAccountMobile !=null">
+			A.SOURCE_ACCOUNT_MOBILE=#{sourceAccountMobile},
+		</if>
+		<if test="sourceAccountName !=null">
+			A.SOURCE_ACCOUNT_NAME=#{sourceAccountName},
+		</if>
+		<if test="targetAccount !=null">
+			A.TARGET_ACCOUNT=#{targetAccount},
+		</if>
+		<if test="targetAccountIDCard !=null">
+			A.TARGET_ACCOUNT_ID_CARD=#{targetAccountIDCard},
+		</if>
+		<if test="targetAccountMobile !=null">
+			A.TARGET_ACCOUNT_MOBILE=#{targetAccountMobile},
+		</if>
+		<if test="targetAccountName !=null">
+			A.TARGET_ACCOUNT_NAME=#{targetAccountName},
+		</if>   
+		
+		
+	</set> 
+	where 1=1
+	<if test="order.id !=null">
+	and A.order_id = #{order.id}
+	</if>
+	<!-- <if test="order.status !=null">
+	 and A.order_status=#{order.status}
+	</if> -->
+	<if test="code !=null">
+	 and A.code=#{code}
+	</if>
+</update>
+
+
+
+<select id="queryPaymentRecord" parameterType="com.goujia.website.base.ges.entity.PaymentRecord"
+		resultMap="paymentRecordResultMap">
+		SELECT
+		PR.ID,
+		PR.GMT_CREATE,
+		PR.GMT_MODIFIED,
+		PR.GMT_SUCCESS,
+		PR.IS_DELETED,
+		PR.MONEY,
+		PR.MODE,
+		PR.ACTION,
+		PR.STATUS,
+		PR.ORDER_STATUS,
+		PR.CODE,
+		PR.POS_SN,
+		PR.SOURCE_ACCOUNT,
+		PR.SOURCE_ACCOUNT_ID_CARD,
+		PR.SOURCE_ACCOUNT_NAME,
+		PR.SOURCE_ACCOUNT_MOBILE,
+		PR.TARGET_ACCOUNT,
+		PR.TARGET_ACCOUNT_ID_CARD,
+		PR.target_ACCOUNT_NAME,
+		PR.TARGET_ACCOUNT_MOBILE,
+		PR.ORDER_ID,
+		PR.OPERATOR_ID
+		FROM
+		G_PAYMENT_RECORD PR, G_ORDER O
+		WHERE
+		PR.ORDER_ID = #{order.id}
+		AND PR.`ORDER_ID`= O.`ID`
+		AND PR.IS_DELETED = 'n'
+		<!-- AND PR.ORDER_STATUS = O.STATUS -->
+		AND PR.ORDER_STATUS =#{orderStatus}
+		AND O.STATUS=#{order.status}
+		AND O.IS_DELETED = 'n'
+		AND PR.STATUS=#{status}
+	</select>
+	
+	<select id="judgeTimeInterval" parameterType="java.lang.Integer" resultMap="paymentRecordResultMap">
+       SELECT 
+           p.order_status,
+           p.gmt_success 
+       FROM 
+           g_payment_record p,g_order o 
+       WHERE 
+           p.order_id=o.id AND o.id=#{id} 
+       order by 
+           p.gmt_success desc 
+       limit 1
+    </select>
+    
+    <update id="updatePayRecordStatus" parameterType="com.goujia.website.base.ges.entity.PaymentRecord" >
+	    update 
+	        G_PAYMENT_RECORD A
+	    set 
+	        A.GMT_MODIFIED =now(),
+	        A.STATUS=#{status}
+	    where 1=1
+	        and A.order_id = #{order.id}
+	        and A.code=#{code}
+    </update>
+    
+</mapper>

@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.goujia.website.base.dao.orderlog.OrderLogMapper" >
+  <resultMap id="BaseResultMap" type="com.goujia.website.base.entity.orderlog.OrderLog" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="order_id" property="orderId" jdbcType="INTEGER" />
+    <result column="content" property="content" jdbcType="VARCHAR" />
+    <result column="label_id" property="labelId" jdbcType="INTEGER" />
+    <result column="gmt_create" property="gmtCreate" jdbcType="TIMESTAMP" />
+    <result column="gmt_modified" property="gmtModified" jdbcType="TIMESTAMP" />
+    <result column="relation_builder" property="relationBuilder" jdbcType="VARCHAR" />
+  </resultMap>
+  <resultMap id="ResultVoMap" type="com.goujia.website.base.vo.orderlog.OrderLogVO" extends="BaseResultMap">
+        <result column="label_name" property="labelName"/>
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, order_id, content, label_id, gmt_create, gmt_modified,relation_builder
+  </sql>
+  <select id="getById" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select a.id, a.order_id as orderId,a.content,b.name as labelName,a.relation_builder as relationBuilder
+    from g_bbs_order_log a left join g_bbs_label b on a.label_id = b.id
+    where a.id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="delete" parameterType="java.lang.Integer" >
+    delete from g_bbs_order_log
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  
+  <delete id="deleteList" parameterType="String">
+  delete from g_bbs_order_log
+  where id in (
+        <foreach collection="list" item="item" separator=",">
+            #{item}
+        </foreach>
+        )
+  </delete>
+  <insert id="add" parameterType="com.goujia.website.base.entity.orderlog.OrderLog" 
+  useGeneratedKeys="true" keyProperty="id">
+    insert into g_bbs_order_log (id, order_id, content, 
+      label_id, gmt_create, gmt_modified,relation_builder
+      )
+    values (#{id,jdbcType=INTEGER}, #{orderId,jdbcType=INTEGER}, #{content,jdbcType=VARCHAR}, 
+      #{labelId,jdbcType=INTEGER}, now(), now(), #{relationBuilder,jdbcType=VARCHAR}
+      )
+  </insert>
+  <update id="update" parameterType="com.goujia.website.base.entity.orderlog.OrderLog" >
+    update g_bbs_order_log
+    <set >
+      <if test="orderId != null" >
+        order_id = #{orderId,jdbcType=INTEGER},
+      </if>
+      <if test="content != null" >
+        content = #{content,jdbcType=VARCHAR},
+      </if>
+      <if test="labelId != null" >
+        label_id = #{labelId,jdbcType=INTEGER},
+      </if>
+      <if test="relationBuilder != null" >
+        relation_builder = #{relationBuilder,jdbcType=INTEGER},
+      </if>
+      <if test="gmtModified != null" >
+        gmt_modified = now(),
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <!-- 分页查看日志列表 -->
+  <select id="listPage" resultType="com.goujia.website.base.entity.orderlog.OrderLog" parameterType="com.goujia.website.base.vo.orderlog.OrderLogSearchParam">
+    select distinct a.id,a.content,a.gmt_create as gmtCreate,b.name as labelName
+    from g_bbs_order_log a 
+    left join g_bbs_label b on a.label_id = b.id
+    where a.order_id = #{orderId}
+    <if test="null != content and '' != content"> and a.content like CONCAT('%',#{content},'%')</if>
+  </select>
+  <select id="countListPage" parameterType="com.goujia.website.base.vo.orderlog.OrderLogSearchParam" resultType="java.lang.Integer">
+    select count(distinct a.id) 
+    from g_bbs_order_log a 
+    left join g_bbs_label b on a.label_id = b.id
+    where a.order_id = #{orderId}
+    <if test="null != content and '' != content"> and a.content like CONCAT('%',#{content},'%')</if>
+  </select>
+  <select id="findAllByLabelAndOrder" parameterType="map" resultMap="ResultVoMap">
+    select * from g_bbs_order_log where order_id=#{order}
+    <if test="label!=null and label!=''">
+        and label_id=#{label}
+    </if>
+  </select>
+  <select id="findLastByOrder" parameterType="map" resultMap="ResultVoMap">
+    select * from g_bbs_order_log where order_id=#{order}
+    order by gmt_create desc limit 1
+  </select>
+  <select id="findLastOrderByLabel" parameterType="map" resultMap="ResultVoMap">
+    select logs.* from g_bbs_order_log logs
+	inner join 
+	    (select order_id,max(gmt_create) as time from g_bbs_order_log where 1=1
+		    <if test="label!=null and label!=''">
+		        and label_id=#{label}
+		    </if>
+	    group by order_id ) times 
+	    on times.time = logs.gmt_create and times.order_id=logs.order_id
+	order by gmt_create desc;
+  </select>
+  <select id="findOrderByLabel" parameterType="map" resultType="int">
+	    select a.order_id from 
+	    (
+	       select order_id,max(gmt_create) as time 
+	       from g_bbs_order_log 
+	       where 1=1
+	        <if test="label!=null and label!=''">
+                and label_id=#{label}
+            </if>
+	       group by order_id 
+	       order by time desc) a
+  </select>
+  <select id="findAllByOrder" parameterType="map" resultMap="ResultVoMap">
+    select olog.*,label.name label_name
+	from (select * from g_bbs_order_log where order_id=#{order}) olog  
+	join g_bbs_label label on label.id=olog.label_id 
+	 order by olog.label_id desc
+	    
+  </select>
+</mapper>

@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.goujia.website.base.dao.system.UserAdminMapper" >
+  <resultMap id="BaseResultMap" type="com.goujia.website.base.entity.system.UserAdmin" >
+    <id column="ID" property="id" jdbcType="INTEGER" />
+    <result column="USER_NAME" property="userName" jdbcType="VARCHAR" />
+    <result column="EMAIL" property="email" jdbcType="VARCHAR" />
+    <result column="PASSWORD_KEY" property="passwordKey" jdbcType="VARCHAR" />
+    <result column="GMT_CREATE" property="gmtCreate" jdbcType="TIMESTAMP" />
+    <result column="HEAD_PORTRAIT" property="headPortrait" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    ID, USER_NAME, EMAIL, PASSWORD_KEY, GMT_CREATE, HEAD_PORTRAIT
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from G_USER_ADMIN
+    where ID = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from G_USER_ADMIN
+    where ID = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.goujia.website.base.entity.system.UserAdmin" >
+    insert into G_USER_ADMIN (ID, USER_NAME, EMAIL, 
+      PASSWORD_KEY, GMT_CREATE, HEAD_PORTRAIT
+      )
+    values (#{id,jdbcType=INTEGER}, #{userName,jdbcType=VARCHAR}, #{email,jdbcType=VARCHAR}, 
+      #{passwordKey,jdbcType=VARCHAR}, #{gmtCreate,jdbcType=TIMESTAMP}, #{headPortrait,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.goujia.website.base.entity.system.UserAdmin" >
+    insert into G_USER_ADMIN
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        ID,
+      </if>
+      <if test="userName != null" >
+        USER_NAME,
+      </if>
+      <if test="email != null" >
+        EMAIL,
+      </if>
+      <if test="passwordKey != null" >
+        PASSWORD_KEY,
+      </if>
+      <if test="gmtCreate != null" >
+        GMT_CREATE,
+      </if>
+      <if test="headPortrait != null" >
+        HEAD_PORTRAIT,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="userName != null" >
+        #{userName,jdbcType=VARCHAR},
+      </if>
+      <if test="email != null" >
+        #{email,jdbcType=VARCHAR},
+      </if>
+      <if test="passwordKey != null" >
+        #{passwordKey,jdbcType=VARCHAR},
+      </if>
+      <if test="gmtCreate != null" >
+        #{gmtCreate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="headPortrait != null" >
+        #{headPortrait,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.goujia.website.base.entity.system.UserAdmin" >
+    update G_USER_ADMIN
+    <set >
+      <if test="userName != null" >
+        USER_NAME = #{userName,jdbcType=VARCHAR},
+      </if>
+      <if test="email != null" >
+        EMAIL = #{email,jdbcType=VARCHAR},
+      </if>
+      <if test="passwordKey != null" >
+        PASSWORD_KEY = #{passwordKey,jdbcType=VARCHAR},
+      </if>
+      <if test="gmtCreate != null" >
+        GMT_CREATE = #{gmtCreate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="headPortrait != null" >
+        HEAD_PORTRAIT = #{headPortrait,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.goujia.website.base.entity.system.UserAdmin" >
+    update G_USER_ADMIN
+    set USER_NAME = #{userName,jdbcType=VARCHAR},
+      EMAIL = #{email,jdbcType=VARCHAR},
+      PASSWORD_KEY = #{passwordKey,jdbcType=VARCHAR},
+      GMT_CREATE = #{gmtCreate,jdbcType=TIMESTAMP},
+      HEAD_PORTRAIT = #{headPortrait,jdbcType=VARCHAR}
+    where ID = #{id,jdbcType=INTEGER}
+  </update>
+  
+  <select id="findByNameAndPwd" resultMap="BaseResultMap" parameterType="com.goujia.website.base.entity.system.UserAdmin">
+    select 
+    <include refid="Base_Column_List" />
+    from G_USER_ADMIN
+    where USER_NAME = #{userName,jdbcType=VARCHAR} AND PASSWORD_KEY = #{passwordKey,jdbcType=VARCHAR}
+  </select>
+</mapper>

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+    
+<mapper namespace="com.goujia.website.base.ges.dao.ShopGoodsMapper">
+
+	<!--
+      - ===============================================
+      - 返回ShopGoods POJO
+      - @author caoqi
+      - @date 2014-06-19
+      - ===============================================
+	-->
+	<resultMap  type="com.goujia.website.base.ges.entity.ShopGoods" id="RM_ShopGoods">
+		<result property="shopId"  	   column="SHOP_ID"    	 jdbcType="INTEGER"   javaType="java.lang.Integer" />
+		<result property="goodsId"     column="GOODS_ID"     jdbcType="INTEGER"   javaType="java.lang.Integer" />
+		<result property="saleNum"     column="SALE_NUM"     jdbcType="INTEGER"   javaType="java.lang.Integer" />
+		<result property="orderIndex"  column="ORDER_INDEX"  jdbcType="INTEGER"   javaType="java.lang.Integer" />
+		<result property="status"  	   column="STATUS"     	 jdbcType="VARCHAR"   javaType="java.lang.String"  />
+		<result property="gmtCreate"   column="GMT_CREATE"   jdbcType="TIMESTAMP" javaType="java.util.Date"    />
+		<result property="gmtModified" column="GMT_MODIFIED" jdbcType="TIMESTAMP" javaType="java.util.Date"    />
+		<result property="ownerId"     column="OWNER_ID"     jdbcType="INTEGER"   javaType="java.lang.Integer" />
+	</resultMap>
+	
+	
+	<!--
+      - ===============================================
+      - 修改4S店产品包的数量
+      - @author jipengfei
+      - @date 2014-07-23
+      - ===============================================
+	-->
+	<update id="updateSaleNum" parameterType="com.goujia.website.base.ges.entity.ShopGoods">
+		update G_SHOP_GOODS 
+			set GMT_MODIFIED = now(),SALE_NUM= SALE_NUM + 1
+		where SHOP_ID=#{shopId} and GOODS_ID = #{goodsId}
+	</update>
+	
+</mapper>

@@ -1,0 +1,119 @@
+<style type="text/css">
+    #product_body th,#product_body th{
+        text-align: center;
+    }
+    #product_body td{
+        text-align: center;
+    }
+</style>
+<div class="container" id="product_container">
+    <div class="row" style="padding-bottom:10px;">
+        <div class="col-md-4"> 
+            <select id="city" name="city" class="form-control">
+                #foreach($item in $listArea)
+                    <option value="${item.id}">${item.name}</option>
+                #end
+            </select>
+        </div>
+        <div class="col-md-6">
+            <input class="form-control" type="text" id="product_search_input" style="height:32px;" placeholder="产品包名称"/>
+        </div>
+        <div class="col-md-2">
+            <button class="btn btn-sm" type="button" id="product_search_but" style="height:32px;">搜索</button>
+        </div>
+    </div>
+    <div id="product_body">
+        <div class="row">
+            <table class="table table-hover table-striped">
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th>名称</th>
+                        <th>风格</th>
+                        <th>户型</th>
+                        <th>价格</th>
+                    </tr>
+                </thead>
+                <tbody id="product_table_body">
+                    #foreach($item in $list.result)
+                        <tr>
+                            <td>
+                                <input type="checkbox" class="goods_checkbox" onclick="changeRelate(this,${item.id})" #if(${item.checked})checked#end/>
+                            </td>
+                            <td>$!{item.name}</td>
+                            <td>$!{item.styleName}</td>
+                            <td>$!{item.houseTypeName}</td>
+                            <td>$!{item.discountPrice}</td>
+                        </tr>
+                    #end
+                </tbody>
+            </table>
+        </div>
+        <div class="row">
+            <ul class="pagination pull-right">
+                #if($!list.hasPre)
+                    <li class="first"><a href="#first" onclick="loadList_product('1');">首页</a></li>
+                    <li class="prev"><a href="#prePage" onclick="loadList_product('$list.prePage');"><i class="icon-double-angle-left"></i></a></li>
+                #else
+                    <li class="first disabled"><a>首页</a></li>
+                    <li class="prev disabled"><a><i class="icon-double-angle-left"></i></a></li>
+                #end
+                #foreach($pNo in $list.closestPage)
+                    <li #if($list.pageNo == $pNo)class="active"#end><a href="#$!pNo" onclick="loadList_product('$!pNo');">$!pNo</a></li>
+                #end
+                #if($!list.hasNext)
+                    <li class="next"><a href="#nextPage" onclick="loadList_product('$list.nextPage');"><i class="icon-double-angle-right"></i></a></li>
+                    <li class="last"><a href="#totalPages" onclick="loadList_product('$list.totalPages');">尾页</a></li>
+                #else
+                    <li class="next disabled"><a><i class="icon-double-angle-right"></i></a></li>
+                    <li class="last disabled"><a>尾页</a></li>
+                #end
+                    <li style="white-space:nowrap;display:inline-block">
+                    &nbsp;共$!list.totalPages页， 去第<input type="text" id="product_pageNo" name="pageNo" value="$!list.pageNo" style="width:40px" class="page-go" onkeypress="if(event.keyCode==13) { $(this).closest('ul').find('button').click(); }"/>页
+                    <button type="button" class="btn btn-xs btn-inverse" onclick="loadList_product();">确认</button>
+                    </li>
+            </ul>
+        </div>
+    </div>
+</div>
+<script type="text/javascript" href="$!request.contextPath/assets/js/jquery-2.0.3.min.js"></script>
+<script type="text/javascript">
+var product_articleId=$!{articleId};
+var product_page_size=10;
+function changeRelate(obj,id){
+    var checked=$(obj).is(":checked");
+    $.post("$!request.contextPath/product/changeRelate.htm",{"article.id":product_articleId,"goods.id":id,"checked":checked},function(data,statusText){
+        var data_=eval("("+data+")");
+        if(!data_){
+            alert("修改出错");
+        }
+    });
+}
+function loadList_product(pageNo) {
+    var param = {};
+    var body = $("#product_body");
+    param["cityId"] = $("#product_container #city").val();
+    param["pageSize"] = product_page_size;
+    param["name"] = $("#product_search_input").val();
+    param["articleId"]=product_articleId;
+    if (!!pageNo && !isNaN(pageNo)) {
+        $("#product_pageNo").val(pageNo);
+        param["pageNo"] = pageNo;
+    } else {
+        param["pageNo"] = $("#product_pageNo").val();
+    }
+    $.post("$request.contextPath/product/sublist.htm", param, function(html, statusText) {
+        body.empty();
+        body.append(html);
+    });
+}
+$(document).ready(function(){
+    $("#product_search_but").click(function(){
+        loadList_product(1);
+    });
+    $("#product_container #city").val(1213);
+});
+</script>
+
+
+

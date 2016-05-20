@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+    
+<mapper namespace="com.goujia.website.base.ges.dao.MaterialsCategoryMapper">
+
+	<!--
+      - ===============================================
+      - 返回MaterialsCategory POJO
+      - @author jipengfei
+      - @date 2014-06-13
+      - ===============================================
+	-->
+	<resultMap  type="com.goujia.website.base.ges.entity.MaterialsCategory"                 id="RM_Materials_Category">
+		<id     property="id"          column="ID"  	     jdbcType="INTEGER"   javaType="java.lang.Integer" />
+		<result property="name"        column="NAME"         jdbcType="VARCHAR"   javaType="java.lang.String"  />
+        <result property="code"        column="CODE"         jdbcType="VARCHAR"   javaType="java.lang.String"  />
+		<result property="parentId"    column="PARENT_ID"    jdbcType="INTEGER"   javaType="java.lang.Integer" />
+		<result property="isDeleted"   column="IS_DELETED"   jdbcType="VARCHAR"   javaType="java.lang.String"  />
+		<result property="isCompared"   column="IS_COMPARED"   jdbcType="VARCHAR"   javaType="java.lang.String"  />
+		<result property="gmtCreate"   column="GMT_CREATE"   jdbcType="TIMESTAMP" javaType="java.util.Date"    />
+		<result property="gmtModified" column="GMT_MODIFIED" jdbcType="TIMESTAMP" javaType="java.util.Date"    />
+		<result property="ownerId"     column="OWNER_ID"     jdbcType="INTEGER"   javaType="java.lang.Integer" />
+	</resultMap>
+	
+	<!--
+      - ===============================================
+      - 新增MaterialsCategory
+      - @author jipengfei
+      - @date 2014-06-13
+      - ===============================================
+	-->
+	<insert id="create" parameterType="com.goujia.website.base.ges.entity.MaterialsCategory" useGeneratedKeys="true" keyProperty="id">
+		insert into G_MATERIALS_CATEGORY (
+			ID, 
+			NAME,
+			CODE,
+			PARENT_ID,
+			IS_DELETED,
+			GMT_CREATE,
+			GMT_MODIFIED,
+			OWNER_ID,
+			IS_COMPARED
+		) values (
+			#{id}, 
+			#{name},
+			#{code},
+			#{parentId},
+			'n',
+			now(),
+			now(),
+			#{ownerId},
+			#{isCompared}
+		)
+	</insert>
+	
+	<!--
+      - ===============================================
+      - 修改MaterialsCategory
+      - @author jipengfei
+      - @date 2014-06-13
+      - ===============================================
+	-->
+	<update id="update" parameterType="com.goujia.website.base.ges.entity.MaterialsCategory">
+		update G_MATERIALS_CATEGORY set GMT_MODIFIED = now(),OWNER_ID = #{ownerId}
+		<if test="name != null and name !=''">, NAME=#{name}</if>
+		<if test="parentId != null and parentId >=0">, PARENT_ID=#{parentId}</if>
+		<if test="isDeleted != null and isDeleted !=''">, IS_DELETED=#{isDeleted}</if>
+		<if test="isCompared != null and isCompared !=''">, IS_COMPARED=#{isCompared}</if>
+		where ID = #{id}
+	</update>
+	
+	<!--
+      - ===============================================
+      - 查询物料类目数量
+      - @author caoqi
+      - @date 2014-06-20
+      - ===============================================
+	-->
+	<select id="count" resultType="java.lang.Integer" parameterType="com.goujia.website.base.ges.entity.MaterialsCategory">
+		select count(ID) 
+		from G_MATERIALS_CATEGORY
+		where 
+			IS_DELETED='n'
+		<if test="parentId != null and parentId >= 0">and PARENT_ID = #{parentId}</if>
+	</select>
+	
+	
+	<!--
+      - ===============================================
+      - 查询物料类目列表
+      - @author jipengfei
+      - @date 2014-06-13
+      - ===============================================
+	-->
+	<select id="listForMaterialsCategory" parameterType="com.goujia.website.base.ges.entity.MaterialsCategory" resultMap="RM_Materials_Category">
+		select
+			ID,
+			NAME,
+            CODE,
+			PARENT_ID,
+			GMT_MODIFIED,
+			GMT_CREATE,
+			OWNER_ID,
+			IS_DELETED,
+			IS_COMPARED
+		from 
+			G_MATERIALS_CATEGORY
+		where
+			IS_DELETED = 'n'
+		<if test="name !=null and name !=''">and NAME like CONCAT('%','${name}','%' )</if>
+		<if test="parentId !=null and parentId >=0">and PARENT_ID=#{parentId}</if>
+	</select>
+	
+	<select id="queryForParentById" parameterType="int" resultMap="RM_Materials_Category">
+		select 
+			ID,
+			NAME,
+			CODE,
+			PARENT_ID,
+			GMT_MODIFIED,
+			GMT_CREATE,
+			OWNER_ID,
+			IS_DELETED,
+			IS_COMPARED
+ 		from G_MATERIALS_CATEGORY where ID =(select PARENT_ID from G_MATERIALS_CATEGORY where ID=#{id})
+	</select>
+</mapper>

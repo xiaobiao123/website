@@ -1,0 +1,238 @@
+#Html("begin")
+#Head("begin")
+#Title("系统管理-推荐位管理")
+#LoadBootstrap("default")
+#LoadSUI("default")
+#LoadSUI("editor")
+#Head("end")
+<body>
+	#parse("header.vm")
+	
+	<!--nav-table start-->
+	<ul class="nav nav-tabs" id="">
+		<li class="active">
+			<a href="javascript:;">
+				 基本信息
+			</a>
+		</li>
+	</ul>
+	<!--nav-table end-->
+	
+	<!-- PAGE CONTENT BEGINS -->
+	<p></p>
+	<form id="J_Form" name="J_Form" class="form-horizontal" role="form" method="post" >
+		#Hidden("posId", "$!recommendPosition.posId")
+		<div class="form-group">
+			<label class="control-label col-xs-12 col-sm-2 no-padding-right" for="title"><span class="red">*</span>标题名称：</label>
+				<div class="clearfix">
+					<div class="col-xs-12 col-sm-9">
+						<div class="clearfix">
+							<input type="text" name="posName" id="title" class="col-xs-12 col-sm-6" value="$!recommendPosition.posName">
+						</div>
+					</div>
+				</div>
+		</div>
+
+		<div class="space-2"></div>
+		
+		<div class="form-group">
+			<label class="control-label col-xs-12 col-sm-2 no-padding-right" for="title"><span class="red">*</span>推荐类型：</label>
+			<div class="col-xs-12 col-sm-9 prodcut-cate" id="J_ProductCate">
+				<div class="clearfix">
+					<input type="radio" name="infoType" value="$SysConstants.REC_INFO_TYPE_ALL" #if(!$!recommendPosition.infoType || $!SysConstants.REC_INFO_TYPE_ALL == $!recommendPosition.infoType) checked #end>全部</input>
+					<input type="radio" name="infoType" value="$!SysConstants.REC_INFO_TYPE_SPECIAL_TOPIC" #if($!SysConstants.REC_INFO_TYPE_SPECIAL_TOPIC == $!recommendPosition.infoType) checked #end>专题</input>
+					<input type="radio" name="infoType" value="$!SysConstants.REC_INFO_TYPE_TOPIC" #if($!SysConstants.REC_INFO_TYPE_TOPIC == $!recommendPosition.infoType) checked #end>话题</input>
+					<input type="radio" name="infoType" value="$!SysConstants.REC_INFO_TYPE_ARTICLE" #if($!SysConstants.REC_INFO_TYPE_ARTICLE == $!recommendPosition.infoType) checked #end>文章</input>
+					<input type="radio" name="infoType" value="$!SysConstants.REC_INFO_TYPE_QUESTION" #if($!SysConstants.REC_INFO_TYPE_QUESTION == $!recommendPosition.infoType) checked #end>问答</input>
+					<input type="radio" name="infoType" value="$!SysConstants.REC_INFO_TYPE_PRODUCT" #if($!SysConstants.REC_INFO_TYPE_PRODUCT == $!recommendPosition.infoType) checked #end>产品</input>
+					<input type="radio" name="infoType" value="$!SysConstants.REC_INFO_TYPE_OTHER" #if($!SysConstants.REC_INFO_TYPE_OTHER == $!recommendPosition.infoType) checked #end>其他</input>
+				</div>
+			</div>
+		</div>
+
+		<div class="space-2"></div>
+
+		<div class="form-group">
+			<label class="control-label col-xs-12 col-sm-2 no-padding-right" for=""><span class="red">*</span>推荐数量：</label>
+
+			<div class="clearfix">
+				<div class="col-xs-12 col-sm-9">
+					<div class="clearfix">
+						<input type="text" name="posNum" id="posNum" class="col-xs-12 col-sm-6" value="$!recommendPosition.posNum">
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="space-2"></div>
+		
+		<div class="form-group">
+			<label class="control-label col-xs-12 col-sm-2 no-padding-right" for=""><span class="red">*</span>支持图片：</label>
+
+			<div class="clearfix">
+				<div class="col-xs-12 col-sm-9">
+					<div class="clearfix">
+    					<input type="radio" name="imageNeeded" value="$!SysConstants.REC_POS_IMAGE_NEED_YES" #if($!SysConstants.REC_POS_IMAGE_NEED_YES == $!recommendPosition.imageNeeded) checked #end>是</input>
+    					<input type="radio" name="imageNeeded" value="$!SysConstants.REC_POS_IMAGE_NEED_NO" #if(!$!recommendPosition.imageNeeded || $!SysConstants.REC_POS_IMAGE_NEED_NO == $!recommendPosition.imageNeeded) checked #end>否</input>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="space-2"></div>
+		
+		<div class="form-group">
+			<label class="control-label col-xs-12 col-sm-2 no-padding-right" for=""><span class="red"></span>图片尺寸：</label>
+
+			<div class="clearfix">
+				<div class="col-xs-12 col-sm-9">
+					<div class="clearfix">
+    					长&nbsp;<input type="text" name="imageWidth" id="imageWidth" class="" value="$!recommendPosition.imageWidth"/>&nbsp;px
+    					宽&nbsp;<input type="text" name="imageHeight" id="imageHeight" class="" value="$!recommendPosition.imageHeight"/>&nbsp;px
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="space-2"></div>
+		
+		<div class="form-group">
+			<label class="control-label col-xs-12 col-sm-2 no-padding-right" for=""><span class="red">*</span>状态：</label>
+
+			<div class="clearfix">
+				<div class="col-xs-12 col-sm-9">
+					<div class="clearfix">
+                        <input type="radio" name="deleteStatus" value="$!SysConstants.DELETED_NO" #if(!$!recommendPosition.deleteStatus || $!SysConstants.DELETED_NO == $!recommendPosition.deleteStatus) checked #end>有效</input>
+                        <input type="radio" name="deleteStatus" value="$!SysConstants.DELETED_YES" #if($!SysConstants.DELETED_YES == $!recommendPosition.deleteStatus) checked #end>无效</input>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="space-2"></div>
+		
+		<div class="form-group">
+			<label class="control-label col-xs-12 col-sm-2 no-padding-right" for=""><span class="red">*</span>推荐位代码：</label>
+
+			<div class="clearfix">
+				<div class="col-xs-12 col-sm-9">
+					<div class="clearfix">
+						<input type="text" name="posCode" id="posCode" class="col-xs-12 col-sm-6" value="$!recommendPosition.posCode">
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="space-2"></div>
+		
+
+		<div class="clearfix form-actions">
+			<div class="col-md-offset-3 col-md-7">
+				<input type="hidden" value="" name="pid">
+				<button type="button" id="J_SAVE" class="btn btn-info J_LoadingBtn" data-loading-text="保存中...">
+					<i class="icon-ok bigger-110"></i>
+					保存
+				</button>
+			</div>
+		</div>
+
+	</form>
+	
+	<script>
+    	$(function(){
+    		$("#J_Form").validate({
+			rules : {
+				posName : {
+					required : true
+				},
+				posNum : {
+					required : true
+				},
+				posCode : {
+					required : true
+				}
+			},
+			messages: {
+				posName: {
+					required: "标题名称不能为空！"
+				},
+				posNum: {
+					required: "推荐数量不能为空！"
+				},
+				posCode: {
+					required: "推荐位代码不能为空！"
+				}
+			},
+			/* 错误信息的显示位置 */
+			errorPlacement: function(error, element) {
+				if(element.is(':checkbox') || element.is(':radio')) {
+    				var controls = element.closest('div[class*="col-"]');
+    				if(controls.find(':checkbox,:radio').length > 1) controls.append(error);
+    				else error.insertAfter(element.nextAll('.lbl:eq(0)').eq(0));
+    			}else if(element.is('.select2')) {
+    				error.insertAfter(element.siblings('[class*="select2-container"]:eq(0)'));
+    			}else if(element.is('.chosen-select')) {
+    				error.insertAfter(element.siblings('[class*="chosen-container"]:eq(0)'));
+    			}else error.insertAfter(element.parent());
+			}
+		});
+    	});
+		
+		
+		$("#J_SAVE").click(function(){
+            var r= $('input[name=imageNeeded]:checked').val(); 
+            var reg = new RegExp("^[0-9]*$");
+            var posNum=$('#posNum').val();
+            var imageWidth=$('#imageWidth').val();
+            var imageHeight=$('#imageHeight').val();
+            if(!reg.test(posNum)){
+                    alert("推荐数量必须为数字！");
+                    return;
+            }
+            if('n'==r){
+                $('#imageWidth').val("");
+                $('#imageHeight').val("");
+            }
+            if('y'==r){
+                if(null==imageWidth || ""==imageWidth){
+                    alert("请输入图片的长度");
+                    return;
+                }
+                if(null==imageHeight || ""==imageHeight){
+                    alert("请输入图片的宽度");
+                    return;
+                }
+            }
+            if(null!=imageWidth && ""!=imageWidth && !reg.test(imageWidth)){
+                    alert("图片长度必须为数字！");
+                    return;
+            }
+            if(null!=imageHeight && ""!=imageHeight && !reg.test(imageHeight)){
+                    alert("图片宽度必须为数字！");
+                    return;
+            }
+			if($('#J_Form').valid()){
+ 				$.ajax({
+				   dataTpe: "json",
+				   type: "POST",
+				   url: '$!request.contextPath/rec/pos/save.htm',
+				   data: $("#J_Form").serialize(),
+				   success: function(res){
+				     if(res[0]){
+					 	alert("保存成功");
+						window.location.href="$!request.contextPath/rec/pos/index.htm";
+				     } else {
+					 	jAlert("保存失败，请稍后再试");
+				     }
+				   },
+				   error: function() {
+					alert(DS.msg.error, DS.msg.tip);
+				   }
+				});
+			}
+		});
+    </script>
+	<!-- PAGE CONTENT ENDS -->
+	#parse("footer.vm")
+</body>
+#Html("end")
